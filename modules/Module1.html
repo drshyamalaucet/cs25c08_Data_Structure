@@ -1,0 +1,2513 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 1 - Linear Lists ADT</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+}
+
+header {
+    background: linear-gradient(135deg, #182848, #4b6cb7);
+    color: white;
+    padding: 30px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+header p {
+    font-size: 17px;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #111827;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 13px 16px;
+    font-size: 14px;
+}
+
+nav a:hover {
+    background: #374151;
+}
+
+.container {
+    width: 94%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+section {
+    background: white;
+    margin: 25px 0;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #1d4ed8;
+    border-bottom: 2px solid #dbeafe;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #374151;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #dbe3ef;
+    padding: 18px;
+    border-radius: 10px;
+}
+
+.card strong {
+    color: #1d4ed8;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+input, select, button {
+    padding: 10px 12px;
+    border-radius: 7px;
+    border: 1px solid #b8c2d1;
+    font-size: 14px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.danger {
+    background: #dc2626;
+}
+
+button.green {
+    background: #059669;
+}
+
+.visual-area {
+    background: #eef5ff;
+    border-radius: 12px;
+    padding: 25px;
+    min-height: 120px;
+    overflow-x: auto;
+}
+
+.array-container,
+.list-container {
+    display: flex;
+    align-items: center;
+    min-width: max-content;
+    padding: 20px;
+}
+
+.array-item {
+    width: 80px;
+    height: 65px;
+    border: 3px solid #2563eb;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-right: 5px;
+    border-radius: 8px;
+    position: relative;
+}
+
+.array-item .index {
+    font-size: 11px;
+    color: #64748b;
+}
+
+.node {
+    min-width: 90px;
+    min-height: 70px;
+    background: white;
+    border: 3px solid #2563eb;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.arrow {
+    font-size: 28px;
+    margin: 0 8px;
+    color: #2563eb;
+}
+
+.circular-arrow {
+    color: #dc2626;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: 13px;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    text-align: left;
+}
+
+th {
+    background: #e5e7eb;
+}
+
+.info {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.warning {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.success {
+    background: #ecfdf5;
+    border-left: 5px solid #059669;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.step {
+    display: inline-block;
+    background: #dbeafe;
+    padding: 8px 12px;
+    margin: 5px;
+    border-radius: 20px;
+}
+
+footer {
+    background: #111827;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 30px;
+}
+
+@media(max-width:700px) {
+    header h1 {
+        font-size: 24px;
+    }
+
+    section {
+        padding: 15px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>MODULE 1 – LINEAR LISTS ADT</h1>
+    <p>Visual Representation • Pseudocode • C++ Implementation • Applications</p>
+</header>
+
+<nav>
+    <a href="../index.html">Home</a>
+    <a href="#array">Array List</a>
+    <a href="#singly">Singly List</a>
+    <a href="#doubly">Doubly List</a>
+    <a href="#circular">Circular List</a>
+    <a href="#polynomial">Polynomial Expression</a>
+    <a href="#browser">Browsing History</a>
+</nav>
+
+<div class="container">
+
+<!-- INTRODUCTION -->
+<section id="intro">
+<h2>1. Linear Lists ADT</h2>
+
+<p>
+A <strong>Linear List</strong> is an ordered collection of elements in which
+each element has a unique predecessor and successor, except the first and
+last elements.
+</p>
+
+<div class="card-grid">
+    <div class="card">
+        <strong>Array-based List</strong>
+        <p>Elements are stored in contiguous memory locations.</p>
+    </div>
+
+    <div class="card">
+        <strong>Singly Linked List</strong>
+        <p>Each node stores data and a pointer to the next node.</p>
+    </div>
+
+    <div class="card">
+        <strong>Doubly Linked List</strong>
+        <p>Each node contains previous and next pointers.</p>
+    </div>
+
+    <div class="card">
+        <strong>Circular Linked List</strong>
+        <p>The last node points back to the first node.</p>
+    </div>
+</div>
+
+<div class="info">
+<strong>ADT:</strong> Abstract Data Type defines what operations can be
+performed on a data structure without specifying how those operations are
+implemented internally.
+</div>
+
+<h3>Common ADT Operations</h3>
+
+<table>
+<tr>
+<th>Operation</th>
+<th>Description</th>
+</tr>
+<tr><td>Insert Begin</td><td>Add an element at the beginning.</td></tr>
+<tr><td>Insert Middle</td><td>Add an element at a specified position.</td></tr>
+<tr><td>Insert End</td><td>Add an element at the end.</td></tr>
+<tr><td>Delete Begin</td><td>Remove the first element.</td></tr>
+<tr><td>Delete Middle</td><td>Remove an element from a specified position.</td></tr>
+<tr><td>Delete End</td><td>Remove the last element.</td></tr>
+<tr><td>Search</td><td>Find an element.</td></tr>
+<tr><td>Traversal</td><td>Visit all elements.</td></tr>
+</table>
+</section>
+
+<!-- ARRAY LIST -->
+<section id="array">
+<h2>2. Array-Based Linear List ADT</h2>
+
+<p>
+An array-based list stores elements in consecutive memory locations.
+Insertion and deletion may require shifting elements.
+</p>
+
+<div class="visual-area">
+    <div id="arrayVisual" class="array-container"></div>
+</div>
+
+<div class="controls">
+    <input type="number" id="arrayValue" placeholder="Value">
+    <button onclick="arrayInsertBegin()">Insert Begin</button>
+    <button onclick="arrayInsertEnd()">Insert End</button>
+    <button onclick="arrayInsertMiddle()">Insert Middle</button>
+    <button class="danger" onclick="arrayDeleteBegin()">Delete Begin</button>
+    <button class="danger" onclick="arrayDeleteEnd()">Delete End</button>
+    <button class="danger" onclick="arrayDeleteMiddle()">Delete Middle</button>
+    <button onclick="arraySearch()">Search</button>
+    <button class="green" onclick="arrayTraverse()">Traversal</button>
+</div>
+
+<p id="arrayStatus"></p>
+
+<h3>Array List Pseudocode</h3>
+
+<pre><code>INSERT_END(A, n, value)
+    A[n] ← value
+    n ← n + 1
+
+INSERT_BEGIN(A, n, value)
+    FOR i ← n DOWNTO 1
+        A[i] ← A[i-1]
+    A[0] ← value
+    n ← n + 1
+
+INSERT_MIDDLE(A, n, pos, value)
+    FOR i ← n DOWNTO pos
+        A[i] ← A[i-1]
+    A[pos] ← value
+    n ← n + 1
+
+DELETE_BEGIN(A, n)
+    FOR i ← 0 TO n-2
+        A[i] ← A[i+1]
+    n ← n - 1
+
+DELETE_END(A, n)
+    n ← n - 1
+
+DELETE_MIDDLE(A, n, pos)
+    FOR i ← pos TO n-2
+        A[i] ← A[i+1]
+    n ← n - 1
+
+SEARCH(A, n, key)
+    FOR i ← 0 TO n-1
+        IF A[i] = key
+            RETURN i
+    RETURN -1
+
+TRAVERSAL(A, n)
+    FOR i ← 0 TO n-1
+        PRINT A[i]</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+class ArrayList {
+    int a[100];
+    int n;
+
+public:
+    ArrayList() {
+        n = 0;
+    }
+
+    void insertBegin(int value) {
+        for (int i = n; i &gt; 0; i--)
+            a[i] = a[i - 1];
+
+        a[0] = value;
+        n++;
+    }
+
+    void insertEnd(int value) {
+        a[n++] = value;
+    }
+
+    void insertMiddle(int pos, int value) {
+        if (pos &lt; 0 || pos &gt; n) return;
+
+        for (int i = n; i &gt; pos; i--)
+            a[i] = a[i - 1];
+
+        a[pos] = value;
+        n++;
+    }
+
+    void deleteBegin() {
+        if (n == 0) return;
+
+        for (int i = 0; i &lt; n - 1; i++)
+            a[i] = a[i + 1];
+
+        n--;
+    }
+
+    void deleteEnd() {
+        if (n &gt; 0)
+            n--;
+    }
+
+    void deleteMiddle(int pos) {
+        if (pos &lt; 0 || pos &gt;= n) return;
+
+        for (int i = pos; i &lt; n - 1; i++)
+            a[i] = a[i + 1];
+
+        n--;
+    }
+
+    int search(int key) {
+        for (int i = 0; i &lt; n; i++)
+            if (a[i] == key)
+                return i;
+
+        return -1;
+    }
+
+    void traverse() {
+        for (int i = 0; i &lt; n; i++)
+            cout &lt;&lt; a[i] &lt;&lt; " ";
+        cout &lt;&lt; endl;
+    }
+};</code></pre>
+</section>
+
+<!-- SINGLY -->
+<section id="singly">
+<h2>3. Singly Linked List</h2>
+
+<p>
+A singly linked list consists of nodes. Each node contains:
+</p>
+
+<div class="card-grid">
+<div class="card">
+<strong>Data</strong>
+<p>The actual value stored in the node.</p>
+</div>
+<div class="card">
+<strong>Next</strong>
+<p>Address of the next node.</p>
+</div>
+</div>
+
+<div class="visual-area">
+    <div id="singlyVisual" class="list-container"></div>
+</div>
+
+<div class="controls">
+<input type="number" id="singlyValue" placeholder="Value">
+<button onclick="singlyInsertBegin()">Insert Begin</button>
+<button onclick="singlyInsertMiddle()">Insert Middle</button>
+<button onclick="singlyInsertEnd()">Insert End</button>
+<button class="danger" onclick="singlyDeleteBegin()">Delete Begin</button>
+<button class="danger" onclick="singlyDeleteMiddle()">Delete Middle</button>
+<button class="danger" onclick="singlyDeleteEnd()">Delete End</button>
+<button onclick="singlySearch()">Search</button>
+<button class="green" onclick="renderSingly()">Traversal</button>
+</div>
+
+<p id="singlyStatus"></p>
+
+<h3>Pseudocode – Singly Linked List</h3>
+
+<pre><code>INSERT_BEGIN(value)
+    newNode ← CREATE NODE(value)
+    newNode.next ← head
+    head ← newNode
+
+INSERT_END(value)
+    newNode ← CREATE NODE(value)
+
+    IF head = NULL
+        head ← newNode
+        RETURN
+
+    temp ← head
+    WHILE temp.next ≠ NULL
+        temp ← temp.next
+
+    temp.next ← newNode
+
+INSERT_MIDDLE(pos, value)
+    newNode ← CREATE NODE(value)
+
+    temp ← head
+    REPEAT pos-1 TIMES
+        temp ← temp.next
+
+    newNode.next ← temp.next
+    temp.next ← newNode
+
+DELETE_BEGIN()
+    IF head = NULL
+        RETURN
+
+    temp ← head
+    head ← head.next
+    DELETE temp
+
+DELETE_END()
+    IF head = NULL
+        RETURN
+
+    IF head.next = NULL
+        DELETE head
+        head ← NULL
+        RETURN
+
+    temp ← head
+    WHILE temp.next.next ≠ NULL
+        temp ← temp.next
+
+    DELETE temp.next
+    temp.next ← NULL
+
+SEARCH(key)
+    temp ← head
+
+    WHILE temp ≠ NULL
+        IF temp.data = key
+            RETURN FOUND
+
+        temp ← temp.next
+
+    RETURN NOT FOUND
+
+TRAVERSAL()
+    temp ← head
+
+    WHILE temp ≠ NULL
+        PRINT temp.data
+        temp ← temp.next</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+
+    Node(int value) {
+        data = value;
+        next = nullptr;
+    }
+};
+
+class SinglyList {
+    Node* head;
+
+public:
+    SinglyList() {
+        head = nullptr;
+    }
+
+    void insertBegin(int value) {
+        Node* newNode = new Node(value);
+        newNode-&gt;next = head;
+        head = newNode;
+    }
+
+    void insertEnd(int value) {
+        Node* newNode = new Node(value);
+
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+
+        Node* temp = head;
+
+        while (temp-&gt;next != nullptr)
+            temp = temp-&gt;next;
+
+        temp-&gt;next = newNode;
+    }
+
+    void insertMiddle(int pos, int value) {
+        if (pos == 0) {
+            insertBegin(value);
+            return;
+        }
+
+        Node* temp = head;
+
+        for (int i = 0; i &lt; pos - 1 &amp;&amp; temp != nullptr; i++)
+            temp = temp-&gt;next;
+
+        if (temp == nullptr) return;
+
+        Node* newNode = new Node(value);
+
+        newNode-&gt;next = temp-&gt;next;
+        temp-&gt;next = newNode;
+    }
+
+    void deleteBegin() {
+        if (head == nullptr) return;
+
+        Node* temp = head;
+        head = head-&gt;next;
+        delete temp;
+    }
+
+    void deleteEnd() {
+        if (head == nullptr) return;
+
+        if (head-&gt;next == nullptr) {
+            delete head;
+            head = nullptr;
+            return;
+        }
+
+        Node* temp = head;
+
+        while (temp-&gt;next-&gt;next != nullptr)
+            temp = temp-&gt;next;
+
+        delete temp-&gt;next;
+        temp-&gt;next = nullptr;
+    }
+
+    void deleteMiddle(int pos) {
+        if (head == nullptr) return;
+
+        if (pos == 0) {
+            deleteBegin();
+            return;
+        }
+
+        Node* temp = head;
+
+        for (int i = 0; i &lt; pos - 1 &amp;&amp; temp-&gt;next != nullptr; i++)
+            temp = temp-&gt;next;
+
+        if (temp-&gt;next == nullptr) return;
+
+        Node* del = temp-&gt;next;
+        temp-&gt;next = del-&gt;next;
+        delete del;
+    }
+
+    bool search(int key) {
+        Node* temp = head;
+
+        while (temp != nullptr) {
+            if (temp-&gt;data == key)
+                return true;
+
+            temp = temp-&gt;next;
+        }
+
+        return false;
+    }
+
+    void traverse() {
+        Node* temp = head;
+
+        while (temp != nullptr) {
+            cout &lt;&lt; temp-&gt;data &lt;&lt; " -&gt; ";
+            temp = temp-&gt;next;
+        }
+
+        cout &lt;&lt; "NULL";
+    }
+};</code></pre>
+</section>
+
+<!-- DOUBLY -->
+<section id="doubly">
+<h2>4. Doubly Linked List</h2>
+
+<p>
+A doubly linked list contains three parts:
+<strong>Previous pointer → Data → Next pointer</strong>.
+</p>
+
+<div class="visual-area">
+<div id="doublyVisual" class="list-container"></div>
+</div>
+
+<div class="controls">
+<input type="number" id="doublyValue" placeholder="Value">
+<button onclick="doublyInsertBegin()">Insert Begin</button>
+<button onclick="doublyInsertMiddle()">Insert Middle</button>
+<button onclick="doublyInsertEnd()">Insert End</button>
+<button class="danger" onclick="doublyDeleteBegin()">Delete Begin</button>
+<button class="danger" onclick="doublyDeleteMiddle()">Delete Middle</button>
+<button class="danger" onclick="doublyDeleteEnd()">Delete End</button>
+<button onclick="doublySearch()">Search</button>
+<button class="green" onclick="renderDoubly()">Traversal</button>
+</div>
+
+<p id="doublyStatus"></p>
+
+<h3>Visual Structure</h3>
+
+<pre><code>NULL &lt;-- [prev | DATA | next] &lt;--&gt;
+       [prev | DATA | next] &lt;--&gt;
+       [prev | DATA | next] --&gt; NULL</code></pre>
+
+<h3>Pseudocode</h3>
+
+<pre><code>INSERT_BEGIN(value)
+    newNode ← CREATE NODE(value)
+    newNode.next ← head
+
+    IF head ≠ NULL
+        head.prev ← newNode
+
+    head ← newNode
+
+INSERT_END(value)
+    newNode ← CREATE NODE(value)
+
+    IF head = NULL
+        head ← newNode
+        RETURN
+
+    temp ← head
+
+    WHILE temp.next ≠ NULL
+        temp ← temp.next
+
+    temp.next ← newNode
+    newNode.prev ← temp
+
+INSERT_MIDDLE(pos, value)
+    Locate node at position pos-1
+
+    newNode.next ← current.next
+    newNode.prev ← current
+
+    IF current.next ≠ NULL
+        current.next.prev ← newNode
+
+    current.next ← newNode
+
+DELETE_BEGIN()
+    temp ← head
+    head ← head.next
+
+    IF head ≠ NULL
+        head.prev ← NULL
+
+    DELETE temp
+
+DELETE_END()
+    Move to last node
+    last.prev.next ← NULL
+    DELETE last
+
+SEARCH(key)
+    Traverse from head
+    Compare every data value
+    Return FOUND or NOT FOUND
+
+TRAVERSAL()
+    Start at head
+    Follow next pointers
+    Print every node</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct DNode {
+    int data;
+    DNode* prev;
+    DNode* next;
+
+    DNode(int value) {
+        data = value;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+class DoublyList {
+    DNode* head;
+
+public:
+    DoublyList() {
+        head = nullptr;
+    }
+
+    void insertBegin(int value) {
+        DNode* newNode = new DNode(value);
+
+        newNode-&gt;next = head;
+
+        if (head != nullptr)
+            head-&gt;prev = newNode;
+
+        head = newNode;
+    }
+
+    void insertEnd(int value) {
+        DNode* newNode = new DNode(value);
+
+        if (head == nullptr) {
+            head = newNode;
+            return;
+        }
+
+        DNode* temp = head;
+
+        while (temp-&gt;next != nullptr)
+            temp = temp-&gt;next;
+
+        temp-&gt;next = newNode;
+        newNode-&gt;prev = temp;
+    }
+
+    void insertMiddle(int pos, int value) {
+        if (pos == 0) {
+            insertBegin(value);
+            return;
+        }
+
+        DNode* temp = head;
+
+        for (int i = 0; i &lt; pos - 1 &amp;&amp; temp != nullptr; i++)
+            temp = temp-&gt;next;
+
+        if (temp == nullptr) return;
+
+        DNode* newNode = new DNode(value);
+
+        newNode-&gt;next = temp-&gt;next;
+        newNode-&gt;prev = temp;
+
+        if (temp-&gt;next != nullptr)
+            temp-&gt;next-&gt;prev = newNode;
+
+        temp-&gt;next = newNode;
+    }
+
+    void deleteBegin() {
+        if (head == nullptr) return;
+
+        DNode* temp = head;
+        head = head-&gt;next;
+
+        if (head != nullptr)
+            head-&gt;prev = nullptr;
+
+        delete temp;
+    }
+
+    void deleteEnd() {
+        if (head == nullptr) return;
+
+        DNode* temp = head;
+
+        while (temp-&gt;next != nullptr)
+            temp = temp-&gt;next;
+
+        if (temp-&gt;prev != nullptr)
+            temp-&gt;prev-&gt;next = nullptr;
+        else
+            head = nullptr;
+
+        delete temp;
+    }
+
+    void deleteMiddle(int pos) {
+        if (head == nullptr) return;
+
+        DNode* temp = head;
+
+        for (int i = 0; i &lt; pos &amp;&amp; temp != nullptr; i++)
+            temp = temp-&gt;next;
+
+        if (temp == nullptr) return;
+
+        if (temp-&gt;prev != nullptr)
+            temp-&gt;prev-&gt;next = temp-&gt;next;
+        else
+            head = temp-&gt;next;
+
+        if (temp-&gt;next != nullptr)
+            temp-&gt;next-&gt;prev = temp-&gt;prev;
+
+        delete temp;
+    }
+
+    bool search(int key) {
+        DNode* temp = head;
+
+        while (temp != nullptr) {
+            if (temp-&gt;data == key)
+                return true;
+
+            temp = temp-&gt;next;
+        }
+
+        return false;
+    }
+
+    void traverse() {
+        DNode* temp = head;
+
+        while (temp != nullptr) {
+            cout &lt;&lt; temp-&gt;data &lt;&lt; " &lt;-&gt; ";
+            temp = temp-&gt;next;
+        }
+
+        cout &lt;&lt; "NULL";
+    }
+};</code></pre>
+</section>
+
+<!-- CIRCULAR -->
+<section id="circular">
+<h2>5. Circular Linked List</h2>
+
+<p>
+In a circular linked list, the last node does not contain NULL.
+Instead, it points back to the first node.
+</p>
+
+<div class="visual-area">
+<div id="circularVisual" class="list-container"></div>
+</div>
+
+<div class="controls">
+<input type="number" id="circularValue" placeholder="Value">
+<button onclick="circularInsertBegin()">Insert Begin</button>
+<button onclick="circularInsertMiddle()">Insert Middle</button>
+<button onclick="circularInsertEnd()">Insert End</button>
+<button class="danger" onclick="circularDeleteBegin()">Delete Begin</button>
+<button class="danger" onclick="circularDeleteMiddle()">Delete Middle</button>
+<button class="danger" onclick="circularDeleteEnd()">Delete End</button>
+<button onclick="circularSearch()">Search</button>
+<button class="green" onclick="renderCircular()">Traversal</button>
+</div>
+
+<p id="circularStatus"></p>
+
+<h3>Visual Representation</h3>
+
+<pre><code>       ┌─────────────────────────────────┐
+       ↓                                 │
+HEAD → [10] → [20] → [30] → [40] ───────┘
+
+Last node.next = HEAD</code></pre>
+
+<h3>Pseudocode</h3>
+
+<pre><code>INSERT_BEGIN(value)
+    Create newNode
+
+    IF head = NULL
+        head ← newNode
+        newNode.next ← head
+        RETURN
+
+    Find last node
+
+    newNode.next ← head
+    last.next ← newNode
+    head ← newNode
+
+INSERT_END(value)
+    Create newNode
+
+    IF head = NULL
+        head ← newNode
+        newNode.next ← head
+        RETURN
+
+    Find last node
+
+    last.next ← newNode
+    newNode.next ← head
+
+DELETE_BEGIN()
+    IF head = NULL
+        RETURN
+
+    IF head.next = head
+        DELETE head
+        head ← NULL
+        RETURN
+
+    Find last node
+    temp ← head
+    head ← head.next
+    last.next ← head
+    DELETE temp
+
+SEARCH(key)
+    IF head = NULL
+        RETURN NOT FOUND
+
+    temp ← head
+
+    DO
+        IF temp.data = key
+            RETURN FOUND
+        temp ← temp.next
+    WHILE temp ≠ head
+
+    RETURN NOT FOUND
+
+TRAVERSAL()
+    IF head = NULL
+        RETURN
+
+    temp ← head
+
+    DO
+        PRINT temp.data
+        temp ← temp.next
+    WHILE temp ≠ head</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct CNode {
+    int data;
+    CNode* next;
+
+    CNode(int value) {
+        data = value;
+        next = nullptr;
+    }
+};
+
+class CircularList {
+    CNode* head;
+
+public:
+    CircularList() {
+        head = nullptr;
+    }
+
+    void insertBegin(int value) {
+        CNode* newNode = new CNode(value);
+
+        if (head == nullptr) {
+            head = newNode;
+            newNode-&gt;next = head;
+            return;
+        }
+
+        CNode* last = head;
+
+        while (last-&gt;next != head)
+            last = last-&gt;next;
+
+        newNode-&gt;next = head;
+        last-&gt;next = newNode;
+        head = newNode;
+    }
+
+    void insertEnd(int value) {
+        CNode* newNode = new CNode(value);
+
+        if (head == nullptr) {
+            head = newNode;
+            newNode-&gt;next = head;
+            return;
+        }
+
+        CNode* last = head;
+
+        while (last-&gt;next != head)
+            last = last-&gt;next;
+
+        last-&gt;next = newNode;
+        newNode-&gt;next = head;
+    }
+
+    void insertMiddle(int pos, int value) {
+        if (pos == 0) {
+            insertBegin(value);
+            return;
+        }
+
+        if (head == nullptr) return;
+
+        CNode* temp = head;
+
+        for (int i = 0; i &lt; pos - 1; i++) {
+            temp = temp-&gt;next;
+
+            if (temp == head)
+                return;
+        }
+
+        CNode* newNode = new CNode(value);
+
+        newNode-&gt;next = temp-&gt;next;
+        temp-&gt;next = newNode;
+    }
+
+    void deleteBegin() {
+        if (head == nullptr) return;
+
+        if (head-&gt;next == head) {
+            delete head;
+            head = nullptr;
+            return;
+        }
+
+        CNode* last = head;
+
+        while (last-&gt;next != head)
+            last = last-&gt;next;
+
+        CNode* temp = head;
+
+        head = head-&gt;next;
+        last-&gt;next = head;
+
+        delete temp;
+    }
+
+    void deleteEnd() {
+        if (head == nullptr) return;
+
+        if (head-&gt;next == head) {
+            delete head;
+            head = nullptr;
+            return;
+        }
+
+        CNode* temp = head;
+
+        while (temp-&gt;next-&gt;next != head)
+            temp = temp-&gt;next;
+
+        delete temp-&gt;next;
+        temp-&gt;next = head;
+    }
+
+    void deleteMiddle(int pos) {
+        if (head == nullptr) return;
+
+        if (pos == 0) {
+            deleteBegin();
+            return;
+        }
+
+        CNode* temp = head;
+
+        for (int i = 0; i &lt; pos - 1; i++) {
+            temp = temp-&gt;next;
+
+            if (temp-&gt;next == head)
+                return;
+        }
+
+        CNode* del = temp-&gt;next;
+
+        if (del == head)
+            return;
+
+        temp-&gt;next = del-&gt;next;
+        delete del;
+    }
+
+    bool search(int key) {
+        if (head == nullptr)
+            return false;
+
+        CNode* temp = head;
+
+        do {
+            if (temp-&gt;data == key)
+                return true;
+
+            temp = temp-&gt;next;
+        } while (temp != head);
+
+        return false;
+    }
+
+    void traverse() {
+        if (head == nullptr) {
+            cout &lt;&lt; "EMPTY";
+            return;
+        }
+
+        CNode* temp = head;
+
+        do {
+            cout &lt;&lt; temp-&gt;data &lt;&lt; " -&gt; ";
+            temp = temp-&gt;next;
+        } while (temp != head);
+
+        cout &lt;&lt; "(HEAD)";
+    }
+};</code></pre>
+</section>
+
+<!-- OPERATIONS -->
+<section id="operations">
+<h2>6. ADT Operations – Visual Summary</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Insert at Beginning</h3>
+<p>New element becomes the first element.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 5 → 10 → 20 → 30</p>
+</div>
+
+<div class="card">
+<h3>Insert in Middle</h3>
+<p>Element is inserted at a selected position.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 10 → 15 → 20 → 30</p>
+</div>
+
+<div class="card">
+<h3>Insert at End</h3>
+<p>Element becomes the last element.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 10 → 20 → 30 → 40</p>
+</div>
+
+<div class="card">
+<h3>Delete Beginning</h3>
+<p>First element is removed.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 20 → 30</p>
+</div>
+
+<div class="card">
+<h3>Delete Middle</h3>
+<p>Selected element is removed.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 10 → 30</p>
+</div>
+
+<div class="card">
+<h3>Delete End</h3>
+<p>Last element is removed.</p>
+<p><strong>Before:</strong> 10 → 20 → 30</p>
+<p><strong>After:</strong> 10 → 20</p>
+</div>
+
+<div class="card">
+<h3>Search</h3>
+<p>Compare the search key with every element until it is found or the list ends.</p>
+</div>
+
+<div class="card">
+<h3>Traversal</h3>
+<p>Visit every element exactly once.</p>
+</div>
+
+</div>
+
+<h3>Time Complexity</h3>
+
+<table>
+<tr>
+<th>Operation</th>
+<th>Array List</th>
+<th>Singly List</th>
+<th>Doubly List</th>
+<th>Circular List</th>
+</tr>
+<tr>
+<td>Insert Begin</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)*</td>
+</tr>
+<tr>
+<td>Insert Middle</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Insert End</td>
+<td>O(1)**</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Delete Begin</td>
+<td>O(n)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(n)*</td>
+</tr>
+<tr>
+<td>Delete Middle</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Delete End</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Search</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Traversal</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+</tr>
+</table>
+
+<p>
+* Can be O(1) if a suitable tail pointer is maintained.
+<br>
+** Amortized O(1) for a dynamic array.
+</p>
+</section>
+
+<!-- POLYNOMIAL -->
+<section id="polynomial">
+<h2>7. Application – Polynomial Addition</h2>
+
+<p>
+Linked lists can represent polynomials efficiently. Each node stores:
+<strong>coefficient, exponent, next pointer</strong>.
+</p>
+
+<div class="info">
+Example:
+<strong>5x³ + 4x² + 2</strong>
+can be represented as
+<strong>[5,3] → [4,2] → [2,0]</strong>.
+</div>
+
+<h3>Polynomial Representation</h3>
+
+<pre><code>Polynomial 1:
+
+5x³ + 4x² + 2
+
+[5 | 3] → [4 | 2] → [2 | 0] → NULL
+
+
+Polynomial 2:
+
+3x³ + 2x + 7
+
+[3 | 3] → [2 | 1] → [7 | 0] → NULL
+
+
+Result:
+
+8x³ + 4x² + 2x + 9</code></pre>
+
+<h3>Pseudocode</h3>
+
+<pre><code>POLYNOMIAL_ADD(P, Q)
+
+    R ← EMPTY LIST
+
+    WHILE P ≠ NULL AND Q ≠ NULL
+
+        IF P.exponent = Q.exponent
+            coefficient ← P.coefficient + Q.coefficient
+
+            IF coefficient ≠ 0
+                INSERT(R, coefficient, P.exponent)
+
+            P ← P.next
+            Q ← Q.next
+
+        ELSE IF P.exponent &gt; Q.exponent
+            INSERT(R, P.coefficient, P.exponent)
+            P ← P.next
+
+        ELSE
+            INSERT(R, Q.coefficient, Q.exponent)
+            Q ← Q.next
+
+    WHILE P ≠ NULL
+        INSERT(R, P.coefficient, P.exponent)
+        P ← P.next
+
+    WHILE Q ≠ NULL
+        INSERT(R, Q.coefficient, Q.exponent)
+        Q ← Q.next
+
+    RETURN R</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct Term {
+    int coeff;
+    int exp;
+    Term* next;
+
+    Term(int c, int e) {
+        coeff = c;
+        exp = e;
+        next = nullptr;
+    }
+};
+
+void insertTerm(Term*& head, int coeff, int exp) {
+
+    Term* newNode = new Term(coeff, exp);
+
+    if (head == nullptr) {
+        head = newNode;
+        return;
+    }
+
+    Term* temp = head;
+
+    while (temp-&gt;next != nullptr)
+        temp = temp-&gt;next;
+
+    temp-&gt;next = newNode;
+}
+
+Term* addPolynomial(Term* p, Term* q) {
+
+    Term* result = nullptr;
+
+    while (p != nullptr &amp;&amp; q != nullptr) {
+
+        if (p-&gt;exp == q-&gt;exp) {
+
+            int sum = p-&gt;coeff + q-&gt;coeff;
+
+            if (sum != 0)
+                insertTerm(result, sum, p-&gt;exp);
+
+            p = p-&gt;next;
+            q = q-&gt;next;
+        }
+
+        else if (p-&gt;exp &gt; q-&gt;exp) {
+
+            insertTerm(result, p-&gt;coeff, p-&gt;exp);
+            p = p-&gt;next;
+        }
+
+        else {
+
+            insertTerm(result, q-&gt;coeff, q-&gt;exp);
+            q = q-&gt;next;
+        }
+    }
+
+    while (p != nullptr) {
+        insertTerm(result, p-&gt;coeff, p-&gt;exp);
+        p = p-&gt;next;
+    }
+
+    while (q != nullptr) {
+        insertTerm(result, q-&gt;coeff, q-&gt;exp);
+        q = q-&gt;next;
+    }
+
+    return result;
+}
+
+void display(Term* head) {
+
+    while (head != nullptr) {
+
+        cout &lt;&lt; head-&gt;coeff
+             &lt;&lt; "x^"
+             &lt;&lt; head-&gt;exp;
+
+        if (head-&gt;next != nullptr)
+            cout &lt;&lt; " + ";
+
+        head = head-&gt;next;
+    }
+
+    cout &lt;&lt; endl;
+}</code></pre>
+
+<h3>Example</h3>
+
+<div class="success">
+<strong>P1:</strong> 5x³ + 4x² + 2<br>
+<strong>P2:</strong> 3x³ + 2x + 7<br>
+<strong>Result:</strong> 8x³ + 4x² + 2x + 9
+</div>
+</section>
+
+<!-- BROWSING HISTORY -->
+<section id="browser">
+<h2>8. Application – Browsing History</h2>
+
+<p>
+A linked list can be used to represent browser history. A doubly linked list
+is particularly suitable because the user can move both backward and forward.
+</p>
+
+<div class="visual-area">
+<div id="browserVisual" class="list-container"></div>
+</div>
+
+<div class="controls">
+<input type="text" id="urlInput" placeholder="Enter website">
+<button onclick="visitPage()">Visit Page</button>
+<button onclick="browserBack()">← Back</button>
+<button onclick="browserForward()">Forward →</button>
+<button class="danger" onclick="clearHistory()">Clear</button>
+</div>
+
+<p id="browserStatus"></p>
+
+<h3>Concept</h3>
+
+<pre><code>[Google]
+   ⇅
+[YouTube]
+   ⇅
+[Wikipedia]
+   ⇅
+[College Portal]
+
+        ↑
+      CURRENT
+
+Back:
+CURRENT → previous node
+
+Forward:
+CURRENT → next node</code></pre>
+
+<h3>Pseudocode</h3>
+
+<pre><code>VISIT(url)
+
+    newNode ← CREATE NODE(url)
+
+    IF current.next ≠ NULL
+        DELETE all forward history
+
+    newNode.prev ← current
+    current.next ← newNode
+    current ← newNode
+
+BACK()
+
+    IF current.prev ≠ NULL
+        current ← current.prev
+
+FORWARD()
+
+    IF current.next ≠ NULL
+        current ← current.next</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;string&gt;
+using namespace std;
+
+struct HistoryNode {
+    string url;
+    HistoryNode* prev;
+    HistoryNode* next;
+
+    HistoryNode(string u) {
+        url = u;
+        prev = nullptr;
+        next = nullptr;
+    }
+};
+
+class BrowserHistory {
+    HistoryNode* current;
+
+public:
+
+    BrowserHistory(string homepage) {
+        current = new HistoryNode(homepage);
+    }
+
+    void visit(string url) {
+
+        HistoryNode* newNode = new HistoryNode(url);
+
+        newNode-&gt;prev = current;
+        current-&gt;next = newNode;
+
+        current = newNode;
+    }
+
+    void back() {
+
+        if (current-&gt;prev != nullptr)
+            current = current-&gt;prev;
+    }
+
+    void forward() {
+
+        if (current-&gt;next != nullptr)
+            current = current-&gt;next;
+    }
+
+    void showCurrent() {
+        cout &lt;&lt; "Current Page: "
+             &lt;&lt; current-&gt;url
+             &lt;&lt; endl;
+    }
+};</code></pre>
+
+<h3>Why Doubly Linked List?</h3>
+
+<div class="card-grid">
+<div class="card">
+<strong>Back</strong>
+<p>Uses the previous pointer.</p>
+</div>
+
+<div class="card">
+<strong>Forward</strong>
+<p>Uses the next pointer.</p>
+</div>
+
+<div class="card">
+<strong>Dynamic</strong>
+<p>History can grow dynamically.</p>
+</div>
+
+<div class="card">
+<strong>Easy Navigation</strong>
+<p>Both directions can be traversed.</p>
+</div>
+</div>
+</section>
+
+<!-- COMPARISON -->
+<section>
+<h2>9. Comparison of Linear List Implementations</h2>
+
+<table>
+<tr>
+<th>Feature</th>
+<th>Array</th>
+<th>Singly Linked</th>
+<th>Doubly Linked</th>
+<th>Circular Linked</th>
+</tr>
+
+<tr>
+<td>Memory</td>
+<td>Contiguous</td>
+<td>Non-contiguous</td>
+<td>Non-contiguous</td>
+<td>Non-contiguous</td>
+</tr>
+
+<tr>
+<td>Extra Pointer</td>
+<td>No</td>
+<td>Next</td>
+<td>Prev + Next</td>
+<td>Next</td>
+</tr>
+
+<tr>
+<td>Random Access</td>
+<td>Fast</td>
+<td>Slow</td>
+<td>Slow</td>
+<td>Slow</td>
+</tr>
+
+<tr>
+<td>Forward Traversal</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+
+<tr>
+<td>Backward Traversal</td>
+<td>Yes</td>
+<td>No</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+
+<tr>
+<td>Dynamic Size</td>
+<td>Limited / Dynamic Array</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+
+<tr>
+<td>Typical Application</td>
+<td>Tables, arrays</td>
+<td>Stacks, simple lists</td>
+<td>Browser history</td>
+<td>Round-robin scheduling</td>
+</tr>
+</table>
+</section>
+
+<!-- SUMMARY -->
+<section>
+<h2>10. Module 1 – Learning Summary</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Array List</h3>
+<p>Uses contiguous memory and provides direct indexing.</p>
+</div>
+
+<div class="card">
+<h3>Singly List</h3>
+<p>Uses one pointer and supports dynamic memory allocation.</p>
+</div>
+
+<div class="card">
+<h3>Doubly List</h3>
+<p>Supports movement in both forward and backward directions.</p>
+</div>
+
+<div class="card">
+<h3>Circular List</h3>
+<p>The last node points back to the first node.</p>
+</div>
+
+<div class="card">
+<h3>Polynomial Addition</h3>
+<p>Linked lists efficiently store coefficient and exponent pairs.</p>
+</div>
+
+<div class="card">
+<h3>Browsing History</h3>
+<p>Doubly linked lists naturally support Back and Forward navigation.</p>
+</div>
+
+</div>
+
+<h3>Important Exam Points</h3>
+
+<ol>
+<li>Define Linear List ADT.</li>
+<li>Explain array-based list representation.</li>
+<li>Explain singly linked list with diagram.</li>
+<li>Explain doubly linked list with diagram.</li>
+<li>Explain circular linked list.</li>
+<li>Write algorithms for insertion and deletion.</li>
+<li>Write algorithms for search and traversal.</li>
+<li>Compare array and linked-list implementations.</li>
+<li>Explain polynomial addition using linked lists.</li>
+<li>Explain browser history using doubly linked lists.</li>
+<li>Analyze time complexity of list operations.</li>
+</ol>
+
+</section>
+
+</div>
+
+<footer>
+    <h3>Data Structures  – Linear Lists ADT </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+/* =========================================================
+   ARRAY LIST
+========================================================= */
+
+let arrayData = [10, 20, 30];
+
+function renderArray() {
+
+    const box = document.getElementById("arrayVisual");
+    box.innerHTML = "";
+
+    arrayData.forEach((value, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "array-item";
+
+        item.innerHTML =
+            "<span class='index'>Index " + index + "</span>" +
+            "<strong>" + value + "</strong>";
+
+        box.appendChild(item);
+    });
+}
+
+function getArrayValue() {
+    return Number(document.getElementById("arrayValue").value);
+}
+
+function arrayInsertBegin() {
+
+    const value = getArrayValue();
+
+    if (isNaN(value)) return;
+
+    arrayData.unshift(value);
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Inserted " + value + " at beginning.";
+}
+
+function arrayInsertEnd() {
+
+    const value = getArrayValue();
+
+    if (isNaN(value)) return;
+
+    arrayData.push(value);
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Inserted " + value + " at end.";
+}
+
+function arrayInsertMiddle() {
+
+    const value = getArrayValue();
+
+    if (isNaN(value)) return;
+
+    let pos = Math.floor(arrayData.length / 2);
+
+    arrayData.splice(pos, 0, value);
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Inserted " + value + " at position " + pos + ".";
+}
+
+function arrayDeleteBegin() {
+
+    if (arrayData.length === 0) return;
+
+    let value = arrayData.shift();
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Deleted " + value + " from beginning.";
+}
+
+function arrayDeleteEnd() {
+
+    if (arrayData.length === 0) return;
+
+    let value = arrayData.pop();
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Deleted " + value + " from end.";
+}
+
+function arrayDeleteMiddle() {
+
+    if (arrayData.length === 0) return;
+
+    let pos = Math.floor(arrayData.length / 2);
+
+    let value = arrayData.splice(pos, 1)[0];
+
+    renderArray();
+
+    document.getElementById("arrayStatus").innerText =
+        "Deleted " + value + " from position " + pos + ".";
+}
+
+function arraySearch() {
+
+    const value = getArrayValue();
+
+    let pos = arrayData.indexOf(value);
+
+    document.getElementById("arrayStatus").innerText =
+        pos >= 0
+        ? value + " found at index " + pos
+        : value + " not found.";
+}
+
+function arrayTraverse() {
+
+    document.getElementById("arrayStatus").innerText =
+        "Traversal: " + arrayData.join(" → ");
+}
+
+
+/* =========================================================
+   SINGLY LINKED LIST
+========================================================= */
+
+let singlyData = [10, 20, 30];
+
+function renderSingly() {
+
+    const box = document.getElementById("singlyVisual");
+    box.innerHTML = "";
+
+    singlyData.forEach((value, index) => {
+
+        let node = document.createElement("div");
+        node.className = "node";
+        node.innerText = value;
+
+        box.appendChild(node);
+
+        if (index < singlyData.length - 1) {
+
+            let arrow = document.createElement("div");
+            arrow.className = "arrow";
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    });
+
+    let nullNode = document.createElement("div");
+    nullNode.className = "arrow";
+    nullNode.innerText = "→ NULL";
+
+    box.appendChild(nullNode);
+}
+
+function singlyValue() {
+    return Number(document.getElementById("singlyValue").value);
+}
+
+function singlyInsertBegin() {
+
+    let value = singlyValue();
+
+    if (isNaN(value)) return;
+
+    singlyData.unshift(value);
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Inserted " + value + " at beginning.";
+}
+
+function singlyInsertMiddle() {
+
+    let value = singlyValue();
+
+    if (isNaN(value)) return;
+
+    let pos = Math.floor(singlyData.length / 2);
+
+    singlyData.splice(pos, 0, value);
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Inserted " + value + " at position " + pos + ".";
+}
+
+function singlyInsertEnd() {
+
+    let value = singlyValue();
+
+    if (isNaN(value)) return;
+
+    singlyData.push(value);
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Inserted " + value + " at end.";
+}
+
+function singlyDeleteBegin() {
+
+    if (singlyData.length === 0) return;
+
+    let value = singlyData.shift();
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Deleted " + value + " from beginning.";
+}
+
+function singlyDeleteMiddle() {
+
+    if (singlyData.length === 0) return;
+
+    let pos = Math.floor(singlyData.length / 2);
+
+    let value = singlyData.splice(pos, 1)[0];
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Deleted " + value + " from position " + pos + ".";
+}
+
+function singlyDeleteEnd() {
+
+    if (singlyData.length === 0) return;
+
+    let value = singlyData.pop();
+
+    renderSingly();
+
+    document.getElementById("singlyStatus").innerText =
+        "Deleted " + value + " from end.";
+}
+
+function singlySearch() {
+
+    let value = singlyValue();
+
+    let pos = singlyData.indexOf(value);
+
+    document.getElementById("singlyStatus").innerText =
+        pos >= 0
+        ? value + " found at position " + pos
+        : value + " not found.";
+}
+
+
+/* =========================================================
+   DOUBLY LINKED LIST
+========================================================= */
+
+let doublyData = [10, 20, 30];
+
+function renderDoubly() {
+
+    const box = document.getElementById("doublyVisual");
+
+    box.innerHTML = "";
+
+    let start = document.createElement("span");
+    start.innerText = "NULL ⇄ ";
+    start.style.fontWeight = "bold";
+
+    box.appendChild(start);
+
+    doublyData.forEach((value, index) => {
+
+        let node = document.createElement("div");
+
+        node.className = "node";
+
+        node.innerText = value;
+
+        box.appendChild(node);
+
+        if (index < doublyData.length - 1) {
+
+            let arrow = document.createElement("div");
+
+            arrow.className = "arrow";
+
+            arrow.innerText = "⇄";
+
+            box.appendChild(arrow);
+        }
+    });
+
+    let end = document.createElement("span");
+
+    end.innerText = " ⇄ NULL";
+    end.style.fontWeight = "bold";
+
+    box.appendChild(end);
+}
+
+function doublyValue() {
+    return Number(document.getElementById("doublyValue").value);
+}
+
+function doublyInsertBegin() {
+
+    let value = doublyValue();
+
+    if (isNaN(value)) return;
+
+    doublyData.unshift(value);
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Inserted " + value + " at beginning.";
+}
+
+function doublyInsertMiddle() {
+
+    let value = doublyValue();
+
+    if (isNaN(value)) return;
+
+    let pos = Math.floor(doublyData.length / 2);
+
+    doublyData.splice(pos, 0, value);
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Inserted " + value + " at position " + pos + ".";
+}
+
+function doublyInsertEnd() {
+
+    let value = doublyValue();
+
+    if (isNaN(value)) return;
+
+    doublyData.push(value);
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Inserted " + value + " at end.";
+}
+
+function doublyDeleteBegin() {
+
+    if (doublyData.length === 0) return;
+
+    let value = doublyData.shift();
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Deleted " + value + " from beginning.";
+}
+
+function doublyDeleteMiddle() {
+
+    if (doublyData.length === 0) return;
+
+    let pos = Math.floor(doublyData.length / 2);
+
+    let value = doublyData.splice(pos, 1)[0];
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Deleted " + value + " from position " + pos + ".";
+}
+
+function doublyDeleteEnd() {
+
+    if (doublyData.length === 0) return;
+
+    let value = doublyData.pop();
+
+    renderDoubly();
+
+    document.getElementById("doublyStatus").innerText =
+        "Deleted " + value + " from end.";
+}
+
+function doublySearch() {
+
+    let value = doublyValue();
+
+    let pos = doublyData.indexOf(value);
+
+    document.getElementById("doublyStatus").innerText =
+        pos >= 0
+        ? value + " found at position " + pos
+        : value + " not found.";
+}
+
+
+/* =========================================================
+   CIRCULAR LINKED LIST
+========================================================= */
+
+let circularData = [10, 20, 30];
+
+function renderCircular() {
+
+    const box = document.getElementById("circularVisual");
+
+    box.innerHTML = "";
+
+    circularData.forEach((value, index) => {
+
+        let node = document.createElement("div");
+
+        node.className = "node";
+
+        node.innerText = value;
+
+        box.appendChild(node);
+
+        let arrow = document.createElement("div");
+
+        arrow.className = "arrow";
+
+        arrow.innerText =
+            index === circularData.length - 1
+            ? "↺ HEAD"
+            : "→";
+
+        box.appendChild(arrow);
+    });
+}
+
+function circularValue() {
+    return Number(document.getElementById("circularValue").value);
+}
+
+function circularInsertBegin() {
+
+    let value = circularValue();
+
+    if (isNaN(value)) return;
+
+    circularData.unshift(value);
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Inserted " + value + " at beginning.";
+}
+
+function circularInsertMiddle() {
+
+    let value = circularValue();
+
+    if (isNaN(value)) return;
+
+    let pos = Math.floor(circularData.length / 2);
+
+    circularData.splice(pos, 0, value);
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Inserted " + value + " at position " + pos + ".";
+}
+
+function circularInsertEnd() {
+
+    let value = circularValue();
+
+    if (isNaN(value)) return;
+
+    circularData.push(value);
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Inserted " + value + " at end.";
+}
+
+function circularDeleteBegin() {
+
+    if (circularData.length === 0) return;
+
+    let value = circularData.shift();
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Deleted " + value + " from beginning.";
+}
+
+function circularDeleteMiddle() {
+
+    if (circularData.length === 0) return;
+
+    let pos = Math.floor(circularData.length / 2);
+
+    let value = circularData.splice(pos, 1)[0];
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Deleted " + value + " from middle.";
+}
+
+function circularDeleteEnd() {
+
+    if (circularData.length === 0) return;
+
+    let value = circularData.pop();
+
+    renderCircular();
+
+    document.getElementById("circularStatus").innerText =
+        "Deleted " + value + " from end.";
+}
+
+function circularSearch() {
+
+    let value = circularValue();
+
+    let pos = circularData.indexOf(value);
+
+    document.getElementById("circularStatus").innerText =
+        pos >= 0
+        ? value + " found at position " + pos
+        : value + " not found.";
+}
+
+
+/* =========================================================
+   BROWSER HISTORY
+========================================================= */
+
+let history = [
+    "Google",
+    "YouTube",
+    "Wikipedia"
+];
+
+let currentPage = 2;
+
+function renderBrowser() {
+
+    const box = document.getElementById("browserVisual");
+
+    box.innerHTML = "";
+
+    history.forEach((page, index) => {
+
+        let node = document.createElement("div");
+
+        node.className = "node";
+
+        node.innerHTML =
+            page +
+            (index === currentPage
+                ? "<br><small>(CURRENT)</small>"
+                : "");
+
+        box.appendChild(node);
+
+        if (index < history.length - 1) {
+
+            let arrow = document.createElement("div");
+
+            arrow.className = "arrow";
+
+            arrow.innerText = "⇄";
+
+            box.appendChild(arrow);
+        }
+    });
+
+    document.getElementById("browserStatus").innerText =
+        "Current Page: " + history[currentPage];
+}
+
+function visitPage() {
+
+    let input = document.getElementById("urlInput");
+
+    let url = input.value.trim();
+
+    if (url === "") return;
+
+    history = history.slice(0, currentPage + 1);
+
+    history.push(url);
+
+    currentPage = history.length - 1;
+
+    input.value = "";
+
+    renderBrowser();
+}
+
+function browserBack() {
+
+    if (currentPage > 0)
+        currentPage--;
+
+    renderBrowser();
+}
+
+function browserForward() {
+
+    if (currentPage < history.length - 1)
+        currentPage++;
+
+    renderBrowser();
+}
+
+function clearHistory() {
+
+    history = ["Home"];
+
+    currentPage = 0;
+
+    renderBrowser();
+}
+
+
+/* =========================================================
+   INITIAL DISPLAY
+========================================================= */
+
+renderArray();
+renderSingly();
+renderDoubly();
+renderCircular();
+renderBrowser();
+
+</script>
+
+</body>
+</html>

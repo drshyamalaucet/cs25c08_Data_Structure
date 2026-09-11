@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Data Structures & Algorithms learning platform with modules, algorithms, examples and interactive visualizations.">
+    <title>Data Structures | Learning Platform</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+</head>
+
+<body class="home-page">
+
+<header class="site-header">
+    <div class="site-nav-wrap">
+        <a class="brand" href="index.html">
+            <span class="brand-mark">DS</span>
+            <span>Data Structures</span>
+        </a>
+
+        <button
+            class="mobile-menu-btn"
+            type="button"
+            aria-label="Open navigation"
+            aria-expanded="false"
+            data-mobile-menu>
+            ☰
+        </button>
+
+        <nav class="site-nav" aria-label="Primary navigation" data-mobile-nav>
+            <a href="index.html">Home</a>
+            <a href="#modules">Modules</a>
+            <a href="#algorithms">Algorithms</a>
+            <a href="#about">About</a>
+        </nav>
+    </div>
+</header>
+
+<main>
+
+<section class="home-hero">
+    <div class="hero-copy">
+        <span class="hero-badge">
+            COMPUTER SCIENCE • 8 LEARNING MODULES
+        </span>
+
+        <h1>Master Data Structures &amp; Algorithms</h1>
+
+        <p>
+            Learn fundamental data structures and important algorithms
+            through clear explanations, examples, visualizations and
+            complexity analysis.
+        </p>
+
+        <div class="hero-actions">
+            <a class="hero-btn primary" href="modules/Module1.html">
+                Start Learning
+            </a>
+
+            <a class="hero-btn secondary" href="#modules">
+                Explore Modules
+            </a>
+        </div>
+    </div>
+
+    <div class="hero-visual" aria-hidden="true">
+        <div class="visual-node n1">Array</div>
+        <div class="visual-node n2">Stack</div>
+        <div class="visual-node n3">Tree</div>
+        <div class="visual-node n4">Graph</div>
+        <div class="visual-lines"></div>
+    </div>
+</section>
+
+<section id="modules" class="dashboard-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">CORE CONCEPTS</span>
+
+            <h2>Data Structures Modules</h2>
+
+            <p>
+                Build a strong foundation from linear structures
+                to graph algorithms.
+            </p>
+        </div>
+
+        <div class="search-wrap">
+            <input
+                data-module-search
+                type="search"
+                placeholder="Search modules..."
+                aria-label="Search modules">
+        </div>
+    </div>
+
+    <div class="module-grid">
+
+        <article
+            class="module-card"
+            data-search-card
+            data-card-complete="linear-lists">
+
+            <div class="card-top">
+                <span class="module-icon">▤</span>
+                <span class="module-number">Module 1</span>
+            </div>
+
+            <h3>Linear Lists</h3>
+
+            <p>
+                Arrays, linked lists and their fundamental operations.
+            </p>
+
+            <div class="topic-row">
+                Arrays • Linked Lists • Operations
+            </div>
+
+            <a class="learn-link" href="modules/Module1.html">
+                Learn Now <span>→</span>
+            </a>
+
+            <div class="card-complete" aria-label="Completion status">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="module-card"
+            data-search-card
+            data-card-complete="stacks-queues">
+
+            <div class="card-top">
+                <span class="module-icon">▥</span>
+                <span class="module-number">Module 2</span>
+            </div>
+
+            <h3>Stacks &amp; Queues</h3>
+
+            <p>
+                LIFO and FIFO structures, implementations and applications.
+            </p>
+
+            <div class="topic-row">
+                Stack • Queue • Priority Queue
+            </div>
+
+            <a class="learn-link" href="modules/Module2.html">
+                Learn Now <span>→</span>
+            </a>
+
+            <div class="card-complete" aria-label="Completion status">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="module-card"
+            data-search-card
+            data-card-complete="trees">
+
+            <div class="card-top">
+                <span class="module-icon">🌳</span>
+                <span class="module-number">Module 3</span>
+            </div>
+
+            <h3>Trees</h3>
+
+            <p>
+                Explore BST, AVL, Splay, B-Tree and Binary Heap ADTs.
+            </p>
+
+            <div class="topic-row">
+                BST • AVL • Heap • Traversals
+            </div>
+
+            <a class="learn-link" href="modules/Module3.html">
+                Learn Now <span>→</span>
+            </a>
+
+            <div class="card-complete" aria-label="Completion status">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="module-card"
+            data-search-card
+            data-card-complete="searching-sorting-hashing">
+
+            <div class="card-top">
+                <span class="module-icon">↕</span>
+                <span class="module-number">Module 4</span>
+            </div>
+
+            <h3>Searching, Sorting &amp; Hashing</h3>
+
+            <p>
+                Learn classic searching, sorting and hashing techniques.
+            </p>
+
+            <div class="topic-row">
+                Search • Sort • Hashing
+            </div>
+
+            <a class="learn-link" href="modules/Module4.html">
+                Learn Now <span>→</span>
+            </a>
+
+            <div class="card-complete" aria-label="Completion status">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="module-card"
+            data-search-card
+            data-card-complete="graphs">
+
+            <div class="card-top">
+                <span class="module-icon">◎</span>
+                <span class="module-number">Module 5</span>
+            </div>
+
+            <h3>Graphs</h3>
+
+            <p>
+                Understand graph ADTs, traversals and major graph algorithms.
+            </p>
+
+            <div class="topic-row">
+                DFS • BFS • MST • SCC
+            </div>
+
+            <a class="learn-link" href="modules/Module5.html">
+                Learn Now <span>→</span>
+            </a>
+
+            <div class="card-complete" aria-label="Completion status">
+                ✓ Completed
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<section id="algorithms" class="dashboard-section algorithms-section">
+    <div class="section-heading">
+        <div>
+            <span class="eyebrow">ADVANCED TOPICS</span>
+
+            <h2>Advanced Algorithms</h2>
+
+            <p>
+                Go deeper with focused algorithm visualizations
+                and implementations.
+            </p>
+        </div>
+    </div>
+
+    <div class="algorithm-grid">
+
+        <article
+            class="algorithm-card"
+            data-search-card
+            data-card-complete="dijkstra">
+
+            <span class="algo-icon">⌁</span>
+
+            <div>
+                <span class="algo-label">ALGORITHM</span>
+
+                <h3>Dijkstra's Algorithm</h3>
+
+                <p>
+                    Shortest-path algorithm with interactive visualization
+                    and C++ implementation.
+                </p>
+
+                <a href="modules/Dijikstra.html">
+                    Explore Algorithm →
+                </a>
+            </div>
+
+            <div class="card-complete">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="algorithm-card"
+            data-search-card
+            data-card-complete="articulation-point">
+
+            <span class="algo-icon">◉</span>
+
+            <div>
+                <span class="algo-label">ALGORITHM</span>
+
+                <h3>Articulation Point</h3>
+
+                <p>
+                    DFS / Tarjan-based articulation point concepts,
+                    visualization and implementation.
+                </p>
+
+                <a href="modules/ArticulationPoint.html">
+                    Explore Algorithm →
+                </a>
+            </div>
+
+            <div class="card-complete">
+                ✓ Completed
+            </div>
+        </article>
+
+        <article
+            class="algorithm-card"
+            data-search-card
+            data-card-complete="prim-kruskal">
+
+            <span class="algo-icon">⌘</span>
+
+            <div>
+                <span class="algo-label">ALGORITHM</span>
+
+                <h3>Prim's &amp; Kruskal's Algorithms</h3>
+
+                <p>
+                    Minimum spanning tree algorithms with visual learning
+                    and C++ implementations.
+                </p>
+
+                <a href="modules/MSP_Prims_Kruskal.html">
+                    Explore Algorithm →
+                </a>
+            </div>
+
+            <div class="card-complete">
+                ✓ Completed
+            </div>
+        </article>
+
+    </div>
+</section>
+
+<section id="about" class="about-section">
+    <div>
+        <span class="eyebrow">ABOUT THE PLATFORM</span>
+
+        <h2>One place to learn DSA</h2>
+
+        <p>
+            This unified learning platform brings together the existing
+            Data Structures &amp; Algorithms educational material into a
+            consistent, responsive experience. Explore each module,
+            study examples and code, use interactive visualizations
+            where available, and track your completion locally in
+            your browser.
+        </p>
+    </div>
+
+    <div class="about-stats">
+        <div>
+            <strong>8</strong>
+            <span>Learning pages</span>
+        </div>
+
+        <div>
+            <strong>5</strong>
+            <span>Core modules</span>
+        </div>
+
+        <div>
+            <strong>3</strong>
+            <span>Advanced algorithms</span>
+        </div>
+    </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+    <div class="footer-grid">
+
+        <div>
+            <h3>Quick Links</h3>
+
+            <a href="index.html">Home</a>
+            <a href="#modules">Modules</a>
+            <a href="#algorithms">Algorithms</a>
+        </div>
+
+        <div>
+            <h3>Modules</h3>
+
+            <a href="modules/Module1.html">Linear Lists</a>
+            <a href="modules/Module2.html">Stacks &amp; Queues</a>
+            <a href="modules/Module3.html">Trees</a>
+            <a href="modules/Module4.html">Searching, Sorting &amp; Hashing</a>
+            <a href="modules/Module5.html">Graphs</a>
+        </div>
+
+        <div>
+            <h3>Algorithms</h3>
+
+            <a href="modules/Dijikstra.html">Dijkstra</a>
+            <a href="modules/ArticulationPoint.html">Articulation Point</a>
+            <a href="modules/MSP_Prims_Kruskal.html">
+                Prim's &amp; Kruskal's
+            </a>
+        </div>
+
+        <div>
+            <h3>Contact Us</h3>
+
+            <p>
+                Dr. Shyamala Ramachandran, M.E., Ph.D.<br>
+                Department of Information Technology<br>
+                University College of Engineering Tindivanam.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,
+        For Suggestions & Queries - shyamala@aucet.in
+    </div>
+</footer>
+
+<script src="js/script.js" defer></script>
+
+</body>
+</html>

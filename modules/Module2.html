@@ -1,0 +1,2601 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Module 2 - Stacks and Queues ADT</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    background: #f3f6fb;
+    color: #172033;
+}
+
+header {
+    background: linear-gradient(135deg, #111827, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 32px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+header p {
+    font-size: 17px;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #111827;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 13px 15px;
+    font-size: 14px;
+}
+
+nav a:hover {
+    background: #374151;
+}
+
+.container {
+    width: 94%;
+    max-width: 1400px;
+    margin: auto;
+}
+
+section {
+    background: white;
+    margin: 25px 0;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,.08);
+}
+
+h2 {
+    color: #1d4ed8;
+    border-bottom: 2px solid #dbeafe;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #374151;
+}
+
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
+    gap: 18px;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #dbe3ef;
+    padding: 18px;
+    border-radius: 10px;
+}
+
+.card strong {
+    color: #1d4ed8;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+input, select, button {
+    padding: 10px 12px;
+    border-radius: 7px;
+    border: 1px solid #b8c2d1;
+    font-size: 14px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.danger {
+    background: #dc2626;
+}
+
+button.green {
+    background: #059669;
+}
+
+button.orange {
+    background: #ea580c;
+}
+
+.visual {
+    background: #eef5ff;
+    padding: 25px;
+    border-radius: 12px;
+    min-height: 150px;
+    overflow-x: auto;
+}
+
+.stack-box {
+    width: 180px;
+    margin: auto;
+    border-left: 5px solid #2563eb;
+    border-right: 5px solid #2563eb;
+    border-bottom: 5px solid #2563eb;
+    min-height: 100px;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+.stack-item {
+    height: 50px;
+    border-top: 2px solid white;
+    background: #60a5fa;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.stack-top {
+    text-align: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.queue {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: max-content;
+    padding: 25px;
+}
+
+.queue-item {
+    width: 90px;
+    height: 60px;
+    border: 3px solid #2563eb;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.queue-arrow {
+    font-size: 28px;
+    margin: 0 8px;
+    color: #2563eb;
+}
+
+.node {
+    min-width: 90px;
+    min-height: 60px;
+    border: 3px solid #2563eb;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.list {
+    display: flex;
+    align-items: center;
+    min-width: max-content;
+    justify-content: center;
+}
+
+.circular {
+    border: 3px dashed #dc2626;
+    border-radius: 50%;
+    padding: 25px;
+    display: inline-flex;
+    gap: 10px;
+    align-items: center;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: 13px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    padding: 11px;
+    border: 1px solid #d1d5db;
+    text-align: left;
+}
+
+th {
+    background: #e5e7eb;
+}
+
+.info {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.success {
+    background: #ecfdf5;
+    border-left: 5px solid #059669;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.warning {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.formula {
+    background: #f8fafc;
+    border: 1px solid #d1d5db;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+}
+
+footer {
+    background: #111827;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+@media(max-width:700px) {
+    header h1 {
+        font-size: 25px;
+    }
+
+    section {
+        padding: 15px;
+    }
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>MODULE 2 – STACKS & QUEUES ADT</h1>
+
+<p>
+Array Stack • Linked Stack • Array Queue • Linked Queue •
+Circular Queue • Priority Queue
+</p>
+
+<p>
+Applications: String Reversal & Expression Evaluation
+</p>
+
+</header>
+
+
+<nav>
+<a href="../index.html">Home</a>
+<a href="#arraystack">Array Stack</a>
+<a href="#linkedstack">Linked Stack</a>
+<a href="#arrayqueue">Array Queue</a>
+<a href="#linkedqueue">Linked Queue</a>
+<a href="#reverse">String Reverse</a>
+<a href="#expression">Expression</a>
+<a href="#circularqueue">Circular Queue</a>
+<a href="#priority">Priority Queue</a>
+<a href="#comparison">Comparison</a>
+
+</nav>
+
+
+<div class="container">
+
+
+<!-- INTRODUCTION -->
+
+<section id="intro">
+
+<h2>1. Stack and Queue ADTs</h2>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Stack</h3>
+<p>
+A stack is a linear data structure that follows
+<strong>LIFO – Last In, First Out</strong>.
+</p>
+</div>
+
+<div class="card">
+<h3>Queue</h3>
+<p>
+A queue follows
+<strong>FIFO – First In, First Out</strong>.
+</p>
+</div>
+
+<div class="card">
+<h3>Stack Applications</h3>
+<p>
+Function calls, undo operations, expression evaluation,
+parentheses matching and string reversal.
+</p>
+</div>
+
+<div class="card">
+<h3>Queue Applications</h3>
+<p>
+CPU scheduling, printer queues, buffering, BFS and
+customer service systems.
+</p>
+</div>
+
+</div>
+
+<h3>Basic Stack Operations</h3>
+
+<div class="formula">
+
+PUSH(x) – Insert x at the top<br>
+POP() – Remove the top element<br>
+PEEK() – Read the top element<br>
+isEmpty() – Check whether stack is empty
+
+</div>
+
+<h3>Basic Queue Operations</h3>
+
+<div class="formula">
+
+ENQUEUE(x) – Insert x at rear<br>
+DEQUEUE() – Remove element from front<br>
+FRONT() – Read front element<br>
+isEmpty() – Check whether queue is empty
+
+</div>
+
+</section>
+
+
+<!-- ARRAY STACK -->
+
+<section id="arraystack">
+
+<h2>2. ArrayStack ADT</h2>
+
+<p>
+An ArrayStack uses an array to store elements. A variable
+<strong>top</strong> indicates the position of the top element.
+</p>
+
+<div class="visual">
+
+<div class="stack-top">
+TOP
+</div>
+
+<div id="arrayStackVisual" class="stack-box"></div>
+
+</div>
+
+<div class="controls">
+
+<input type="number" id="stackValue" placeholder="Value">
+
+<button onclick="pushArrayStack()">PUSH</button>
+
+<button class="danger" onclick="popArrayStack()">POP</button>
+
+<button onclick="peekArrayStack()">PEEK</button>
+
+<button class="green" onclick="clearArrayStack()">CLEAR</button>
+
+</div>
+
+<p id="arrayStackStatus"></p>
+
+
+<h3>Array Stack Pseudocode</h3>
+
+<pre><code>PUSH(x)
+
+IF top = MAX - 1
+    PRINT "Stack Overflow"
+    RETURN
+
+top ← top + 1
+stack[top] ← x
+
+
+POP()
+
+IF top = -1
+    PRINT "Stack Underflow"
+    RETURN
+
+x ← stack[top]
+top ← top - 1
+RETURN x
+
+
+PEEK()
+
+IF top = -1
+    PRINT "Stack Empty"
+    RETURN
+
+RETURN stack[top]</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+class ArrayStack {
+
+    int stack[100];
+    int top;
+
+public:
+
+    ArrayStack() {
+        top = -1;
+    }
+
+    void push(int x) {
+
+        if (top == 99) {
+            cout &lt;&lt; "Stack Overflow";
+            return;
+        }
+
+        stack[++top] = x;
+    }
+
+    void pop() {
+
+        if (top == -1) {
+            cout &lt;&lt; "Stack Underflow";
+            return;
+        }
+
+        cout &lt;&lt; "Deleted: "
+             &lt;&lt; stack[top--];
+    }
+
+    int peek() {
+
+        if (top == -1)
+            return -1;
+
+        return stack[top];
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+};</code></pre>
+
+</section>
+
+
+<!-- LINKED STACK -->
+
+<section id="linkedstack">
+
+<h2>3. LinkedListStack ADT</h2>
+
+<p>
+A linked stack uses linked nodes. The top of the stack is represented
+by the head pointer.
+</p>
+
+<div class="visual">
+
+<div id="linkedStackVisual" class="list"></div>
+
+</div>
+
+<div class="controls">
+
+<input type="number" id="linkedStackValue" placeholder="Value">
+
+<button onclick="pushLinkedStack()">PUSH</button>
+
+<button class="danger" onclick="popLinkedStack()">POP</button>
+
+<button onclick="peekLinkedStack()">PEEK</button>
+
+</div>
+
+<p id="linkedStackStatus"></p>
+
+
+<h3>Representation</h3>
+
+<pre><code>TOP
+ ↓
+[30|next] → [20|next] → [10|NULL]</code></pre>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>PUSH(x)
+
+newNode ← CREATE NODE(x)
+
+newNode.next ← top
+
+top ← newNode
+
+
+POP()
+
+IF top = NULL
+    PRINT "Stack Underflow"
+    RETURN
+
+temp ← top
+
+x ← top.data
+
+top ← top.next
+
+DELETE temp
+
+RETURN x
+
+
+PEEK()
+
+IF top = NULL
+    RETURN EMPTY
+
+RETURN top.data</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct Node {
+
+    int data;
+    Node* next;
+
+    Node(int x) {
+        data = x;
+        next = nullptr;
+    }
+};
+
+class LinkedStack {
+
+    Node* top;
+
+public:
+
+    LinkedStack() {
+        top = nullptr;
+    }
+
+    void push(int x) {
+
+        Node* newNode = new Node(x);
+
+        newNode-&gt;next = top;
+
+        top = newNode;
+    }
+
+    void pop() {
+
+        if (top == nullptr) {
+            cout &lt;&lt; "Stack Underflow";
+            return;
+        }
+
+        Node* temp = top;
+
+        cout &lt;&lt; "Deleted: "
+             &lt;&lt; top-&gt;data;
+
+        top = top-&gt;next;
+
+        delete temp;
+    }
+
+    int peek() {
+
+        if (top == nullptr)
+            return -1;
+
+        return top-&gt;data;
+    }
+};</code></pre>
+
+</section>
+
+
+<!-- ARRAY QUEUE -->
+
+<section id="arrayqueue">
+
+<h2>4. ArrayQueue ADT</h2>
+
+<p>
+An array queue stores elements using an array with
+<strong>front</strong> and <strong>rear</strong>.
+</p>
+
+<div class="visual">
+
+<div id="arrayQueueVisual" class="queue"></div>
+
+</div>
+
+<div class="controls">
+
+<input type="number" id="arrayQueueValue" placeholder="Value">
+
+<button onclick="enqueueArray()">ENQUEUE</button>
+
+<button class="danger" onclick="dequeueArray()">DEQUEUE</button>
+
+<button onclick="frontArray()">FRONT</button>
+
+<button class="green" onclick="clearArrayQueue()">CLEAR</button>
+
+</div>
+
+<p id="arrayQueueStatus"></p>
+
+
+<h3>Visualization</h3>
+
+<pre><code>FRONT                         REAR
+ ↓                              ↓
+[10] → [20] → [30] → [40]
+ ↑                              ↑
+Remove                         Insert</code></pre>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>ENQUEUE(x)
+
+IF rear = MAX - 1
+    PRINT "Queue Overflow"
+    RETURN
+
+IF front = -1
+    front ← 0
+
+rear ← rear + 1
+queue[rear] ← x
+
+
+DEQUEUE()
+
+IF front = -1 OR front &gt; rear
+    PRINT "Queue Underflow"
+    RETURN
+
+x ← queue[front]
+front ← front + 1
+
+RETURN x
+
+
+FRONT()
+
+IF front = -1
+    RETURN EMPTY
+
+RETURN queue[front]</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+class ArrayQueue {
+
+    int q[100];
+    int front, rear;
+
+public:
+
+    ArrayQueue() {
+        front = -1;
+        rear = -1;
+    }
+
+    void enqueue(int x) {
+
+        if (rear == 99) {
+            cout &lt;&lt; "Queue Overflow";
+            return;
+        }
+
+        if (front == -1)
+            front = 0;
+
+        q[++rear] = x;
+    }
+
+    void dequeue() {
+
+        if (front == -1 || front &gt; rear) {
+            cout &lt;&lt; "Queue Underflow";
+            return;
+        }
+
+        cout &lt;&lt; "Deleted: "
+             &lt;&lt; q[front++];
+
+        if (front &gt; rear) {
+            front = -1;
+            rear = -1;
+        }
+    }
+
+    int getFront() {
+
+        if (front == -1)
+            return -1;
+
+        return q[front];
+    }
+};</code></pre>
+
+</section>
+
+
+<!-- LINKED QUEUE -->
+
+<section id="linkedqueue">
+
+<h2>5. LinkedQueue ADT</h2>
+
+<p>
+A linked queue uses nodes and maintains two pointers:
+<strong>front</strong> and <strong>rear</strong>.
+</p>
+
+<div class="visual">
+
+<div id="linkedQueueVisual" class="list"></div>
+
+</div>
+
+<div class="controls">
+
+<input type="number" id="linkedQueueValue" placeholder="Value">
+
+<button onclick="enqueueLinked()">ENQUEUE</button>
+
+<button class="danger" onclick="dequeueLinked()">DEQUEUE</button>
+
+</div>
+
+<p id="linkedQueueStatus"></p>
+
+
+<h3>Representation</h3>
+
+<pre><code>FRONT                                REAR
+ ↓                                      ↓
+[10|next] → [20|next] → [30|NULL]</code></pre>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>ENQUEUE(x)
+
+newNode ← CREATE NODE(x)
+
+IF rear = NULL
+    front ← rear ← newNode
+    RETURN
+
+rear.next ← newNode
+rear ← newNode
+
+
+DEQUEUE()
+
+IF front = NULL
+    PRINT "Queue Underflow"
+    RETURN
+
+temp ← front
+
+front ← front.next
+
+IF front = NULL
+    rear ← NULL
+
+DELETE temp</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct QNode {
+
+    int data;
+    QNode* next;
+
+    QNode(int x) {
+        data = x;
+        next = nullptr;
+    }
+};
+
+class LinkedQueue {
+
+    QNode* front;
+    QNode* rear;
+
+public:
+
+    LinkedQueue() {
+        front = rear = nullptr;
+    }
+
+    void enqueue(int x) {
+
+        QNode* newNode = new QNode(x);
+
+        if (rear == nullptr) {
+            front = rear = newNode;
+            return;
+        }
+
+        rear-&gt;next = newNode;
+        rear = newNode;
+    }
+
+    void dequeue() {
+
+        if (front == nullptr) {
+            cout &lt;&lt; "Queue Underflow";
+            return;
+        }
+
+        QNode* temp = front;
+
+        cout &lt;&lt; "Deleted: "
+             &lt;&lt; front-&gt;data;
+
+        front = front-&gt;next;
+
+        if (front == nullptr)
+            rear = nullptr;
+
+        delete temp;
+    }
+
+    int getFront() {
+
+        if (front == nullptr)
+            return -1;
+
+        return front-&gt;data;
+    }
+};</code></pre>
+
+</section>
+
+
+<!-- STRING REVERSE -->
+
+<section id="reverse">
+
+<h2>6. Application – String Reverse Using Stack</h2>
+
+<p>
+A stack is ideal for reversing a string because it follows
+<strong>LIFO</strong>.
+</p>
+
+<div class="info">
+
+Example:
+
+<br><br>
+
+<strong>Input:</strong> DATA
+
+<br><br>
+
+Push:
+D → A → T → A
+
+<br><br>
+
+Pop:
+A → T → A → D
+
+<br><br>
+
+<strong>Output:</strong> ATAD
+
+</div>
+
+<div class="controls">
+
+<input type="text" id="reverseInput" placeholder="Enter a string">
+
+<button onclick="reverseString()">Reverse</button>
+
+</div>
+
+<div class="success" id="reverseOutput"></div>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>REVERSE_STRING(str)
+
+Create empty stack S
+
+FOR each character c in str
+    PUSH(S, c)
+
+result ← ""
+
+WHILE S is not empty
+    result ← result + POP(S)
+
+RETURN result</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stack&gt;
+#include &lt;string&gt;
+using namespace std;
+
+string reverseString(string str) {
+
+    stack&lt;char&gt; s;
+
+    for (char c : str)
+        s.push(c);
+
+    string result = "";
+
+    while (!s.empty()) {
+
+        result += s.top();
+
+        s.pop();
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+
+
+<!-- EXPRESSION EVALUATION -->
+
+<section id="expression">
+
+<h2>7. Application – Expression Evaluation</h2>
+
+<p>
+Stacks are widely used to evaluate arithmetic expressions.
+Operands are stored in an operand stack while operators are processed
+according to precedence.
+</p>
+
+<h3>Operator Precedence</h3>
+
+<table>
+
+<tr>
+<th>Operator</th>
+<th>Precedence</th>
+</tr>
+
+<tr>
+<td>()</td>
+<td>Highest</td>
+</tr>
+
+<tr>
+<td>^</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>* / %</td>
+<td>2</td>
+</tr>
+
+<tr>
+<td>+ -</td>
+<td>1</td>
+</tr>
+
+</table>
+
+<h3>Infix → Postfix</h3>
+
+<pre><code>Infix:
+
+A + B * C
+
+Step 1:
+Read A
+Output A
+
+Step 2:
+Read +
+Push +
+
+Step 3:
+Read B
+Output B
+
+Step 4:
+Read *
+Push *
+
+Step 5:
+Read C
+Output C
+
+Pop remaining operators
+
+Postfix:
+
+A B C * +</code></pre>
+
+
+<h3>Pseudocode – Infix to Postfix</h3>
+
+<pre><code>INFIX_TO_POSTFIX(expression)
+
+Create empty operator stack
+
+FOR each token x
+
+    IF x is operand
+        Add x to output
+
+    ELSE IF x = '('
+        PUSH x
+
+    ELSE IF x = ')'
+        WHILE top ≠ '('
+            output ← POP
+        POP '('
+
+    ELSE
+        WHILE stack not empty AND
+              precedence(top) ≥ precedence(x)
+
+            output ← POP
+
+        PUSH x
+
+WHILE stack not empty
+    output ← POP
+
+RETURN output</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stack&gt;
+#include &lt;string&gt;
+#include &lt;cctype&gt;
+
+using namespace std;
+
+int precedence(char op) {
+
+    if (op == '^')
+        return 3;
+
+    if (op == '*' || op == '/' || op == '%')
+        return 2;
+
+    if (op == '+' || op == '-')
+        return 1;
+
+    return 0;
+}
+
+string infixToPostfix(string exp) {
+
+    stack&lt;char&gt; s;
+    string result;
+
+    for (char c : exp) {
+
+        if (isalnum(c)) {
+
+            result += c;
+        }
+
+        else if (c == '(') {
+
+            s.push(c);
+        }
+
+        else if (c == ')') {
+
+            while (!s.empty() &amp;&amp; s.top() != '(') {
+
+                result += s.top();
+                s.pop();
+            }
+
+            if (!s.empty())
+                s.pop();
+        }
+
+        else {
+
+            while (!s.empty() &amp;&amp;
+                   precedence(s.top()) &gt;= precedence(c)) {
+
+                result += s.top();
+                s.pop();
+            }
+
+            s.push(c);
+        }
+    }
+
+    while (!s.empty()) {
+
+        result += s.top();
+        s.pop();
+    }
+
+    return result;
+}</code></pre>
+
+
+<h3>Postfix Evaluation</h3>
+
+<pre><code>Evaluate:
+
+2 3 * 4 +
+
+Step 1:
+Push 2
+
+Stack:
+2
+
+Step 2:
+Push 3
+
+Stack:
+2 3
+
+Step 3:
+*
+Pop 3 and 2
+2 × 3 = 6
+Push 6
+
+Stack:
+6
+
+Step 4:
+Push 4
+
+Stack:
+6 4
+
+Step 5:
++
+6 + 4 = 10
+
+Answer = 10</code></pre>
+
+
+<h3>C++ – Postfix Evaluation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;stack&gt;
+#include &lt;cctype&gt;
+using namespace std;
+
+int evaluatePostfix(string exp) {
+
+    stack&lt;int&gt; s;
+
+    for (char c : exp) {
+
+        if (isdigit(c)) {
+
+            s.push(c - '0');
+        }
+
+        else {
+
+            int b = s.top();
+            s.pop();
+
+            int a = s.top();
+            s.pop();
+
+            switch(c) {
+
+                case '+':
+                    s.push(a + b);
+                    break;
+
+                case '-':
+                    s.push(a - b);
+                    break;
+
+                case '*':
+                    s.push(a * b);
+                    break;
+
+                case '/':
+                    s.push(a / b);
+                    break;
+            }
+        }
+    }
+
+    return s.top();
+}</code></pre>
+
+</section>
+
+
+<!-- CIRCULAR QUEUE -->
+
+<section id="circularqueue">
+
+<h2>8. Circular Queue ADT</h2>
+
+<p>
+A circular queue connects the last array position back to the first
+position. This allows previously unused spaces to be reused.
+</p>
+
+<div class="visual">
+
+<div id="circularQueueVisual" class="queue"></div>
+
+</div>
+
+<div class="controls">
+
+<input type="number" id="circularQueueValue" placeholder="Value">
+
+<button onclick="enqueueCircular()">ENQUEUE</button>
+
+<button class="danger" onclick="dequeueCircular()">DEQUEUE</button>
+
+<button class="green" onclick="resetCircular()">RESET</button>
+
+</div>
+
+<p id="circularQueueStatus"></p>
+
+
+<div class="info">
+
+<strong>Circular movement:</strong>
+
+<br><br>
+
+rear = (rear + 1) % MAX
+
+<br>
+
+front = (front + 1) % MAX
+
+</div>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>ENQUEUE(x)
+
+IF (rear + 1) MOD MAX = front
+    PRINT "Queue Full"
+    RETURN
+
+IF front = -1
+    front ← rear ← 0
+
+ELSE
+    rear ← (rear + 1) MOD MAX
+
+queue[rear] ← x
+
+
+DEQUEUE()
+
+IF front = -1
+    PRINT "Queue Empty"
+    RETURN
+
+x ← queue[front]
+
+IF front = rear
+    front ← rear ← -1
+
+ELSE
+    front ← (front + 1) MOD MAX
+
+RETURN x</code></pre>
+
+
+<h3>C++ Implementation</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+class CircularQueue {
+
+    int q[5];
+
+    int front;
+    int rear;
+
+public:
+
+    CircularQueue() {
+
+        front = -1;
+        rear = -1;
+    }
+
+    bool isFull() {
+
+        return (rear + 1) % 5 == front;
+    }
+
+    bool isEmpty() {
+
+        return front == -1;
+    }
+
+    void enqueue(int x) {
+
+        if (isFull()) {
+
+            cout &lt;&lt; "Queue Full";
+            return;
+        }
+
+        if (front == -1)
+            front = rear = 0;
+
+        else
+            rear = (rear + 1) % 5;
+
+        q[rear] = x;
+    }
+
+    void dequeue() {
+
+        if (isEmpty()) {
+
+            cout &lt;&lt; "Queue Empty";
+            return;
+        }
+
+        cout &lt;&lt; q[front];
+
+        if (front == rear)
+
+            front = rear = -1;
+
+        else
+
+            front = (front + 1) % 5;
+    }
+};</code></pre>
+
+</section>
+
+
+<!-- PRIORITY QUEUE -->
+
+<section id="priority">
+
+<h2>9. Priority Queue ADT</h2>
+
+<p>
+A priority queue is a queue in which each element is associated with
+a priority. The element with the highest priority is served first.
+</p>
+
+<div class="info">
+
+Example:
+
+<br><br>
+
+Patient A – Priority 2<br>
+Patient B – Priority 5<br>
+Patient C – Priority 1<br>
+Patient D – Priority 4
+
+<br><br>
+
+Removal order:
+
+<strong>B → D → A → C</strong>
+
+</div>
+
+
+<h3>Interactive Priority Queue</h3>
+
+<div class="controls">
+
+<input type="text" id="priorityName" placeholder="Element">
+
+<input type="number" id="priorityValue" placeholder="Priority">
+
+<button onclick="priorityInsert()">INSERT</button>
+
+<button class="danger" onclick="priorityDelete()">DELETE HIGHEST</button>
+
+</div>
+
+<div class="visual">
+
+<div id="priorityVisual" class="list"></div>
+
+</div>
+
+<p id="priorityStatus"></p>
+
+
+<h3>Pseudocode</h3>
+
+<pre><code>INSERT(item, priority)
+
+Create new element
+
+Add element to priority queue
+
+Arrange elements according to priority
+
+
+DELETE()
+
+IF queue is empty
+    PRINT "Queue Empty"
+    RETURN
+
+Find element with highest priority
+
+Remove it
+
+RETURN element
+
+
+PEEK()
+
+Find highest-priority element
+
+Return it</code></pre>
+
+
+<h3>C++ Implementation – Array Based Priority Queue</h3>
+
+<pre><code>#include &lt;iostream&gt;
+using namespace std;
+
+struct Item {
+
+    int data;
+    int priority;
+};
+
+class PriorityQueue {
+
+    Item pq[100];
+    int n;
+
+public:
+
+    PriorityQueue() {
+        n = 0;
+    }
+
+    void insert(int data, int priority) {
+
+        pq[n].data = data;
+        pq[n].priority = priority;
+
+        n++;
+    }
+
+    int deleteHighest() {
+
+        if (n == 0)
+            return -1;
+
+        int index = 0;
+
+        for (int i = 1; i &lt; n; i++) {
+
+            if (pq[i].priority &gt;
+                pq[index].priority)
+
+                index = i;
+        }
+
+        int value = pq[index].data;
+
+        for (int i = index; i &lt; n - 1; i++)
+
+            pq[i] = pq[i + 1];
+
+        n--;
+
+        return value;
+    }
+
+    int peek() {
+
+        if (n == 0)
+            return -1;
+
+        int index = 0;
+
+        for (int i = 1; i &lt; n; i++) {
+
+            if (pq[i].priority &gt;
+                pq[index].priority)
+
+                index = i;
+        }
+
+        return pq[index].data;
+    }
+};</code></pre>
+
+
+<h3>Applications of Priority Queue</h3>
+
+<div class="card-grid">
+
+<div class="card">
+<strong>CPU Scheduling</strong>
+<p>High-priority processes can execute first.</p>
+</div>
+
+<div class="card">
+<strong>Hospital Emergency</strong>
+<p>Critical patients can receive priority.</p>
+</div>
+
+<div class="card">
+<strong>Network Routing</strong>
+<p>Important packets can be processed first.</p>
+</div>
+
+<div class="card">
+<strong>Operating Systems</strong>
+<p>Processes and tasks can be scheduled according to priority.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- COMPARISON -->
+
+<section id="comparison">
+
+<h2>10. Stack and Queue Comparison</h2>
+
+<table>
+
+<tr>
+<th>Structure</th>
+<th>Rule</th>
+<th>Insertion</th>
+<th>Deletion</th>
+<th>Typical Application</th>
+</tr>
+
+<tr>
+<td>Array Stack</td>
+<td>LIFO</td>
+<td>Top</td>
+<td>Top</td>
+<td>Expression evaluation</td>
+</tr>
+
+<tr>
+<td>Linked Stack</td>
+<td>LIFO</td>
+<td>Top</td>
+<td>Top</td>
+<td>Undo operations</td>
+</tr>
+
+<tr>
+<td>Array Queue</td>
+<td>FIFO</td>
+<td>Rear</td>
+<td>Front</td>
+<td>Simple scheduling</td>
+</tr>
+
+<tr>
+<td>Linked Queue</td>
+<td>FIFO</td>
+<td>Rear</td>
+<td>Front</td>
+<td>Dynamic queues</td>
+</tr>
+
+<tr>
+<td>Circular Queue</td>
+<td>FIFO</td>
+<td>Rear</td>
+<td>Front</td>
+<td>Buffer management</td>
+</tr>
+
+<tr>
+<td>Priority Queue</td>
+<td>Priority</td>
+<td>According to priority</td>
+<td>Highest priority</td>
+<td>CPU scheduling</td>
+</tr>
+
+</table>
+
+
+<h3>Time Complexity</h3>
+
+<table>
+
+<tr>
+<th>Operation</th>
+<th>Array Stack</th>
+<th>Linked Stack</th>
+<th>Array Queue</th>
+<th>Linked Queue</th>
+<th>Circular Queue</th>
+</tr>
+
+<tr>
+<td>Insert</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Delete</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Peek</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+<td>O(1)</td>
+</tr>
+
+</table>
+
+<h3>Key Differences</h3>
+
+<div class="card-grid">
+
+<div class="card">
+<h3>Stack</h3>
+<p><strong>LIFO</strong></p>
+<p>Last inserted element is removed first.</p>
+</div>
+
+<div class="card">
+<h3>Queue</h3>
+<p><strong>FIFO</strong></p>
+<p>First inserted element is removed first.</p>
+</div>
+
+<div class="card">
+<h3>Circular Queue</h3>
+<p>Reuses empty positions by wrapping around.</p>
+</div>
+
+<div class="card">
+<h3>Priority Queue</h3>
+<p>Element with highest priority is processed first.</p>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- EXAM SUMMARY -->
+
+<section>
+
+<h2>11. Module 2 – Important Learning Points</h2>
+
+<ol>
+
+<li>Define Stack ADT.</li>
+
+<li>Explain LIFO principle.</li>
+
+<li>Implement ArrayStack using an array.</li>
+
+<li>Implement LinkedListStack using linked nodes.</li>
+
+<li>Explain PUSH, POP and PEEK.</li>
+
+<li>Define Queue ADT.</li>
+
+<li>Explain FIFO principle.</li>
+
+<li>Implement ArrayQueue.</li>
+
+<li>Implement LinkedQueue.</li>
+
+<li>Explain Circular Queue.</li>
+
+<li>Explain Priority Queue.</li>
+
+<li>Reverse a string using a stack.</li>
+
+<li>Convert infix expression to postfix.</li>
+
+<li>Evaluate postfix expressions using a stack.</li>
+
+<li>Analyze the time complexity of stack and queue operations.</li>
+
+</ol>
+
+<div class="success">
+
+<strong>Remember:</strong>
+
+<br><br>
+
+STACK → LIFO → PUSH / POP
+
+<br><br>
+
+QUEUE → FIFO → ENQUEUE / DEQUEUE
+
+<br><br>
+
+CIRCULAR QUEUE → FIFO + WRAP AROUND
+
+<br><br>
+
+PRIORITY QUEUE → HIGHEST PRIORITY FIRST
+
+</div>
+
+</section>
+
+
+</div>
+
+
+<footer>
+
+    <h3>Data Structures  – Stacks and Queues ADT </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+/* =========================================================
+   ARRAY STACK
+========================================================= */
+
+let arrayStack = [];
+
+function renderArrayStack() {
+
+    const box =
+        document.getElementById("arrayStackVisual");
+
+    box.innerHTML = "";
+
+   // [...arrayStack].reverse().forEach(value => {
+    [...arrayStack].forEach(value => {
+        let item =
+            document.createElement("div");
+
+        item.className = "stack-item";
+
+        item.innerText = value;
+
+        box.appendChild(item);
+    });
+}
+
+function pushArrayStack() {
+
+    let input =
+        document.getElementById("stackValue");
+
+    let value = Number(input.value);
+
+    if (isNaN(value))
+        return;
+
+    if (arrayStack.length >= 6) {
+
+        document.getElementById(
+            "arrayStackStatus"
+        ).innerText = "Stack Overflow";
+
+        return;
+    }
+
+    arrayStack.push(value);
+
+    renderArrayStack();
+
+    document.getElementById(
+        "arrayStackStatus"
+    ).innerText =
+        "PUSH " + value + " completed.";
+
+    input.value = "";
+}
+
+function popArrayStack() {
+
+    if (arrayStack.length === 0) {
+
+        document.getElementById(
+            "arrayStackStatus"
+        ).innerText = "Stack Underflow";
+
+        return;
+    }
+
+    let value = arrayStack.pop();
+
+    renderArrayStack();
+
+    document.getElementById(
+        "arrayStackStatus"
+    ).innerText =
+        "POP → " + value;
+}
+
+function peekArrayStack() {
+
+    let status =
+        document.getElementById(
+            "arrayStackStatus"
+        );
+
+    if (arrayStack.length === 0) {
+
+        status.innerText = "Stack is empty.";
+
+        return;
+    }
+
+    status.innerText =
+        "PEEK → " +
+        arrayStack[arrayStack.length - 1];
+}
+
+function clearArrayStack() {
+
+    arrayStack = [];
+
+    renderArrayStack();
+
+    document.getElementById(
+        "arrayStackStatus"
+    ).innerText =
+        "Stack cleared.";
+}
+
+
+/* =========================================================
+   LINKED STACK
+========================================================= */
+
+let linkedStack = [];
+
+function renderLinkedStack() {
+
+    const box =
+        document.getElementById(
+            "linkedStackVisual"
+        );
+
+    box.innerHTML = "";
+
+    let top =
+        document.createElement("strong");
+
+    top.innerText = "TOP → ";
+
+    box.appendChild(top);
+
+    linkedStack.forEach((value,index) => {
+
+        let node =
+            document.createElement("div");
+
+        node.className = "node";
+
+        node.innerText = value;
+
+        box.appendChild(node);
+
+        if (index < linkedStack.length - 1) {
+
+            let arrow =
+                document.createElement("span");
+
+            arrow.className = "queue-arrow";
+
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    });
+
+    let end =
+        document.createElement("strong");
+
+    end.innerText = " → NULL";
+
+    box.appendChild(end);
+}
+
+function pushLinkedStack() {
+
+    let value =
+        Number(
+            document.getElementById(
+                "linkedStackValue"
+            ).value
+        );
+
+    if (isNaN(value))
+        return;
+
+    linkedStack.unshift(value);
+
+    renderLinkedStack();
+
+    document.getElementById(
+        "linkedStackStatus"
+    ).innerText =
+        "PUSH " + value + " completed.";
+}
+
+function popLinkedStack() {
+
+    if (linkedStack.length === 0) {
+
+        document.getElementById(
+            "linkedStackStatus"
+        ).innerText =
+            "Stack Underflow";
+
+        return;
+    }
+
+    let value = linkedStack.shift();
+
+    renderLinkedStack();
+
+    document.getElementById(
+        "linkedStackStatus"
+    ).innerText =
+        "POP → " + value;
+}
+
+function peekLinkedStack() {
+
+    document.getElementById(
+        "linkedStackStatus"
+    ).innerText =
+        linkedStack.length === 0
+        ? "Stack empty."
+        : "PEEK → " + linkedStack[0];
+}
+
+
+/* =========================================================
+   ARRAY QUEUE
+========================================================= */
+
+let arrayQueue = [];
+
+function renderArrayQueue() {
+
+    const box =
+        document.getElementById(
+            "arrayQueueVisual"
+        );
+
+    box.innerHTML = "";
+
+    arrayQueue.forEach(
+        (value,index) => {
+
+        let item =
+            document.createElement("div");
+
+        item.className = "queue-item";
+
+        item.innerHTML =
+            value +
+            (index === 0
+                ? "<br><small>FRONT</small>"
+                : "");
+
+        box.appendChild(item);
+
+        if (index < arrayQueue.length - 1) {
+
+            let arrow =
+                document.createElement("div");
+
+            arrow.className = "queue-arrow";
+
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    });
+}
+
+function enqueueArray() {
+
+    let value =
+        Number(
+            document.getElementById(
+                "arrayQueueValue"
+            ).value
+        );
+
+    if (isNaN(value))
+        return;
+
+    if (arrayQueue.length >= 7) {
+
+        document.getElementById(
+            "arrayQueueStatus"
+        ).innerText =
+            "Queue Overflow";
+
+        return;
+    }
+
+    arrayQueue.push(value);
+
+    renderArrayQueue();
+
+    document.getElementById(
+        "arrayQueueStatus"
+    ).innerText =
+        "ENQUEUE " + value + " completed.";
+}
+
+function dequeueArray() {
+
+    if (arrayQueue.length === 0) {
+
+        document.getElementById(
+            "arrayQueueStatus"
+        ).innerText =
+            "Queue Underflow";
+
+        return;
+    }
+
+    let value = arrayQueue.shift();
+
+    renderArrayQueue();
+
+    document.getElementById(
+        "arrayQueueStatus"
+    ).innerText =
+        "DEQUEUE → " + value;
+}
+
+function frontArray() {
+
+    document.getElementById(
+        "arrayQueueStatus"
+    ).innerText =
+        arrayQueue.length === 0
+        ? "Queue empty."
+        : "FRONT → " + arrayQueue[0];
+}
+
+function clearArrayQueue() {
+
+    arrayQueue = [];
+
+    renderArrayQueue();
+
+    document.getElementById(
+        "arrayQueueStatus"
+    ).innerText =
+        "Queue cleared.";
+}
+
+
+/* =========================================================
+   LINKED QUEUE
+========================================================= */
+
+let linkedQueue = [];
+
+function renderLinkedQueue() {
+
+    const box =
+        document.getElementById(
+            "linkedQueueVisual"
+        );
+
+    box.innerHTML = "";
+
+    linkedQueue.forEach(
+        (value,index) => {
+
+        let node =
+            document.createElement("div");
+
+        node.className = "node";
+
+        node.innerText = value;
+
+        box.appendChild(node);
+
+        if (index < linkedQueue.length - 1) {
+
+            let arrow =
+                document.createElement("span");
+
+            arrow.className =
+                "queue-arrow";
+
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    });
+}
+
+function enqueueLinked() {
+
+    let value =
+        Number(
+            document.getElementById(
+                "linkedQueueValue"
+            ).value
+        );
+
+    if (isNaN(value))
+        return;
+
+    linkedQueue.push(value);
+
+    renderLinkedQueue();
+
+    document.getElementById(
+        "linkedQueueStatus"
+    ).innerText =
+        "ENQUEUE " + value + " completed.";
+}
+
+function dequeueLinked() {
+
+    if (linkedQueue.length === 0) {
+
+        document.getElementById(
+            "linkedQueueStatus"
+        ).innerText =
+            "Queue Underflow";
+
+        return;
+    }
+
+    let value = linkedQueue.shift();
+
+    renderLinkedQueue();
+
+    document.getElementById(
+        "linkedQueueStatus"
+    ).innerText =
+        "DEQUEUE → " + value;
+}
+
+
+/* =========================================================
+   STRING REVERSE
+========================================================= */
+
+function reverseString() {
+
+    let str =
+        document.getElementById(
+            "reverseInput"
+        ).value;
+
+    let stack = [];
+
+    for (let char of str)
+        stack.push(char);
+
+    let result = "";
+
+    while (stack.length > 0)
+        result += stack.pop();
+
+    document.getElementById(
+        "reverseOutput"
+    ).innerHTML =
+        "<strong>Reversed:</strong> " +
+        result;
+}
+
+
+/* =========================================================
+   CIRCULAR QUEUE
+========================================================= */
+
+const CQ_SIZE = 6;
+
+let circularQueue =
+    new Array(CQ_SIZE).fill(null);
+
+let cqFront = -1;
+let cqRear = -1;
+
+function renderCircularQueue() {
+
+    const box =
+        document.getElementById(
+            "circularQueueVisual"
+        );
+
+    box.innerHTML = "";
+
+    for (let i = 0; i < CQ_SIZE; i++) {
+
+        let item =
+            document.createElement("div");
+
+        item.className =
+            "queue-item";
+
+        if (circularQueue[i] !== null)
+            item.innerText =
+                circularQueue[i];
+        else
+            item.innerText = "EMPTY";
+
+        box.appendChild(item);
+
+        if (i < CQ_SIZE - 1) {
+
+            let arrow =
+                document.createElement("div");
+
+            arrow.className =
+                "queue-arrow";
+
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    }
+
+    let status = "";
+
+    if (cqFront !== -1)
+        status +=
+            " FRONT=" + cqFront;
+
+    if (cqRear !== -1)
+        status +=
+            " REAR=" + cqRear;
+
+    document.getElementById(
+        "circularQueueStatus"
+    ).innerText = status;
+}
+
+function enqueueCircular() {
+
+    let value =
+        Number(
+            document.getElementById(
+                "circularQueueValue"
+            ).value
+        );
+
+    if (isNaN(value))
+        return;
+
+    let next =
+        (cqRear + 1) % CQ_SIZE;
+
+    if (next === cqFront) {
+
+        document.getElementById(
+            "circularQueueStatus"
+        ).innerText =
+            "Circular Queue FULL";
+
+        return;
+    }
+
+    if (cqFront === -1) {
+
+        cqFront = 0;
+        cqRear = 0;
+
+    } else {
+
+        cqRear =
+            (cqRear + 1) % CQ_SIZE;
+    }
+
+    circularQueue[cqRear] = value;
+
+    renderCircularQueue();
+}
+
+function dequeueCircular() {
+
+    if (cqFront === -1) {
+
+        document.getElementById(
+            "circularQueueStatus"
+        ).innerText =
+            "Circular Queue EMPTY";
+
+        return;
+    }
+
+    circularQueue[cqFront] = null;
+
+    if (cqFront === cqRear) {
+
+        cqFront = -1;
+        cqRear = -1;
+
+    } else {
+
+        cqFront =
+            (cqFront + 1) % CQ_SIZE;
+    }
+
+    renderCircularQueue();
+}
+
+function resetCircular() {
+
+    circularQueue =
+        new Array(CQ_SIZE).fill(null);
+
+    cqFront = -1;
+    cqRear = -1;
+
+    renderCircularQueue();
+}
+
+
+/* =========================================================
+   PRIORITY QUEUE
+========================================================= */
+
+let priorityQueue = [];
+
+function priorityInsert() {
+
+    let name =
+        document.getElementById(
+            "priorityName"
+        ).value.trim();
+
+    let priority =
+        Number(
+            document.getElementById(
+                "priorityValue"
+            ).value
+        );
+
+    if (name === "" || isNaN(priority))
+        return;
+
+    priorityQueue.push({
+        name: name,
+        priority: priority
+    });
+
+    priorityQueue.sort(
+        (a,b) =>
+            b.priority - a.priority
+    );
+
+    renderPriority();
+
+    document.getElementById(
+        "priorityName"
+    ).value = "";
+
+    document.getElementById(
+        "priorityValue"
+    ).value = "";
+}
+
+function renderPriority() {
+
+    const box =
+        document.getElementById(
+            "priorityVisual"
+        );
+
+    box.innerHTML = "";
+
+    priorityQueue.forEach(
+        (item,index) => {
+
+        let node =
+            document.createElement("div");
+
+        node.className = "node";
+
+        node.innerHTML =
+            item.name +
+            "<br>" +
+            "P=" +
+            item.priority;
+
+        box.appendChild(node);
+
+        if (index < priorityQueue.length - 1) {
+
+            let arrow =
+                document.createElement("span");
+
+            arrow.className =
+                "queue-arrow";
+
+            arrow.innerText = "→";
+
+            box.appendChild(arrow);
+        }
+    });
+}
+
+function priorityDelete() {
+
+    if (priorityQueue.length === 0) {
+
+        document.getElementById(
+            "priorityStatus"
+        ).innerText =
+            "Priority Queue empty.";
+
+        return;
+    }
+
+    let item =
+        priorityQueue.shift();
+
+    renderPriority();
+
+    document.getElementById(
+        "priorityStatus"
+    ).innerText =
+        "Removed: " +
+        item.name +
+        " (Priority " +
+        item.priority +
+        ")";
+}
+
+
+/* =========================================================
+   INITIAL RENDER
+========================================================= */
+
+renderArrayStack();
+renderLinkedStack();
+renderArrayQueue();
+renderLinkedQueue();
+renderCircularQueue();
+renderPriority();
+
+</script>
+
+</body>
+</html>

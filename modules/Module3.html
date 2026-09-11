@@ -1,0 +1,2805 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Module 3 - Tree ADTs Visualizer</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:"Poppins", Arial, Helvetica, sans-serif;
+    background:#f4f7fb;
+    color:#1f2937;
+    line-height:1.6;
+}
+
+header{
+    background:linear-gradient(135deg,#172554,#2563eb);
+    color:white;
+    padding:35px 20px;
+    text-align:center;
+}
+
+header h1{
+    font-size:36px;
+    margin-bottom:8px;
+}
+
+header p{
+    font-size:17px;
+    opacity:.9;
+}
+
+nav{
+    position:sticky;
+    top:0;
+    z-index:100;
+    background:#111827;
+    padding:12px;
+    text-align:center;
+}
+
+nav a{
+    color:white;
+    text-decoration:none;
+    margin:5px 8px;
+    padding:8px 13px;
+    display:inline-block;
+    border-radius:6px;
+    font-size:14px;
+}
+
+nav a:hover{
+    background:#2563eb;
+}
+
+.container{
+    max-width:1400px;
+    margin:auto;
+    padding:25px;
+}
+
+.section{
+    background:white;
+    margin:25px 0;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 4px 15px rgba(0,0,0,.08);
+}
+
+.section h2{
+    color:#1d4ed8;
+    margin-bottom:10px;
+    border-bottom:2px solid #dbeafe;
+    padding-bottom:8px;
+}
+
+.section h3{
+    margin-top:20px;
+    color:#374151;
+}
+
+.description{
+    background:#eff6ff;
+    padding:15px;
+    border-left:5px solid #2563eb;
+    margin:15px 0;
+    border-radius:5px;
+}
+.pseudo {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 18px;
+    border-radius: 8px;
+    white-space: pre-wrap;
+    font-family: Consolas, monospace;
+    margin: 15px 0;
+}
+.controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:18px 0;
+}
+.tree-text {
+    font-family: Consolas, monospace;
+    white-space: pre;
+    overflow-x: auto;
+    background: #f1f5f9;
+    padding: 18px;
+    border-radius: 8px;
+}
+input, select, button{
+    padding:10px 14px;
+    border:1px solid #cbd5e1;
+    border-radius:7px;
+    font-size:15px;
+}
+
+input{
+    width:180px;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#1d4ed8;
+}
+
+button.danger{
+    background:#dc2626;
+}
+
+button.success{
+    background:#059669;
+}
+
+.visual{
+    min-height:360px;
+    background:#f8fafc;
+    border:2px dashed #cbd5e1;
+    border-radius:10px;
+    margin-top:15px;
+    padding:20px;
+    overflow:auto;
+}
+
+.tree-area{
+    min-width:850px;
+    position:relative;
+    min-height:320px;
+}
+
+.tree-node{
+    position:absolute;
+    width:48px;
+    height:48px;
+    border-radius:50%;
+    background:#2563eb;
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:bold;
+    border:3px solid #bfdbfe;
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
+    transition:.4s;
+}
+
+.tree-node.highlight{
+    background:#f59e0b;
+    border-color:#fef3c7;
+    transform:scale(1.12);
+}
+
+.tree-line{
+    position:absolute;
+    height:2px;
+    background:#64748b;
+    transform-origin:left center;
+}
+
+.traversal{
+    background:#111827;
+    color:#22c55e;
+    padding:15px;
+    border-radius:8px;
+    font-family:Consolas,monospace;
+    margin-top:15px;
+    min-height:50px;
+}
+
+.code{
+    background:#0f172a;
+    color:#e2e8f0;
+    padding:20px;
+    border-radius:10px;
+    overflow:auto;
+    margin-top:15px;
+    font-family:Consolas,"Courier New",monospace;
+    font-size:13px;
+    line-height:1.55;
+    white-space:pre;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,td{
+    border:1px solid #cbd5e1;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    background:#dbeafe;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+    gap:15px;
+    margin-top:15px;
+}
+
+.card{
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    padding:18px;
+    border-radius:10px;
+}
+
+.card strong{
+    color:#1d4ed8;
+}
+
+footer{
+    text-align:center;
+    background:#111827;
+    color:white;
+    padding:25px;
+    margin-top:40px;
+}
+
+.badge{
+    display:inline-block;
+    background:#dbeafe;
+    color:#1d4ed8;
+    padding:4px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:bold;
+}
+
+@media(max-width:700px){
+    header h1{
+        font-size:26px;
+    }
+
+    .container{
+        padding:10px;
+    }
+
+    .section{
+        padding:16px;
+    }
+
+    .tree-area{
+        min-width:650px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>🌳 Module 3 – Tree ADTs</h1>
+    <p>Interactive Visual Representation + C++ Implementations</p>
+</header>
+
+<nav>
+    <a href="../index.html">Home</a>
+    <a href="#bst">BST</a>
+    <a href="#traversal">Traversal</a>
+    <a href="AVL_rotations.html">AVL</a>
+    <a href="#splay">Splay</a>
+    <a href="#btree">B-Tree</a>
+    <a href="#heap">Binary Heap</a>
+    <a href="#comparison">Comparison</a>
+</nav>
+
+<div class="container">
+
+<!-- ========================================================= -->
+
+<!-- BST -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="bst">
+
+<h2>1. Binary Search Tree (BST) ADT</h2>
+
+<div class="description">
+<strong>Definition:</strong>
+A Binary Search Tree is a binary tree in which every node in the left
+subtree contains values smaller than the node and every node in the
+right subtree contains values greater than the node.
+</div>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>Left subtree</strong>
+<p>Values &lt; root</p>
+</div>
+
+<div class="card">
+<strong>Root</strong>
+<p>Current node</p>
+</div>
+
+<div class="card">
+<strong>Right subtree</strong>
+<p>Values &gt; root</p>
+</div>
+
+<div class="card">
+<strong>Average Search</strong>
+<p>O(log n)</p>
+</div>
+
+</div>
+
+<h3>Interactive BST</h3>
+
+<div class="controls">
+<input id="bstInput" type="number" placeholder="Enter value">
+
+<button onclick="bstInsert()">Insert</button> <button onclick="bstSearch()">Search</button> <button class="danger" onclick="bstDelete()">Delete</button> <button onclick="bstClear()">Clear</button>
+
+<select id="bstTraversal" onchange="showBSTTraversal()">
+<option value="inorder">Inorder</option>
+<option value="preorder">Preorder</option>
+<option value="postorder">Postorder</option>
+</select>
+
+</div>
+
+<div class="visual">
+<div id="bstTree" class="tree-area"></div>
+</div>
+
+<div id="bstTraversalOutput" class="traversal">
+Inorder: -
+</div>
+
+<h3>BST Operations</h3>
+
+<table>
+<tr>
+<th>Operation</th>
+<th>Average</th>
+<th>Worst Case</th>
+</tr>
+<tr>
+<td>Search</td>
+<td>O(log n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Insert</td>
+<td>O(log n)</td>
+<td>O(n)</td>
+</tr>
+<tr>
+<td>Delete</td>
+<td>O(log n)</td>
+<td>O(n)</td>
+</tr>
+</table>
+
+<h3>BST Pseudocode – Insertion</h3>
+
+<div class="pseudo">BST_INSERT(root, key)
+
+1. If root = NULL
+   create a new node
+   return new node
+
+2. If key < root.key
+   root.left = BST_INSERT(root.left, key)
+
+3. Else if key > root.key
+   root.right = BST_INSERT(root.right, key)
+
+4. Return root</div>
+
+<h3>BST Pseudocode – Search</h3>
+
+<div class="pseudo">BST_SEARCH(root, key)
+
+1. If root = NULL
+   return NOT FOUND
+
+2. If root.key = key
+   return FOUND
+
+3. If key < root.key
+   search left subtree
+
+4. Else
+   search right subtree</div>
+
+<h3>BST Pseudocode – Deletion</h3>
+
+<div class="pseudo">BST_DELETE(root, key)
+
+1. Search for key.
+
+2. If node is a leaf
+   remove node.
+
+3. If node has one child
+   replace node with its child.
+
+4. If node has two children
+   find inorder successor.
+   copy successor value.
+   delete successor.
+
+5. Return root.</div>
+
+<h3>C++ Implementation – BST</h3>
+
+<div class="code">
+#include &lt;iostream&gt;
+using namespace std;
+
+struct Node {
+int key;
+Node *left, *right;
+
+```
+Node(int value) {
+    key = value;
+    left = right = nullptr;
+}
+```
+
+};
+
+class BST {
+private:
+Node* insert(Node* root, int key) {
+if (root == nullptr)
+return new Node(key);
+
+```
+    if (key &lt; root-&gt;key)
+        root-&gt;left = insert(root-&gt;left, key);
+    else if (key &gt; root-&gt;key)
+        root-&gt;right = insert(root-&gt;right, key);
+
+    return root;
+}
+
+bool search(Node* root, int key) {
+    if (root == nullptr)
+        return false;
+
+    if (root-&gt;key == key)
+        return true;
+
+    if (key &lt; root-&gt;key)
+        return search(root-&gt;left, key);
+
+    return search(root-&gt;right, key);
+}
+
+void inorder(Node* root) {
+    if (root == nullptr)
+        return;
+
+    inorder(root-&gt;left);
+    cout &lt;&lt; root-&gt;key &lt;&lt; " ";
+    inorder(root-&gt;right);
+}
+```
+
+public:
+Node* root = nullptr;
+
+```
+void insert(int key) {
+    root = insert(root, key);
+}
+
+void searchKey(int key) {
+    cout &lt;&lt; (search(root, key) ? "Found" : "Not Found");
+}
+
+void display() {
+    inorder(root);
+}
+```
+
+};
+
+int main() {
+BST tree;
+
+```
+tree.insert(50);
+tree.insert(30);
+tree.insert(70);
+tree.insert(20);
+tree.insert(40);
+tree.insert(60);
+tree.insert(80);
+
+tree.display();
+
+return 0;
+```
+
+}
+
+</div>
+
+</section>
+
+<!-- TRAVERSALS -->
+
+<section class="section" id="traversal">
+<h2>3. Tree Traversals</h2>
+
+<p>
+Tree traversal means visiting every node of a tree exactly once.
+The four important traversals are:
+</p>
+
+<div class="info-grid">
+    <div class="info-card">
+        <strong>Inorder</strong>
+        Left → Root → Right
+    </div>
+<div class="info-card">
+    <strong>Preorder</strong>
+    Root → Left → Right
+</div>
+
+<div class="info-card">
+    <strong>Postorder</strong>
+    Left → Right → Root
+</div>
+
+<div class="info-card">
+    <strong>Level Order</strong>
+    Visit nodes level by level.
+</div>
+```
+
+</div>
+
+<div class="tree-text">
+                 50
+               /    \
+             30      70
+            /  \    /  \
+          20   40  60   80
+</div>
+
+<h3>Interactive Traversal</h3>
+
+<div class="controls">
+    <button onclick="showTraversal('inorder')">Inorder</button>
+    <button onclick="showTraversal('preorder')">Preorder</button>
+    <button onclick="showTraversal('postorder')">Postorder</button>
+    <button onclick="showTraversal('level')">Level Order</button>
+</div>
+
+<div id="traversalResult" class="result">
+    Select a traversal.
+</div>
+
+<h3>Traversal Pseudocode</h3>
+
+<div class="pseudo">INORDER(root)
+
+1. If root = NULL
+   return
+
+2. INORDER(root.left)
+
+3. Visit root
+
+4. INORDER(root.right)
+
+PREORDER(root)
+
+1. If root = NULL
+   return
+
+2. Visit root
+
+3. PREORDER(root.left)
+
+4. PREORDER(root.right)
+
+POSTORDER(root)
+
+1. If root = NULL
+   return
+
+2. POSTORDER(root.left)
+
+3. POSTORDER(root.right)
+
+4. Visit root
+
+LEVEL_ORDER(root)
+
+1. Create an empty queue.
+
+2. Insert root into queue.
+
+3. While queue is not empty:
+
+   ```
+   remove front node
+   visit node
+
+   if left child exists
+       enqueue left child
+
+   if right child exists
+       enqueue right child</div>
+   ```
+
+<h3>C++ Traversal Implementation</h3>
+
+<pre class="code"><code>void inorder(Node* root) {
+    if (root == nullptr)
+        return;
+
+    inorder(root-&gt;left);
+    cout &lt;&lt; root-&gt;key &lt;&lt; " ";
+    inorder(root-&gt;right);
+}
+
+void preorder(Node* root) {
+    if (root == nullptr)
+        return;
+
+    cout &lt;&lt; root-&gt;key &lt;&lt; " ";
+    preorder(root-&gt;left);
+    preorder(root-&gt;right);
+}
+
+void postorder(Node* root) {
+    if (root == nullptr)
+        return;
+
+    postorder(root-&gt;left);
+    postorder(root-&gt;right);
+    cout &lt;&lt; root-&gt;key &lt;&lt; " ";
+}
+
+void levelOrder(Node* root) {
+    if (root == nullptr)
+        return;
+
+    queue&lt;Node*&gt; q;
+    q.push(root);
+
+    while (!q.empty()) {
+        Node* current = q.front();
+        q.pop();
+
+        cout &lt;&lt; current-&gt;key &lt;&lt; " ";
+
+        if (current-&gt;left)
+            q.push(current-&gt;left);
+
+        if (current-&gt;right)
+            q.push(current-&gt;right);
+    }
+}</code></pre>
+
+<div class="note">
+<b>Important exam point:</b>
+For a Binary Search Tree, <b>inorder traversal produces keys in sorted order</b>.
+</div>
+</section>
+
+
+<!-- ========================================================= -->
+
+<!-- AVL -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="avl">
+
+<h2>2. AVL Tree ADT</h2>
+
+<div class="description">
+<strong>Definition:</strong>
+An AVL tree is a self-balancing Binary Search Tree. For every node,
+the difference between the height of its left and right subtrees is
+at most 1.
+</div>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>Balance Factor</strong>
+<p>BF = Height(left) − Height(right)</p>
+</div>
+
+<div class="card">
+<strong>Valid Values</strong>
+<p>-1, 0, +1</p>
+</div>
+
+<div class="card">
+<strong>LL Case</strong>
+<p>Right Rotation</p>
+</div>
+
+<div class="card">
+<strong>RR Case</strong>
+<p>Left Rotation</p>
+</div>
+
+<div class="card">
+<strong>LR Case</strong>
+<p>Left + Right Rotation</p>
+</div>
+
+<div class="card">
+<strong>RL Case</strong>
+<p>Right + Left Rotation</p>
+</div>
+
+</div>
+
+<h3>Interactive AVL Tree</h3>
+
+<div class="controls">
+<input id="avlInput" type="number" placeholder="Enter value">
+
+<button onclick="avlInsert()">Insert</button> <button onclick="avlSearch()">Search</button> <button onclick="avlClear()">Clear</button>
+
+</div>
+
+<div class="visual">
+<div id="avlTree" class="tree-area"></div>
+</div>
+
+<div id="avlOutput" class="traversal">
+AVL Inorder: -
+</div>
+
+<h3>AVL Rotations</h3>
+
+<table>
+<tr>
+<th>Case</th>
+<th>Condition</th>
+<th>Rotation</th>
+</tr>
+<tr>
+<td>LL</td>
+<td>BF &gt; 1 and key &lt; left key</td>
+<td>Right Rotation</td>
+</tr>
+<tr>
+<td>RR</td>
+<td>BF &lt; -1 and key &gt; right key</td>
+<td>Left Rotation</td>
+</tr>
+<tr>
+<td>LR</td>
+<td>BF &gt; 1 and key &gt; left key</td>
+<td>Left then Right</td>
+</tr>
+<tr>
+<td>RL</td>
+<td>BF &lt; -1 and key &lt; right key</td>
+<td>Right then Left</td>
+</tr>
+</table>
+
+<h3>C++ Implementation – AVL Tree</h3>
+
+<div class="code">
+#include &lt;iostream&gt;
+#include &lt;algorithm&gt;
+using namespace std;
+
+struct Node {
+int key;
+int height;
+Node *left, *right;
+
+```
+Node(int value) {
+    key = value;
+    height = 1;
+    left = right = nullptr;
+}
+```
+
+};
+
+class AVL {
+private:
+
+```
+int height(Node* n) {
+    return n ? n-&gt;height : 0;
+}
+
+int balanceFactor(Node* n) {
+    return n ? height(n-&gt;left) - height(n-&gt;right) : 0;
+}
+
+Node* rightRotate(Node* y) {
+    Node* x = y-&gt;left;
+    Node* T2 = x-&gt;right;
+
+    x-&gt;right = y;
+    y-&gt;left = T2;
+
+    y-&gt;height =
+        1 + max(height(y-&gt;left), height(y-&gt;right));
+
+    x-&gt;height =
+        1 + max(height(x-&gt;left), height(x-&gt;right));
+
+    return x;
+}
+
+Node* leftRotate(Node* x) {
+    Node* y = x-&gt;right;
+    Node* T2 = y-&gt;left;
+
+    y-&gt;left = x;
+    x-&gt;right = T2;
+
+    x-&gt;height =
+        1 + max(height(x-&gt;left), height(x-&gt;right));
+
+    y-&gt;height =
+        1 + max(height(y-&gt;left), height(y-&gt;right));
+
+    return y;
+}
+
+Node* insert(Node* node, int key) {
+
+    if (!node)
+        return new Node(key);
+
+    if (key &lt; node-&gt;key)
+        node-&gt;left = insert(node-&gt;left, key);
+    else if (key &gt; node-&gt;key)
+        node-&gt;right = insert(node-&gt;right, key);
+    else
+        return node;
+
+    node-&gt;height =
+        1 + max(height(node-&gt;left),
+                height(node-&gt;right));
+
+    int balance = balanceFactor(node);
+
+    // LL
+    if (balance &gt; 1 && key &lt; node-&gt;left-&gt;key)
+        return rightRotate(node);
+
+    // RR
+    if (balance &lt; -1 && key &gt; node-&gt;right-&gt;key)
+        return leftRotate(node);
+
+    // LR
+    if (balance &gt; 1 && key &gt; node-&gt;left-&gt;key) {
+        node-&gt;left = leftRotate(node-&gt;left);
+        return rightRotate(node);
+    }
+
+    // RL
+    if (balance &lt; -1 && key &lt; node-&gt;right-&gt;key) {
+        node-&gt;right = rightRotate(node-&gt;right);
+        return leftRotate(node);
+    }
+
+    return node;
+}
+
+void inorder(Node* root) {
+    if (!root) return;
+
+    inorder(root-&gt;left);
+    cout &lt;&lt; root-&gt;key &lt;&lt; " ";
+    inorder(root-&gt;right);
+}
+```
+
+public:
+Node* root = nullptr;
+
+```
+void insert(int key) {
+    root = insert(root, key);
+}
+
+void display() {
+    inorder(root);
+}
+```
+
+};
+
+int main() {
+
+```
+AVL tree;
+
+tree.insert(30);
+tree.insert(20);
+tree.insert(10);
+
+tree.display();
+
+return 0;
+```
+
+}
+
+</div>
+
+</section>
+
+<!-- ========================================================= -->
+
+<!-- SPLAY -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="splay">
+
+<h2>3. Splay Tree ADT</h2>
+
+<div class="description">
+<strong>Note:</strong>
+“Slay Tree” is generally called a <strong>Splay Tree</strong>.
+A Splay Tree is a self-adjusting Binary Search Tree. Whenever a node
+is accessed, it is moved toward the root using rotations.
+</div>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>Zig</strong>
+<p>Single rotation</p>
+</div>
+
+<div class="card">
+<strong>Zig-Zig</strong>
+<p>Two rotations in same direction</p>
+</div>
+
+<div class="card">
+<strong>Zig-Zag</strong>
+<p>Two rotations in opposite directions</p>
+</div>
+
+<div class="card">
+<strong>Amortized Complexity</strong>
+<p>O(log n)</p>
+</div>
+
+</div>
+
+<h3>Interactive Splay Tree</h3>
+
+<div class="controls">
+<input id="splayInput" type="number" placeholder="Enter value">
+
+<button onclick="splayInsert()">Insert</button> <button onclick="splaySearch()">Search / Splay</button> <button onclick="splayClear()">Clear</button>
+
+</div>
+
+<div class="visual">
+<div id="splayTree" class="tree-area"></div>
+</div>
+
+<div id="splayOutput" class="traversal">
+Splay Inorder: -
+</div>
+
+<h3>C++ Implementation – Splay Tree</h3>
+
+<div class="code">
+#include &lt;iostream&gt;
+using namespace std;
+
+struct Node {
+int key;
+Node *left, *right;
+
+```
+Node(int value) {
+    key = value;
+    left = right = nullptr;
+}
+```
+
+};
+
+class SplayTree {
+
+```
+Node* rightRotate(Node* x) {
+    Node* y = x-&gt;left;
+    x-&gt;left = y-&gt;right;
+    y-&gt;right = x;
+    return y;
+}
+
+Node* leftRotate(Node* x) {
+    Node* y = x-&gt;right;
+    x-&gt;right = y-&gt;left;
+    y-&gt;left = x;
+    return y;
+}
+
+Node* splay(Node* root, int key) {
+
+    if (!root || root-&gt;key == key)
+        return root;
+
+    // Key lies in left subtree
+    if (key &lt; root-&gt;key) {
+
+        if (!root-&gt;left)
+            return root;
+
+        // Zig-Zig
+        if (key &lt; root-&gt;left-&gt;key) {
+            root-&gt;left-&gt;left =
+                splay(root-&gt;left-&gt;left, key);
+
+            root = rightRotate(root);
+        }
+
+        // Zig-Zag
+        else if (key &gt; root-&gt;left-&gt;key) {
+            root-&gt;left-&gt;right =
+                splay(root-&gt;left-&gt;right, key);
+
+            if (root-&gt;left-&gt;right)
+                root-&gt;left =
+                    leftRotate(root-&gt;left);
+        }
+
+        return root-&gt;left ?
+               rightRotate(root) : root;
+    }
+
+    // Key lies in right subtree
+    else {
+
+        if (!root-&gt;right)
+            return root;
+
+        // Zig-Zig
+        if (key &gt; root-&gt;right-&gt;key) {
+            root-&gt;right-&gt;right =
+                splay(root-&gt;right-&gt;right, key);
+
+            root = leftRotate(root);
+        }
+
+        // Zig-Zag
+        else if (key &lt; root-&gt;right-&gt;key) {
+            root-&gt;right-&gt;left =
+                splay(root-&gt;right-&gt;left, key);
+
+            if (root-&gt;right-&gt;left)
+                root-&gt;right =
+                    rightRotate(root-&gt;right);
+        }
+
+        return root-&gt;right ?
+               leftRotate(root) : root;
+    }
+}
+```
+
+public:
+
+```
+Node* root = nullptr;
+
+void search(int key) {
+    root = splay(root, key);
+}
+```
+
+};
+
+int main() {
+
+```
+SplayTree tree;
+
+// Insert and search operations
+// can be implemented using splay()
+
+return 0;
+```
+
+}
+
+</div>
+
+</section>
+
+<!-- ========================================================= -->
+
+<!-- B TREE -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="btree">
+
+<h2>4. B-Tree ADT</h2>
+
+<div class="description">
+<strong>Definition:</strong>
+A B-Tree is a balanced multi-way search tree. Unlike a binary tree,
+a B-Tree node can contain multiple keys and multiple children.
+B-Trees are widely used in databases and file systems.
+</div>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>Multiple Keys</strong>
+<p>Each node can store several keys.</p>
+</div>
+
+<div class="card">
+<strong>Balanced</strong>
+<p>All leaves occur at the same level.</p>
+</div>
+
+<div class="card">
+<strong>Database Use</strong>
+<p>Efficient disk-based searching.</p>
+</div>
+
+<div class="card">
+<strong>Search</strong>
+<p>O(log n)</p>
+</div>
+
+</div>
+
+<h3>Example B-Tree</h3>
+
+<div class="visual">
+
+<div style="
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:35px;
+padding:30px;">
+
+<div style="
+background:#2563eb;
+color:white;
+padding:18px 30px;
+border-radius:10px;
+font-weight:bold;">
+[ 30 | 60 ]
+</div>
+
+<div style="
+display:flex;
+justify-content:space-around;
+width:90%;
+gap:20px;">
+
+<div style="
+background:#60a5fa;
+color:white;
+padding:18px;
+border-radius:10px;">
+[ 10 | 20 ]
+</div>
+
+<div style="
+background:#60a5fa;
+color:white;
+padding:18px;
+border-radius:10px;">
+[ 40 | 50 ]
+</div>
+
+<div style="
+background:#60a5fa;
+color:white;
+padding:18px;
+border-radius:10px;">
+[ 70 | 80 | 90 ]
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<h3>B-Tree Properties</h3>
+
+<table>
+<tr>
+<th>Property</th>
+<th>Description</th>
+</tr>
+<tr>
+<td>Keys</td>
+<td>Multiple keys per node</td>
+</tr>
+<tr>
+<td>Children</td>
+<td>Multiple children per node</td>
+</tr>
+<tr>
+<td>Height</td>
+<td>Small compared with binary trees</td>
+</tr>
+<tr>
+<td>Leaves</td>
+<td>All leaves at same level</td>
+</tr>
+<tr>
+<td>Application</td>
+<td>Databases, file systems</td>
+</tr>
+</table>
+
+<h3>C++ Implementation – B-Tree</h3>
+
+<div class="code">
+#include &lt;iostream&gt;
+using namespace std;
+
+class BTreeNode {
+
+```
+int *keys;
+int t;
+
+BTreeNode **children;
+
+int n;
+bool leaf;
+```
+
+public:
+
+```
+BTreeNode(int degree, bool isLeaf) {
+
+    t = degree;
+    leaf = isLeaf;
+
+    keys = new int[2 * t - 1];
+
+    children =
+        new BTreeNode*[2 * t];
+
+    n = 0;
+}
+
+void traverse() {
+
+    int i;
+
+    for (i = 0; i &lt; n; i++) {
+
+        if (!leaf)
+            children[i]-&gt;traverse();
+
+        cout &lt;&lt; keys[i] &lt;&lt; " ";
+    }
+
+    if (!leaf)
+        children[i]-&gt;traverse();
+}
+
+friend class BTree;
+```
+
+};
+
+class BTree {
+
+```
+BTreeNode *root;
+int t;
+```
+
+public:
+
+```
+BTree(int degree) {
+    root = nullptr;
+    t = degree;
+}
+
+void traverse() {
+
+    if (root)
+        root-&gt;traverse();
+}
+```
+
+};
+
+int main() {
+
+```
+BTree tree(3);
+
+cout &lt;&lt; "B-Tree created";
+
+return 0;
+```
+
+}
+
+</div>
+
+</section>
+
+<!-- ========================================================= -->
+
+<!-- BINARY HEAP -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="heap">
+
+<h2>5. Binary Heap ADT</h2>
+
+<div class="description">
+<strong>Definition:</strong>
+A Binary Heap is a complete binary tree that satisfies the heap
+property. In a Max Heap, the parent is greater than or equal to its
+children. In a Min Heap, the parent is smaller than or equal to its
+children.
+</div>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>Max Heap</strong>
+<p>Parent ≥ Children</p>
+</div>
+
+<div class="card">
+<strong>Min Heap</strong>
+<p>Parent ≤ Children</p>
+</div>
+
+<div class="card">
+<strong>Insert</strong>
+<p>O(log n)</p>
+</div>
+
+<div class="card">
+<strong>Delete Root</strong>
+<p>O(log n)</p>
+</div>
+
+<div class="card">
+<strong>Peek</strong>
+<p>O(1)</p>
+</div>
+
+</div>
+
+<h3>Interactive Max Heap</h3>
+
+<div class="controls">
+<input id="heapInput" type="number" placeholder="Enter value">
+
+<button onclick="heapInsert()">Insert</button> <button class="danger" onclick="heapDelete()">Delete Max</button> <button onclick="heapClear()">Clear</button>
+
+</div>
+
+<div class="visual">
+<div id="heapTree" class="tree-area"></div>
+</div>
+
+<div id="heapOutput" class="traversal">
+Heap Array: [ ]
+</div>
+
+<h3>Array Representation</h3>
+
+<p>
+For a node at index <strong>i</strong>:
+</p>
+
+<ul>
+<li>Parent = floor((i - 1) / 2)</li>
+<li>Left child = 2i + 1</li>
+<li>Right child = 2i + 2</li>
+</ul>
+
+<h3>C++ Implementation – Max Heap</h3>
+
+<div class="code">
+#include &lt;iostream&gt;
+#include &lt;vector&gt;
+using namespace std;
+
+class MaxHeap {
+
+```
+vector&lt;int&gt; heap;
+
+void heapifyUp(int index) {
+
+    while (index &gt; 0) {
+
+        int parent = (index - 1) / 2;
+
+        if (heap[parent] &gt;= heap[index])
+            break;
+
+        swap(heap[parent], heap[index]);
+
+        index = parent;
+    }
+}
+
+void heapifyDown(int index) {
+
+    int n = heap.size();
+
+    while (true) {
+
+        int largest = index;
+
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        if (left &lt; n &&
+            heap[left] &gt; heap[largest])
+            largest = left;
+
+        if (right &lt; n &&
+            heap[right] &gt; heap[largest])
+            largest = right;
+
+        if (largest == index)
+            break;
+
+        swap(heap[index], heap[largest]);
+
+        index = largest;
+    }
+}
+```
+
+public:
+
+```
+void insert(int value) {
+
+    heap.push_back(value);
+
+    heapifyUp(heap.size() - 1);
+}
+
+void deleteMax() {
+
+    if (heap.empty())
+        return;
+
+    heap[0] = heap.back();
+
+    heap.pop_back();
+
+    if (!heap.empty())
+        heapifyDown(0);
+}
+
+int getMax() {
+
+    if (heap.empty())
+        return -1;
+
+    return heap[0];
+}
+
+void display() {
+
+    for (int x : heap)
+        cout &lt;&lt; x &lt;&lt; " ";
+
+    cout &lt;&lt; endl;
+}
+```
+
+};
+
+int main() {
+
+```
+MaxHeap heap;
+
+heap.insert(50);
+heap.insert(30);
+heap.insert(70);
+heap.insert(90);
+heap.insert(20);
+
+heap.display();
+
+cout &lt;&lt; "Maximum = "
+     &lt;&lt; heap.getMax();
+
+return 0;
+```
+
+}
+
+</div>
+
+</section>
+
+<!-- ========================================================= -->
+
+<!-- COMPARISON -->
+
+<!-- ========================================================= -->
+
+<section class="section" id="comparison">
+
+<h2>6. Comparison of Tree ADTs</h2>
+
+<table>
+<tr>
+<th>Data Structure</th>
+<th>Search</th>
+<th>Insert</th>
+<th>Delete</th>
+<th>Main Feature</th>
+</tr>
+
+<tr>
+<td>BST</td>
+<td>O(log n)*</td>
+<td>O(log n)*</td>
+<td>O(log n)*</td>
+<td>Simple ordered binary tree</td>
+</tr>
+
+<tr>
+<td>AVL</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>Strictly balanced BST</td>
+</tr>
+
+<tr>
+<td>Splay</td>
+<td>O(log n) amortized</td>
+<td>O(log n) amortized</td>
+<td>O(log n) amortized</td>
+<td>Recently accessed nodes move upward</td>
+</tr>
+
+<tr>
+<td>B-Tree</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>Multi-way balanced tree</td>
+</tr>
+
+<tr>
+<td>Binary Heap</td>
+<td>O(n)</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>Priority queue</td>
+</tr>
+</table>
+
+<p style="margin-top:10px">
+* BST complexities assume a reasonably balanced tree. A highly skewed
+BST can require O(n) time.
+</p>
+
+<h3>Where Are They Used?</h3>
+
+<div class="info-grid">
+
+<div class="card">
+<strong>BST</strong>
+<p>Searching, ordered data, symbol tables.</p>
+</div>
+
+<div class="card">
+<strong>AVL Tree</strong>
+<p>Applications requiring consistently fast searching.</p>
+</div>
+
+<div class="card">
+<strong>Splay Tree</strong>
+<p>Applications where recently accessed data is likely to be accessed again.</p>
+</div>
+
+<div class="card">
+<strong>B-Tree</strong>
+<p>Databases, file systems, storage systems.</p>
+</div>
+
+<div class="card">
+<strong>Binary Heap</strong>
+<p>Priority queues, scheduling, Dijkstra's algorithm, heap sort.</p>
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+
+<footer>
+    <h3>Data Structures  – Tree ADT </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+/* =========================================================
+   GENERIC TREE DRAWING
+========================================================= */
+
+function drawTree(root, containerId, highlightValue=null){
+
+    const container = document.getElementById(containerId);
+
+    container.innerHTML = "";
+
+    if(!root)
+        return;
+
+    const nodes = [];
+    const edges = [];
+
+    function collect(node, depth=0, x=0){
+
+        if(!node) return;
+
+        node.depth = depth;
+        node.x = x;
+
+        nodes.push(node);
+
+        if(node.left){
+
+            edges.push({
+                parent:node,
+                child:node.left
+            });
+
+            collect(node.left, depth+1, x-1/(depth+2));
+        }
+
+        if(node.right){
+
+            edges.push({
+                parent:node,
+                child:node.right
+            });
+
+            collect(node.right, depth+1, x+1/(depth+2));
+        }
+    }
+
+    collect(root);
+
+    let maxDepth = 0;
+
+    nodes.forEach(n => {
+        if(n.depth > maxDepth)
+            maxDepth = n.depth;
+    });
+
+    const levels = {};
+
+    nodes.forEach(n => {
+
+        if(!levels[n.depth])
+            levels[n.depth] = [];
+
+        levels[n.depth].push(n);
+    });
+
+    Object.keys(levels).forEach(level => {
+
+        const arr = levels[level];
+
+        arr.forEach((node,index)=>{
+
+            node.finalX =
+                (index+1) *
+                (800/(arr.length+1));
+
+            node.finalY =
+                30 + Number(level)*75;
+        });
+    });
+
+    edges.forEach(edge=>{
+
+        const p = edge.parent;
+        const c = edge.child;
+
+        const x1 = p.finalX + 24;
+        const y1 = p.finalY + 24;
+
+        const x2 = c.finalX + 24;
+        const y2 = c.finalY + 24;
+
+        const dx = x2-x1;
+        const dy = y2-y1;
+
+        const length = Math.sqrt(dx*dx+dy*dy);
+
+        const angle =
+            Math.atan2(dy,dx)*180/Math.PI;
+
+        const line =
+            document.createElement("div");
+
+        line.className="tree-line";
+
+        line.style.left=x1+"px";
+        line.style.top=y1+"px";
+        line.style.width=length+"px";
+        line.style.transform=
+            "rotate("+angle+"deg)";
+
+        container.appendChild(line);
+    });
+
+    nodes.forEach(node=>{
+
+        const el =
+            document.createElement("div");
+
+        el.className="tree-node";
+
+        if(node.key === highlightValue)
+            el.classList.add("highlight");
+
+        el.innerText=node.key;
+
+        el.style.left=node.finalX+"px";
+        el.style.top=node.finalY+"px";
+
+        container.appendChild(el);
+    });
+}
+
+
+/* =========================================================
+   BST
+========================================================= */
+
+let bstRoot=null;
+
+function bstNode(key){
+    return {
+        key:key,
+        left:null,
+        right:null
+    };
+}
+
+function bstInsertNode(root,key){
+
+    if(!root)
+        return bstNode(key);
+
+    if(key < root.key)
+        root.left=bstInsertNode(root.left,key);
+
+    else if(key > root.key)
+        root.right=bstInsertNode(root.right,key);
+
+    return root;
+}
+
+function bstFind(root,key){
+
+    if(!root)
+        return false;
+
+    if(root.key===key)
+        return true;
+
+    if(key<root.key)
+        return bstFind(root.left,key);
+
+    return bstFind(root.right,key);
+}
+
+function bstMin(root){
+
+    while(root.left)
+        root=root.left;
+
+    return root;
+}
+
+function bstDeleteNode(root,key){
+
+    if(!root)
+        return null;
+
+    if(key<root.key){
+
+        root.left=
+            bstDeleteNode(root.left,key);
+
+    }else if(key>root.key){
+
+        root.right=
+            bstDeleteNode(root.right,key);
+
+    }else{
+
+        if(!root.left)
+            return root.right;
+
+        if(!root.right)
+            return root.left;
+
+        let successor=
+            bstMin(root.right);
+
+        root.key=successor.key;
+
+        root.right=
+            bstDeleteNode(
+                root.right,
+                successor.key
+            );
+    }
+
+    return root;
+}
+
+function bstInorder(root,a=[]){
+
+    if(!root) return a;
+
+    bstInorder(root.left,a);
+    a.push(root.key);
+    bstInorder(root.right,a);
+
+    return a;
+}
+
+function bstPreorder(root,a=[]){
+
+    if(!root) return a;
+
+    a.push(root.key);
+    bstPreorder(root.left,a);
+    bstPreorder(root.right,a);
+
+    return a;
+}
+
+function bstPostorder(root,a=[]){
+
+    if(!root) return a;
+
+    bstPostorder(root.left,a);
+    bstPostorder(root.right,a);
+    a.push(root.key);
+
+    return a;
+}
+
+function bstInsert(){
+
+    const input=
+        document.getElementById("bstInput");
+
+    const value=Number(input.value);
+
+    if(isNaN(value))
+        return;
+
+    bstRoot=
+        bstInsertNode(bstRoot,value);
+
+    input.value="";
+
+    drawTree(bstRoot,"bstTree");
+
+    showBSTTraversal();
+}
+
+function bstSearch(){
+
+    const value=
+        Number(document.getElementById("bstInput").value);
+
+    if(isNaN(value)) return;
+
+    const found=bstFind(bstRoot,value);
+
+    document.getElementById("bstTraversalOutput").innerText=
+        found
+        ? "Search: "+value+" found ✓"
+        : "Search: "+value+" not found ✗";
+
+    drawTree(bstRoot,"bstTree",value);
+}
+
+function bstDelete(){
+
+    const value=
+        Number(document.getElementById("bstInput").value);
+
+    if(isNaN(value)) return;
+
+    bstRoot=
+        bstDeleteNode(bstRoot,value);
+
+    drawTree(bstRoot,"bstTree");
+
+    showBSTTraversal();
+}
+
+function bstClear(){
+
+    bstRoot=null;
+
+    drawTree(null,"bstTree");
+
+    document.getElementById(
+        "bstTraversalOutput"
+    ).innerText="Inorder: -";
+}
+
+function showBSTTraversal(){
+
+    const type=
+        document.getElementById("bstTraversal").value;
+
+    let result=[];
+
+    if(type==="inorder")
+        result=bstInorder(bstRoot);
+
+    else if(type==="preorder")
+        result=bstPreorder(bstRoot);
+
+    else
+        result=bstPostorder(bstRoot);
+
+    document.getElementById(
+        "bstTraversalOutput"
+    ).innerText=
+        type.charAt(0).toUpperCase()+
+        type.slice(1)+": "+
+        (result.length ? result.join(" → ") : "-");
+}
+
+/* =========================================================
+   TRAVERSALS
+========================================================= */
+
+const traversalTree = {
+    key: 50,
+    left: {
+        key: 30,
+        left: {
+            key: 20,
+            left: null,
+            right: null
+        },
+        right: {
+            key: 40,
+            left: null,
+            right: null
+        }
+    },
+    right: {
+        key: 70,
+        left: {
+            key: 60,
+            left: null,
+            right: null
+        },
+        right: {
+            key: 80,
+            left: null,
+            right: null
+        }
+    }
+};
+
+function inorderArray(root, arr) {
+
+    if (!root) return;
+
+    inorderArray(root.left, arr);
+    arr.push(root.key);
+    inorderArray(root.right, arr);
+}
+
+function preorderArray(root, arr) {
+
+    if (!root) return;
+
+    arr.push(root.key);
+    preorderArray(root.left, arr);
+    preorderArray(root.right, arr);
+}
+
+function postorderArray(root, arr) {
+
+    if (!root) return;
+
+    postorderArray(root.left, arr);
+    postorderArray(root.right, arr);
+    arr.push(root.key);
+}
+
+function levelArray(root) {
+
+    if (!root) return [];
+
+    const result = [];
+    const queue = [root];
+
+    while (queue.length) {
+
+        const current = queue.shift();
+
+        result.push(current.key);
+
+        if (current.left)
+            queue.push(current.left);
+
+        if (current.right)
+            queue.push(current.right);
+    }
+
+    return result;
+}
+
+function showTraversal(type) {
+
+    let result = [];
+
+    if (type === "inorder")
+        inorderArray(traversalTree, result);
+
+    else if (type === "preorder")
+        preorderArray(traversalTree, result);
+
+    else if (type === "postorder")
+        postorderArray(traversalTree, result);
+
+    else
+        result = levelArray(traversalTree);
+
+    document.getElementById("traversalResult").textContent =
+        type.toUpperCase() + " : " + result.join(" → ");
+}
+
+
+/* =========================================================
+   AVL
+========================================================= */
+
+let avlRoot=null;
+
+function avlNode(key){
+
+    return {
+        key:key,
+        height:1,
+        left:null,
+        right:null
+    };
+}
+
+function avlHeight(n){
+
+    return n ? n.height : 0;
+}
+
+function avlBalance(n){
+
+    return n ?
+        avlHeight(n.left)-
+        avlHeight(n.right)
+        :0;
+}
+
+function rotateRight(y){
+
+    const x=y.left;
+    const t=x.right;
+
+    x.right=y;
+    y.left=t;
+
+    y.height=
+        1+Math.max(
+            avlHeight(y.left),
+            avlHeight(y.right)
+        );
+
+    x.height=
+        1+Math.max(
+            avlHeight(x.left),
+            avlHeight(x.right)
+        );
+
+    return x;
+}
+
+function rotateLeft(x){
+
+    const y=x.right;
+    const t=y.left;
+
+    y.left=x;
+    x.right=t;
+
+    x.height=
+        1+Math.max(
+            avlHeight(x.left),
+            avlHeight(x.right)
+        );
+
+    y.height=
+        1+Math.max(
+            avlHeight(y.left),
+            avlHeight(y.right)
+        );
+
+    return y;
+}
+
+function avlInsertNode(root,key){
+
+    if(!root)
+        return avlNode(key);
+
+    if(key<root.key)
+        root.left=
+            avlInsertNode(root.left,key);
+
+    else if(key>root.key)
+        root.right=
+            avlInsertNode(root.right,key);
+
+    else
+        return root;
+
+    root.height=
+        1+Math.max(
+            avlHeight(root.left),
+            avlHeight(root.right)
+        );
+
+    const balance=
+        avlBalance(root);
+
+    // LL
+    if(balance>1 && key<root.left.key)
+        return rotateRight(root);
+
+    // RR
+    if(balance<-1 && key>root.right.key)
+        return rotateLeft(root);
+
+    // LR
+    if(balance>1 && key>root.left.key){
+
+        root.left=
+            rotateLeft(root.left);
+
+        return rotateRight(root);
+    }
+
+    // RL
+    if(balance<-1 && key<root.right.key){
+
+        root.right=
+            rotateRight(root.right);
+
+        return rotateLeft(root);
+    }
+
+    return root;
+}
+
+function avlInorder(root,a=[]){
+
+    if(!root) return a;
+
+    avlInorder(root.left,a);
+    a.push(root.key);
+    avlInorder(root.right,a);
+
+    return a;
+}
+
+function avlInsert(){
+
+    const value=
+        Number(document.getElementById("avlInput").value);
+
+    if(isNaN(value)) return;
+
+    avlRoot=
+        avlInsertNode(avlRoot,value);
+
+    document.getElementById("avlInput").value="";
+
+    drawTree(avlRoot,"avlTree");
+
+    document.getElementById("avlOutput").innerText=
+        "AVL Inorder: "+
+        avlInorder(avlRoot).join(" → ");
+}
+
+function avlSearch(){
+
+    const value=
+        Number(document.getElementById("avlInput").value);
+
+    if(isNaN(value)) return;
+
+    let node=avlRoot;
+
+    while(node){
+
+        if(node.key===value){
+
+            drawTree(
+                avlRoot,
+                "avlTree",
+                value
+            );
+
+            document.getElementById(
+                "avlOutput"
+            ).innerText=
+                value+" found ✓";
+
+            return;
+        }
+
+        node =
+            value<node.key ?
+            node.left :
+            node.right;
+    }
+
+    document.getElementById(
+        "avlOutput"
+    ).innerText=
+        value+" not found ✗";
+}
+
+function avlClear(){
+
+    avlRoot=null;
+
+    drawTree(null,"avlTree");
+
+    document.getElementById(
+        "avlOutput"
+    ).innerText=
+        "AVL Inorder: -";
+}
+
+
+/* =========================================================
+   SPLAY
+========================================================= */
+
+let splayRoot=null;
+
+function splayRotateRight(x){
+
+    const y=x.left;
+
+    x.left=y.right;
+    y.right=x;
+
+    return y;
+}
+
+function splayRotateLeft(x){
+
+    const y=x.right;
+
+    x.right=y.left;
+    y.left=x;
+
+    return y;
+}
+
+function splay(root,key){
+
+    if(!root || root.key===key)
+        return root;
+
+    if(key<root.key){
+
+        if(!root.left)
+            return root;
+
+        if(key<root.left.key){
+
+            root.left.left=
+                splay(
+                    root.left.left,
+                    key
+                );
+
+            root=
+                splayRotateRight(root);
+
+        }else if(key>root.left.key){
+
+            root.left.right=
+                splay(
+                    root.left.right,
+                    key
+                );
+
+            if(root.left.right)
+                root.left=
+                    splayRotateLeft(
+                        root.left
+                    );
+        }
+
+        return root.left ?
+            splayRotateRight(root) :
+            root;
+
+    }else{
+
+        if(!root.right)
+            return root;
+
+        if(key>root.right.key){
+
+            root.right.right=
+                splay(
+                    root.right.right,
+                    key
+                );
+
+            root=
+                splayRotateLeft(root);
+
+        }else if(key<root.right.key){
+
+            root.right.left=
+                splay(
+                    root.right.left,
+                    key
+                );
+
+            if(root.right.left)
+                root.right=
+                    splayRotateRight(
+                        root.right
+                    );
+        }
+
+        return root.right ?
+            splayRotateLeft(root) :
+            root;
+    }
+}
+
+function splayInsertNode(root,key){
+
+    if(!root)
+        return {
+            key:key,
+            left:null,
+            right:null
+        };
+
+    root=splay(root,key);
+
+    if(root.key===key)
+        return root;
+
+    const node={
+        key:key,
+        left:null,
+        right:null
+    };
+
+    if(key<root.key){
+
+        node.right=root;
+        node.left=root.left;
+
+        root.left=null;
+
+    }else{
+
+        node.left=root;
+        node.right=root.right;
+
+        root.right=null;
+    }
+
+    return node;
+}
+
+function splayInorder(root,a=[]){
+
+    if(!root) return a;
+
+    splayInorder(root.left,a);
+    a.push(root.key);
+    splayInorder(root.right,a);
+
+    return a;
+}
+
+function splayInsert(){
+
+    const value=
+        Number(
+            document.getElementById(
+                "splayInput"
+            ).value
+        );
+
+    if(isNaN(value)) return;
+
+    splayRoot=
+        splayInsertNode(
+            splayRoot,
+            value
+        );
+
+    document.getElementById(
+        "splayInput"
+    ).value="";
+
+    drawTree(
+        splayRoot,
+        "splayTree"
+    );
+
+    document.getElementById(
+        "splayOutput"
+    ).innerText=
+        "Splay Inorder: "+
+        splayInorder(splayRoot).join(" → ");
+}
+
+function splaySearch(){
+
+    const value=
+        Number(
+            document.getElementById(
+                "splayInput"
+            ).value
+        );
+
+    if(isNaN(value)) return;
+
+    splayRoot=
+        splay(
+            splayRoot,
+            value
+        );
+
+    drawTree(
+        splayRoot,
+        "splayTree",
+        value
+    );
+
+    document.getElementById(
+        "splayOutput"
+    ).innerText=
+        "Root after splay: "+
+        (splayRoot ? splayRoot.key : "-");
+}
+
+function splayClear(){
+
+    splayRoot=null;
+
+    drawTree(null,"splayTree");
+
+    document.getElementById(
+        "splayOutput"
+    ).innerText=
+        "Splay Inorder: -";
+}
+
+
+/* =========================================================
+   MAX HEAP
+========================================================= */
+
+let heap=[];
+
+function heapInsert(){
+
+    const value=
+        Number(
+            document.getElementById(
+                "heapInput"
+            ).value
+        );
+
+    if(isNaN(value)) return;
+
+    heap.push(value);
+
+    let index=heap.length-1;
+
+    while(index>0){
+
+        const parent=
+            Math.floor((index-1)/2);
+
+        if(heap[parent]>=heap[index])
+            break;
+
+        [
+            heap[parent],
+            heap[index]
+        ]=[
+            heap[index],
+            heap[parent]
+        ];
+
+        index=parent;
+    }
+
+    document.getElementById(
+        "heapInput"
+    ).value="";
+
+    drawHeap();
+
+    updateHeapOutput();
+}
+
+function heapDelete(){
+
+    if(heap.length===0)
+        return;
+
+    heap[0]=heap[heap.length-1];
+
+    heap.pop();
+
+    let index=0;
+
+    while(true){
+
+        let largest=index;
+
+        const left=
+            2*index+1;
+
+        const right=
+            2*index+2;
+
+        if(
+            left<heap.length &&
+            heap[left]>heap[largest]
+        )
+            largest=left;
+
+        if(
+            right<heap.length &&
+            heap[right]>heap[largest]
+        )
+            largest=right;
+
+        if(largest===index)
+            break;
+
+        [
+            heap[index],
+            heap[largest]
+        ]=[
+            heap[largest],
+            heap[index]
+        ];
+
+        index=largest;
+    }
+
+    drawHeap();
+
+    updateHeapOutput();
+}
+
+function drawHeap(){
+
+    const root=
+        heapToTree(0);
+
+    drawTree(
+        root,
+        "heapTree"
+    );
+}
+
+function heapToTree(index){
+
+    if(index>=heap.length)
+        return null;
+
+    return {
+        key:heap[index],
+        left:heapToTree(2*index+1),
+        right:heapToTree(2*index+2)
+    };
+}
+
+function updateHeapOutput(){
+
+    document.getElementById(
+        "heapOutput"
+    ).innerText=
+        "Heap Array: [ "+
+        heap.join(", ")+" ]";
+}
+
+function heapClear(){
+
+    heap=[];
+
+    drawTree(null,"heapTree");
+
+    updateHeapOutput();
+}
+
+
+/* =========================================================
+   INITIAL DEMO DATA
+========================================================= */
+
+[
+    50,30,70,20,40,60,80
+].forEach(v=>{
+    bstRoot=
+        bstInsertNode(
+            bstRoot,
+            v
+        );
+});
+
+drawTree(
+    bstRoot,
+    "bstTree"
+);
+
+showBSTTraversal();
+
+
+[
+    30,20,10,25,40,50
+].forEach(v=>{
+    avlRoot=
+        avlInsertNode(
+            avlRoot,
+            v
+        );
+});
+
+drawTree(
+    avlRoot,
+    "avlTree"
+);
+
+document.getElementById(
+    "avlOutput"
+).innerText=
+    "AVL Inorder: "+
+    avlInorder(avlRoot).join(" → ");
+
+
+[
+    50,30,70,20,40,60,80
+].forEach(v=>{
+    splayRoot=
+        splayInsertNode(
+            splayRoot,
+            v
+        );
+});
+
+drawTree(
+    splayRoot,
+    "splayTree"
+);
+
+document.getElementById(
+    "splayOutput"
+).innerText=
+    "Splay Inorder: "+
+    splayInorder(splayRoot).join(" → ");
+
+
+[
+    50,30,70,20,40,60,90
+].forEach(v=>{
+
+    heap.push(v);
+
+    let i=heap.length-1;
+
+    while(i>0){
+
+        let p=Math.floor((i-1)/2);
+
+        if(heap[p]>=heap[i])
+            break;
+
+        [heap[p],heap[i]]=
+        [heap[i],heap[p]];
+
+        i=p;
+    }
+});
+
+drawHeap();
+updateHeapOutput();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,2147 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
+
+<title>Visual Prim's and Kruskal's Algorithms</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #173f5f;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 25px auto;
+}
+
+.panel {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #ccc;
+}
+
+/* =========================
+   TABS
+========================= */
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tab {
+    padding: 13px 25px;
+    border: none;
+    border-radius: 7px;
+    background: #dce4ea;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.tab.active {
+    background: #173f5f;
+    color: white;
+}
+
+/* =========================
+   CONTROLS
+========================= */
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+input,
+select {
+    padding: 10px;
+    border: 1px solid #aaa;
+    border-radius: 6px;
+    font-size: 15px;
+}
+
+button {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    background: #173f5f;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+/* =========================
+   GRAPH
+========================= */
+
+.graph-area {
+    position: relative;
+    height: 560px;
+    border: 2px solid #d2d8dd;
+    border-radius: 10px;
+    background: #fafbfc;
+    overflow: hidden;
+}
+
+svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.edge {
+    stroke: #777;
+    stroke-width: 3;
+}
+
+.edge.mst {
+    stroke: #173f5f;
+    stroke-width: 7;
+}
+
+.edge.current {
+    stroke: #d95f02;
+    stroke-width: 7;
+}
+
+.edge.rejected {
+    stroke: #aaa;
+    stroke-width: 3;
+    stroke-dasharray: 8 5;
+}
+
+.weight {
+    font-size: 16px;
+    font-weight: bold;
+    fill: #222;
+}
+
+.vertex {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: white;
+    border: 4px solid #173f5f;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 19px;
+    transform: translate(-50%, -50%);
+    z-index: 5;
+}
+
+.vertex.selected {
+    background: #f2c14e;
+    border-color: #a56b00;
+}
+
+.vertex.current {
+    background: #d95f02;
+    color: white;
+    border-color: #8c3d00;
+}
+
+/* =========================
+   STATUS
+========================= */
+
+.status {
+    padding: 15px;
+    margin-top: 15px;
+    background: #eef3f7;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* =========================
+   INFO
+========================= */
+
+.info {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-top: 18px;
+}
+
+.info-box {
+    min-width: 150px;
+    text-align: center;
+    background: #eef3f7;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.info-box strong {
+    display: block;
+    font-size: 25px;
+    margin-top: 5px;
+}
+
+/* =========================
+   EDGE TABLE
+========================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+th {
+    background: #173f5f;
+    color: white;
+}
+
+.selected-row {
+    background: #e2f0d9;
+    font-weight: bold;
+}
+
+.current-row {
+    background: #f9dfbd;
+    font-weight: bold;
+}
+
+.rejected-row {
+    background: #eeeeee;
+    color: #777;
+}
+
+/* =========================
+   GRID
+========================= */
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+pre {
+    background: #1e1e1e;
+    color: #d4d4d4;
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+.explanation {
+    line-height: 1.6;
+}
+
+.algorithm-box {
+    border-left: 5px solid #173f5f;
+    padding-left: 15px;
+    margin-bottom: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media(max-width: 900px) {
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+
+    .graph-area {
+        height: 450px;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<header>
+
+<h1>
+    Visual Prim's and Kruskal's Algorithms
+</h1>
+
+<p>
+    Minimum Spanning Tree (MST) Visualization with C++
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- ========================
+     ALGORITHM TABS
+========================= -->
+
+<div class="panel">
+
+<div class="tabs">
+
+<button class="tab active"
+        onclick="selectAlgorithm('prim', this)">
+    Prim's Algorithm
+</button>
+
+<button class="tab"
+        onclick="selectAlgorithm('kruskal', this)">
+    Kruskal's Algorithm
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ========================
+     GRAPH CONTROLS
+========================= -->
+
+<div class="panel">
+
+<h2>Graph Controls</h2>
+
+<div class="controls">
+
+<input type="text"
+       id="from"
+       placeholder="From (A)">
+
+<input type="text"
+       id="to"
+       placeholder="To (B)">
+
+<input type="number"
+       id="weight"
+       placeholder="Weight"
+       min="1">
+
+<button onclick="addEdge()">
+    Add Edge
+</button>
+
+<button onclick="loadSample()">
+    Load Sample Graph
+</button>
+
+<button onclick="clearGraph()">
+    Clear Graph
+</button>
+
+</div>
+
+<br>
+
+<div class="controls">
+
+<select id="startVertex">
+
+<option value="A">Start Vertex: A</option>
+<option value="B">Start Vertex: B</option>
+<option value="C">Start Vertex: C</option>
+<option value="D">Start Vertex: D</option>
+<option value="E">Start Vertex: E</option>
+<option value="F">Start Vertex: F</option>
+
+</select>
+
+<button onclick="startAlgorithm()">
+    Start Algorithm
+</button>
+
+<button onclick="nextStep()">
+    Next Step
+</button>
+
+<button onclick="runAll()">
+    Run All
+</button>
+
+<button onclick="resetAlgorithm()">
+    Reset Algorithm
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ========================
+     GRAPH
+========================= -->
+
+<div class="panel">
+
+<h2 id="algorithmTitle">
+    Prim's Algorithm
+</h2>
+
+<div class="graph-area"
+     id="graphArea">
+
+<svg id="svg"></svg>
+
+</div>
+
+
+<div class="info">
+
+<div class="info-box">
+
+MST Edges
+
+<strong id="mstEdges">
+0
+</strong>
+
+</div>
+
+
+<div class="info-box">
+
+MST Weight
+
+<strong id="mstWeight">
+0
+</strong>
+
+</div>
+
+
+<div class="info-box">
+
+Vertices
+
+<strong id="vertexCount">
+0
+</strong>
+
+</div>
+
+
+<div class="info-box">
+
+Edges
+
+<strong id="edgeCount">
+0
+</strong>
+
+</div>
+
+</div>
+
+
+<div id="status"
+     class="status">
+
+Load a graph and start the algorithm.
+
+</div>
+
+</div>
+
+
+<!-- ========================
+     EDGE TABLE
+========================= -->
+
+<div class="panel">
+
+<h2>Edges</h2>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>#</th>
+<th>Edge</th>
+<th>Weight</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="edgeTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- ========================
+     EXPLANATION
+========================= -->
+
+<div class="grid">
+
+
+<div class="panel">
+
+<h2>Algorithm Explanation</h2>
+
+<div id="explanation">
+
+<h3>Prim's Algorithm</h3>
+
+<p>
+Prim's algorithm starts with one vertex and
+repeatedly chooses the minimum-weight edge that
+connects a vertex already in the MST to a vertex
+outside the MST.
+</p>
+
+<pre>
+Start
+  ↓
+Choose minimum edge
+  ↓
+Add new vertex
+  ↓
+Choose next minimum edge
+  ↓
+Repeat until all vertices are included
+</pre>
+
+<p>
+The important idea is that Prim's algorithm
+grows <b>one connected tree</b>.
+</p>
+
+</div>
+
+</div>
+
+
+<!-- ========================
+     C++ CODE
+========================= -->
+
+<div class="panel">
+
+<h2>C++ Implementation</h2>
+
+<pre id="cppCode"></pre>
+
+</div>
+
+</div>
+
+
+<!-- ========================
+     COMPARISON
+========================= -->
+
+<div class="panel">
+
+<h2>Prim vs Kruskal</h2>
+
+<table>
+
+<tr>
+
+<th>Feature</th>
+<th>Prim</th>
+<th>Kruskal</th>
+
+</tr>
+
+<tr>
+
+<td>Approach</td>
+
+<td>
+Vertex based
+</td>
+
+<td>
+Edge based
+</td>
+
+</tr>
+
+<tr>
+
+<td>Starting Point</td>
+
+<td>
+Starts from a vertex
+</td>
+
+<td>
+No starting vertex required
+</td>
+
+</tr>
+
+<tr>
+
+<td>Main Data Structure</td>
+
+<td>
+Priority Queue / Min Heap
+</td>
+
+<td>
+Disjoint Set / Union-Find
+</td>
+
+</tr>
+
+<tr>
+
+<td>Edge Selection</td>
+
+<td>
+Minimum edge connecting MST
+</td>
+
+<td>
+Globally smallest edge
+</td>
+
+</tr>
+
+<tr>
+
+<td>Cycle Handling</td>
+
+<td>
+Avoids adding visited vertex
+</td>
+
+<td>
+Uses Union-Find
+</td>
+
+</tr>
+
+<tr>
+
+<td>Typical Complexity</td>
+
+<td>
+O(E log V)
+</td>
+
+<td>
+O(E log E)
+</td>
+
+</tr>
+
+</table>
+
+</div>
+
+
+<!-- ========================
+     COMPLEXITY
+========================= -->
+
+<div class="panel">
+
+<h2>Time Complexity</h2>
+
+<table>
+
+<tr>
+<th>Algorithm</th>
+<th>Complexity</th>
+</tr>
+
+<tr>
+<td>Prim using adjacency matrix</td>
+<td>O(V²)</td>
+</tr>
+
+<tr>
+<td>Prim using priority queue</td>
+<td>O(E log V)</td>
+</tr>
+
+<tr>
+<td>Kruskal</td>
+<td>O(E log E)</td>
+</tr>
+
+</table>
+
+</div>
+
+
+</div>
+<footer>
+    <h3>Data Structures  – Finding Minimum Spanning Tree </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+<script>
+
+/* ======================================================
+   DATA
+====================================================== */
+
+let vertices = [];
+
+let edges = [];
+
+let algorithm = "prim";
+
+let step = 0;
+
+let mst = [];
+
+let mstWeight = 0;
+
+let primVisited = new Set();
+
+let algorithmStarted = false;
+
+
+/* ======================================================
+   VERTEX POSITIONS
+====================================================== */
+
+const positions = {
+
+A: [18, 25],
+
+B: [50, 15],
+
+C: [82, 25],
+
+D: [25, 65],
+
+E: [50, 85],
+
+F: [78, 65]
+
+};
+
+
+/* ======================================================
+   C++ CODE
+====================================================== */
+
+const primCode = `
+// Prim's Algorithm
+
+#include <iostream>
+#include <vector>
+#include <queue>
+
+using namespace std;
+
+typedef pair<int,int> PII;
+
+void prim(
+    int V,
+    vector<vector<PII>>& adj
+) {
+
+    priority_queue<
+        PII,
+        vector<PII>,
+        greater<PII>
+    > pq;
+
+    vector<bool> visited(V, false);
+
+    // {weight, vertex}
+
+    pq.push({0, 0});
+
+    int totalWeight = 0;
+
+    while (!pq.empty()) {
+
+        int weight = pq.top().first;
+        int u = pq.top().second;
+
+        pq.pop();
+
+        if (visited[u])
+            continue;
+
+        visited[u] = true;
+
+        totalWeight += weight;
+
+        cout << "Selected vertex: "
+             << u << endl;
+
+        for (auto edge : adj[u]) {
+
+            int v = edge.first;
+            int w = edge.second;
+
+            if (!visited[v]) {
+
+                pq.push({w, v});
+            }
+        }
+    }
+
+    cout << "MST Weight = "
+         << totalWeight;
+}
+`;
+
+
+const kruskalCode = `
+// Kruskal's Algorithm
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+struct Edge {
+
+    int u;
+    int v;
+    int weight;
+};
+
+
+int parent[100];
+int rankValue[100];
+
+
+int find(int x) {
+
+    if (parent[x] != x)
+        parent[x] =
+            find(parent[x]);
+
+    return parent[x];
+}
+
+
+void unite(int a, int b) {
+
+    a = find(a);
+    b = find(b);
+
+    if (a == b)
+        return;
+
+    if (rankValue[a] <
+        rankValue[b]) {
+
+        parent[a] = b;
+
+    } else {
+
+        parent[b] = a;
+
+        if (rankValue[a] ==
+            rankValue[b])
+
+            rankValue[a]++;
+    }
+}
+
+
+void kruskal(
+    int V,
+    vector<Edge>& edges
+) {
+
+    sort(
+        edges.begin(),
+        edges.end(),
+        [](Edge a, Edge b) {
+
+            return a.weight <
+                   b.weight;
+        }
+    );
+
+
+    for (int i = 0;
+         i < V;
+         i++) {
+
+        parent[i] = i;
+        rankValue[i] = 0;
+    }
+
+
+    int totalWeight = 0;
+
+    int count = 0;
+
+
+    for (Edge e : edges) {
+
+        int u = find(e.u);
+        int v = find(e.v);
+
+
+        if (u != v) {
+
+            unite(u, v);
+
+            cout << e.u
+                 << " - "
+                 << e.v
+                 << " : "
+                 << e.weight
+                 << endl;
+
+            totalWeight +=
+                e.weight;
+
+            count++;
+        }
+
+        if (count == V - 1)
+            break;
+    }
+
+
+    cout << "MST Weight = "
+         << totalWeight;
+}
+`;
+
+
+/* ======================================================
+   SELECT ALGORITHM
+====================================================== */
+
+function selectAlgorithm(type, button) {
+
+    algorithm = type;
+
+    document
+        .querySelectorAll(".tab")
+        .forEach(btn =>
+            btn.classList.remove("active")
+        );
+
+    button.classList.add("active");
+
+
+    if (type === "prim") {
+
+        document.getElementById(
+            "algorithmTitle"
+        ).innerText =
+            "Prim's Algorithm";
+
+
+        document.getElementById(
+            "explanation"
+        ).innerHTML = `
+
+        <h3>Prim's Algorithm</h3>
+
+        <p>
+        Prim's algorithm grows the MST starting
+        from a selected vertex.
+        </p>
+
+        <pre>
+Start with a vertex
+       ↓
+Find minimum outgoing edge
+       ↓
+Add the new vertex
+       ↓
+Repeat
+       ↓
+MST complete
+        </pre>
+
+        <p>
+        At every step, select the smallest edge
+        connecting the current MST to an unvisited
+        vertex.
+        </p>
+        `;
+
+    } else {
+
+        document.getElementById(
+            "algorithmTitle"
+        ).innerText =
+            "Kruskal's Algorithm";
+
+
+        document.getElementById(
+            "explanation"
+        ).innerHTML = `
+
+        <h3>Kruskal's Algorithm</h3>
+
+        <p>
+        Kruskal's algorithm sorts all edges by
+        increasing weight.
+        </p>
+
+        <pre>
+Sort edges
+   ↓
+Choose smallest edge
+   ↓
+Does it form a cycle?
+   ↓
+No → Add edge
+Yes → Reject edge
+   ↓
+Repeat
+        </pre>
+
+        <p>
+        A Disjoint Set / Union-Find structure
+        is normally used to detect cycles.
+        </p>
+        `;
+    }
+
+
+    updateCode();
+
+    resetAlgorithm();
+}
+
+
+/* ======================================================
+   UPDATE CODE
+====================================================== */
+
+function updateCode() {
+
+    document.getElementById(
+        "cppCode"
+    ).innerText =
+        algorithm === "prim"
+        ? primCode
+        : kruskalCode;
+}
+
+
+/* ======================================================
+   ADD EDGE
+====================================================== */
+
+function addEdge() {
+
+    const from =
+        document.getElementById(
+            "from"
+        ).value.trim().toUpperCase();
+
+    const to =
+        document.getElementById(
+            "to"
+        ).value.trim().toUpperCase();
+
+    const weight =
+        Number(
+            document.getElementById(
+                "weight"
+            ).value
+        );
+
+
+    if (
+        from === "" ||
+        to === "" ||
+        !weight ||
+        weight <= 0
+    ) {
+
+        showStatus(
+            "Enter valid vertices and weight."
+        );
+
+        return;
+    }
+
+
+    if (
+        !positions[from] ||
+        !positions[to]
+    ) {
+
+        showStatus(
+            "Use vertices A, B, C, D, E or F."
+        );
+
+        return;
+    }
+
+
+    if (from === to) {
+
+        showStatus(
+            "Self loops are not allowed."
+        );
+
+        return;
+    }
+
+
+    const exists =
+        edges.some(e =>
+            (
+                e.from === from &&
+                e.to === to
+            ) ||
+            (
+                e.from === to &&
+                e.to === from
+            )
+        );
+
+
+    if (exists) {
+
+        showStatus(
+            "This edge already exists."
+        );
+
+        return;
+    }
+
+
+    edges.push({
+
+        from: from,
+
+        to: to,
+
+        weight: weight
+
+    });
+
+
+    if (!vertices.includes(from))
+        vertices.push(from);
+
+    if (!vertices.includes(to))
+        vertices.push(to);
+
+
+    drawGraph();
+
+    updateEdgeTable();
+
+    updateInfo();
+
+    showStatus(
+        "Added edge " +
+        from +
+        " - " +
+        to +
+        " with weight " +
+        weight
+    );
+}
+
+
+/* ======================================================
+   SAMPLE GRAPH
+====================================================== */
+
+function loadSample() {
+
+    vertices = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F"
+    ];
+
+
+    edges = [
+
+        {
+            from: "A",
+            to: "B",
+            weight: 4
+        },
+
+        {
+            from: "A",
+            to: "D",
+            weight: 2
+        },
+
+        {
+            from: "B",
+            to: "C",
+            weight: 6
+        },
+
+        {
+            from: "B",
+            to: "D",
+            weight: 5
+        },
+
+        {
+            from: "B",
+            to: "E",
+            weight: 3
+        },
+
+        {
+            from: "C",
+            to: "E",
+            weight: 1
+        },
+
+        {
+            from: "C",
+            to: "F",
+            weight: 4
+        },
+
+        {
+            from: "D",
+            to: "E",
+            weight: 8
+        },
+
+        {
+            from: "D",
+            to: "F",
+            weight: 7
+        },
+
+        {
+            from: "E",
+            to: "F",
+            weight: 2
+        }
+
+    ];
+
+
+    resetAlgorithm();
+
+    drawGraph();
+
+    updateEdgeTable();
+
+    updateInfo();
+
+    showStatus(
+        "Sample graph loaded. Select an algorithm."
+    );
+}
+
+
+/* ======================================================
+   CLEAR GRAPH
+====================================================== */
+
+function clearGraph() {
+
+    vertices = [];
+
+    edges = [];
+
+    resetAlgorithm();
+
+    drawGraph();
+
+    updateEdgeTable();
+
+    updateInfo();
+
+    showStatus(
+        "Graph cleared."
+    );
+}
+
+
+/* ======================================================
+   START ALGORITHM
+====================================================== */
+
+function startAlgorithm() {
+
+    if (vertices.length === 0) {
+
+        showStatus(
+            "Load or create a graph first."
+        );
+
+        return;
+    }
+
+
+    resetAlgorithm(false);
+
+    algorithmStarted = true;
+
+
+    if (algorithm === "prim") {
+
+        const start =
+            document.getElementById(
+                "startVertex"
+            ).value;
+
+
+        if (!vertices.includes(start)) {
+
+            showStatus(
+                "Selected start vertex is not in graph."
+            );
+
+            return;
+        }
+
+
+        primVisited.add(start);
+
+        showStatus(
+            "Prim started from vertex " +
+            start +
+            ". Click Next Step."
+        );
+
+    } else {
+
+        edges.sort(
+            (a, b) =>
+                a.weight - b.weight
+        );
+
+
+        showStatus(
+            "Kruskal: edges sorted by weight. Click Next Step."
+        );
+    }
+
+
+    drawGraph();
+
+    updateEdgeTable();
+}
+
+
+/* ======================================================
+   NEXT STEP
+====================================================== */
+
+function nextStep() {
+
+    if (!algorithmStarted) {
+
+        startAlgorithm();
+
+        return;
+    }
+
+
+    if (algorithm === "prim") {
+
+        nextPrimStep();
+
+    } else {
+
+        nextKruskalStep();
+    }
+}
+
+
+/* ======================================================
+   PRIM STEP
+====================================================== */
+
+function nextPrimStep() {
+
+    if (mst.length >= vertices.length - 1) {
+
+        showStatus(
+            "Prim complete. MST weight = " +
+            mstWeight
+        );
+
+        return;
+    }
+
+
+    let candidates = [];
+
+
+    edges.forEach((edge, index) => {
+
+        const fromVisited =
+            primVisited.has(edge.from);
+
+        const toVisited =
+            primVisited.has(edge.to);
+
+
+        if (
+            fromVisited &&
+            !toVisited
+        ) {
+
+            candidates.push({
+                edge: edge,
+                index: index
+            });
+        }
+
+
+        if (
+            toVisited &&
+            !fromVisited
+        ) {
+
+            candidates.push({
+                edge: edge,
+                index: index
+            });
+        }
+
+    });
+
+
+    if (candidates.length === 0) {
+
+        showStatus(
+            "Graph is disconnected. MST cannot be completed."
+        );
+
+        return;
+    }
+
+
+    candidates.sort(
+        (a, b) =>
+            a.edge.weight -
+            b.edge.weight
+    );
+
+
+    const chosen =
+        candidates[0].edge;
+
+
+    mst.push(chosen);
+
+    mstWeight +=
+        chosen.weight;
+
+
+    primVisited.add(
+        chosen.from
+    );
+
+    primVisited.add(
+        chosen.to
+    );
+
+
+    step++;
+
+
+    drawGraph(
+        chosen
+    );
+
+    updateEdgeTable();
+
+
+    showStatus(
+        "Prim selected edge " +
+        chosen.from +
+        " - " +
+        chosen.to +
+        " with weight " +
+        chosen.weight +
+        ". MST weight = " +
+        mstWeight
+    );
+
+
+    updateInfo();
+}
+
+
+/* ======================================================
+   KRUSKAL STEP
+====================================================== */
+
+let kruskalIndex = 0;
+
+let parent = {};
+
+
+function initializeUnionFind() {
+
+    parent = {};
+
+    vertices.forEach(v => {
+
+        parent[v] = v;
+
+    });
+}
+
+
+function findParent(x) {
+
+    if (parent[x] !== x) {
+
+        parent[x] =
+            findParent(parent[x]);
+    }
+
+    return parent[x];
+}
+
+
+function unionSet(a, b) {
+
+    a = findParent(a);
+
+    b = findParent(b);
+
+
+    if (a === b)
+        return false;
+
+
+    parent[b] = a;
+
+    return true;
+}
+
+
+function nextKruskalStep() {
+
+    if (
+        mst.length >=
+        vertices.length - 1
+    ) {
+
+        showStatus(
+            "Kruskal complete. MST weight = " +
+            mstWeight
+        );
+
+        return;
+    }
+
+
+    while (
+        kruskalIndex <
+        edges.length
+    ) {
+
+        const edge =
+            edges[kruskalIndex];
+
+        const createsCycle =
+            findParent(edge.from) ===
+            findParent(edge.to);
+
+
+        if (createsCycle) {
+
+            step++;
+
+            drawGraph(edge);
+
+            updateEdgeTable(
+                kruskalIndex,
+                "rejected"
+            );
+
+
+            showStatus(
+                "Kruskal rejected " +
+                edge.from +
+                " - " +
+                edge.to +
+                " (" +
+                edge.weight +
+                ") because it creates a cycle."
+            );
+
+
+            kruskalIndex++;
+
+            return;
+        }
+
+
+        unionSet(
+            edge.from,
+            edge.to
+        );
+
+
+        mst.push(edge);
+
+        mstWeight +=
+            edge.weight;
+
+
+        step++;
+
+        drawGraph(edge);
+
+        updateEdgeTable(
+            kruskalIndex,
+            "selected"
+        );
+
+
+        showStatus(
+            "Kruskal selected " +
+            edge.from +
+            " - " +
+            edge.to +
+            " with weight " +
+            edge.weight +
+            ". MST weight = " +
+            mstWeight
+        );
+
+
+        kruskalIndex++;
+
+        updateInfo();
+
+        return;
+    }
+
+
+    showStatus(
+        "Kruskal finished."
+    );
+}
+
+
+/* ======================================================
+   RUN ALL
+====================================================== */
+
+function runAll() {
+
+    if (!algorithmStarted)
+        startAlgorithm();
+
+
+    let safety = 0;
+
+
+    while (
+        mst.length <
+        vertices.length - 1 &&
+        safety < 100
+    ) {
+
+        if (algorithm === "prim")
+            nextPrimStep();
+        else
+            nextKruskalStep();
+
+        safety++;
+    }
+
+
+    drawGraph();
+
+    updateEdgeTable();
+
+    updateInfo();
+
+
+    if (
+        mst.length ===
+        vertices.length - 1
+    ) {
+
+        showStatus(
+            algorithm === "prim"
+            ? "Prim complete. MST weight = " + mstWeight
+            : "Kruskal complete. MST weight = " + mstWeight
+        );
+    }
+}
+
+
+/* ======================================================
+   RESET ALGORITHM
+====================================================== */
+
+function resetAlgorithm(clearGraphToo = false) {
+
+    if (clearGraphToo) {
+
+        vertices = [];
+
+        edges = [];
+    }
+
+
+    step = 0;
+
+    mst = [];
+
+    mstWeight = 0;
+
+    primVisited =
+        new Set();
+
+    algorithmStarted = false;
+
+    kruskalIndex = 0;
+
+    initializeUnionFind();
+
+    drawGraph();
+
+    updateEdgeTable();
+
+    updateInfo();
+
+
+    if (!clearGraphToo) {
+
+        showStatus(
+            "Algorithm reset."
+        );
+    }
+}
+
+
+/* ======================================================
+   DRAW GRAPH
+====================================================== */
+
+function drawGraph(currentEdge = null) {
+
+    const area =
+        document.getElementById(
+            "graphArea"
+        );
+
+    const svg =
+        document.getElementById(
+            "svg"
+        );
+
+
+    svg.innerHTML = "";
+
+
+    /* EDGES */
+
+    edges.forEach((edge, index) => {
+
+        const p1 =
+            positions[edge.from];
+
+        const p2 =
+            positions[edge.to];
+
+
+        if (!p1 || !p2)
+            return;
+
+
+        const x1 =
+            p1[0] / 100 *
+            area.clientWidth;
+
+        const y1 =
+            p1[1] / 100 *
+            area.clientHeight;
+
+        const x2 =
+            p2[0] / 100 *
+            area.clientWidth;
+
+        const y2 =
+            p2[1] / 100 *
+            area.clientHeight;
+
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+
+        line.setAttribute(
+            "x1",
+            x1
+        );
+
+        line.setAttribute(
+            "y1",
+            y1
+        );
+
+        line.setAttribute(
+            "x2",
+            x2
+        );
+
+        line.setAttribute(
+            "y2",
+            y2
+        );
+
+
+        let className = "edge";
+
+
+        if (
+            mst.includes(edge)
+        ) {
+
+            className +=
+                " mst";
+        }
+
+
+        if (
+            currentEdge &&
+            currentEdge === edge
+        ) {
+
+            className =
+                "edge current";
+        }
+
+
+        line.setAttribute(
+            "class",
+            className
+        );
+
+
+        svg.appendChild(line);
+
+
+        /* WEIGHT */
+
+        const text =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+
+
+        const mx =
+            (x1 + x2) / 2;
+
+        const my =
+            (y1 + y2) / 2;
+
+
+        text.setAttribute(
+            "x",
+            mx
+        );
+
+        text.setAttribute(
+            "y",
+            my - 8
+        );
+
+        text.setAttribute(
+            "class",
+            "weight"
+        );
+
+        text.setAttribute(
+            "text-anchor",
+            "middle"
+        );
+
+        text.textContent =
+            edge.weight;
+
+
+        svg.appendChild(text);
+
+    });
+
+
+    /* VERTICES */
+
+    document
+        .querySelectorAll(".vertex")
+        .forEach(v => v.remove());
+
+
+    vertices.forEach(v => {
+
+        const vertex =
+            document.createElement("div");
+
+        vertex.className =
+            "vertex";
+
+
+        if (
+            primVisited.has(v) &&
+            algorithm === "prim"
+        ) {
+
+            vertex.classList.add(
+                "selected"
+            );
+        }
+
+
+        vertex.innerText = v;
+
+
+        const p =
+            positions[v];
+
+
+        vertex.style.left =
+            p[0] + "%";
+
+        vertex.style.top =
+            p[1] + "%";
+
+
+        area.appendChild(vertex);
+
+    });
+}
+
+
+/* ======================================================
+   EDGE TABLE
+====================================================== */
+
+function updateEdgeTable(
+    currentIndex = -1,
+    currentStatus = ""
+) {
+
+    const body =
+        document.getElementById(
+            "edgeTable"
+        );
+
+
+    body.innerHTML = "";
+
+
+    let sortedEdges =
+        [...edges];
+
+
+    if (algorithm === "kruskal") {
+
+        sortedEdges.sort(
+            (a, b) =>
+                a.weight -
+                b.weight
+        );
+    }
+
+
+    sortedEdges.forEach(
+        (edge, index) => {
+
+            const row =
+                document.createElement("tr");
+
+
+            if (mst.includes(edge))
+                row.className =
+                    "selected-row";
+
+
+            if (
+                index === currentIndex
+            )
+                row.className =
+                    "current-row";
+
+
+            let status =
+                mst.includes(edge)
+                ? "Selected"
+                : "Not considered";
+
+
+            if (
+                currentStatus ===
+                "rejected" &&
+                index === currentIndex
+            ) {
+
+                status =
+                    "Rejected - Cycle";
+
+                row.className =
+                    "rejected-row";
+            }
+
+
+            row.innerHTML = `
+
+                <td>${index + 1}</td>
+
+                <td>
+                    ${edge.from}
+                    -
+                    ${edge.to}
+                </td>
+
+                <td>
+                    ${edge.weight}
+                </td>
+
+                <td>
+                    ${status}
+                </td>
+
+            `;
+
+
+            body.appendChild(row);
+
+        }
+    );
+}
+
+
+/* ======================================================
+   UPDATE INFO
+====================================================== */
+
+function updateInfo() {
+
+    document.getElementById(
+        "mstEdges"
+    ).innerText =
+        mst.length;
+
+
+    document.getElementById(
+        "mstWeight"
+    ).innerText =
+        mstWeight;
+
+
+    document.getElementById(
+        "vertexCount"
+    ).innerText =
+        vertices.length;
+
+
+    document.getElementById(
+        "edgeCount"
+    ).innerText =
+        edges.length;
+}
+
+
+/* ======================================================
+   STATUS
+====================================================== */
+
+function showStatus(message) {
+
+    document.getElementById(
+        "status"
+    ).innerText =
+        message;
+}
+
+
+/* ======================================================
+   INITIALIZE
+====================================================== */
+
+loadSample();
+
+</script>
+
+</body>
+
+</html>

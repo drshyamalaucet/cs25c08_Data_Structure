@@ -1,0 +1,1661 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Articulation Point - DFS Visualization</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(135deg, #312e81, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 28px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 22px;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0,0,0,.08);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #1d4ed8;
+}
+
+.graph-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#graph {
+    position: relative;
+    width: 760px;
+    height: 520px;
+    max-width: 100%;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+
+    background:
+        linear-gradient(#e2e8f0 1px, transparent 1px),
+        linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+
+    background-size: 40px 40px;
+
+    overflow: hidden;
+}
+
+svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.edge {
+    stroke: #64748b;
+    stroke-width: 3;
+}
+
+.edge.dfs {
+    stroke: #f59e0b;
+    stroke-width: 6;
+}
+
+.edge.back {
+    stroke: #8b5cf6;
+    stroke-width: 5;
+}
+
+.edge.path {
+    stroke: #16a34a;
+    stroke-width: 7;
+}
+
+.edge-label {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #0f172a;
+}
+
+.node {
+    position: absolute;
+    width: 50px;
+    height: 50px;
+
+    border-radius: 50%;
+
+    background: #3b82f6;
+    color: white;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: bold;
+
+    border: 4px solid white;
+
+    box-shadow: 0 3px 10px rgba(0,0,0,.25);
+
+    transform: translate(-50%, -50%);
+
+    z-index: 5;
+
+    transition: .3s;
+}
+
+.node.current {
+    background: #f59e0b;
+    transform:
+        translate(-50%, -50%)
+        scale(1.18);
+}
+
+.node.visited {
+    background: #16a34a;
+}
+
+.node.articulation {
+    background: #dc2626;
+
+    box-shadow:
+        0 0 0 5px rgba(220,38,38,.25),
+        0 3px 10px rgba(0,0,0,.25);
+}
+
+.node.current.articulation {
+    background: #dc2626;
+}
+
+.panel {
+    flex: 1;
+    min-width: 300px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+button {
+    border: none;
+    padding: 11px 16px;
+    border-radius: 7px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.step {
+    background: #059669;
+}
+
+button.auto {
+    background: #7c3aed;
+}
+
+button.reset {
+    background: #dc2626;
+}
+
+.status {
+    padding: 15px;
+    border-left: 5px solid #2563eb;
+    background: #eff6ff;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    border: 1px solid #cbd5e1;
+    padding: 9px;
+    text-align: center;
+}
+
+th {
+    background: #dbeafe;
+}
+
+.art-row {
+    background: #fee2e2;
+    font-weight: bold;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns:
+        repeat(auto-fit, minmax(240px, 1fr));
+
+    gap: 15px;
+}
+
+.feature {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.feature h3 {
+    color: #2563eb;
+    margin-top: 0;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+.formula {
+    background: #111827;
+    color: white;
+    padding: 16px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    margin: 12px 0;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}
+
+.normal-dot {
+    background: #3b82f6;
+}
+
+.visited-dot {
+    background: #16a34a;
+}
+
+.current-dot {
+    background: #f59e0b;
+}
+
+.art-dot {
+    background: #dc2626;
+}
+
+footer {
+    background: #172554;
+    color: white;
+    text-align: center;
+    padding: 25px;
+}
+
+@media(max-width:800px) {
+
+    #graph {
+        height: 400px;
+    }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<header>
+
+<h1>🔴 Articulation Point Algorithm</h1>
+
+<p>
+DFS / Tarjan's Algorithm — Interactive Visualization
+</p>
+
+</header>
+
+<div class="container">
+
+<!-- INTRODUCTION -->
+
+<div class="card">
+
+<h2>1. What is an Articulation Point?</h2>
+
+<p>
+An <b>articulation point</b>, also called a
+<b>cut vertex</b>, is a vertex in a connected graph such
+that removing that vertex and all of its incident edges
+increases the number of connected components of the graph.
+</p>
+
+<div class="formula">
+
+For a DFS tree:
+
+low[v] >= disc[u]
+
+⇒ u is an articulation point
+
+</div>
+
+<p>
+For a non-root vertex <b>u</b>, if it has a child
+<b>v</b> such that:
+</p>
+
+<div class="formula">
+
+low[v] >= disc[u]
+
+</div>
+
+<p>
+then <b>u</b> is an articulation point.
+</p>
+
+<p>
+For a DFS root, it is an articulation point if it has
+<b>more than one DFS child</b>.
+</p>
+
+</div>
+
+<!-- VISUALIZATION -->
+
+<div class="card">
+
+<h2>2. Interactive DFS Visualization</h2>
+
+<div class="controls">
+
+<button onclick="initialize()">
+Initialize
+</button>
+
+<button class="step" onclick="nextStep()">
+Next DFS Step
+</button>
+
+<button class="auto" onclick="runAuto()">
+▶ Run Automatically
+</button>
+
+<button class="reset" onclick="resetGraph()">
+Reset
+</button>
+
+</div>
+
+<div class="graph-area">
+
+<div id="graph">
+
+<svg id="svg"></svg>
+
+<div id="nodes"></div>
+
+</div>
+
+<div class="panel">
+
+<div class="status" id="status">
+
+Click Initialize to start DFS.
+
+</div>
+
+<h3>DFS Information</h3>
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>Vertex</th>
+<th>Discovery</th>
+<th>Low</th>
+<th>Parent</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody id="tableBody"></tbody>
+
+</table>
+
+<h3>Legend</h3>
+
+<div class="legend">
+
+<div class="legend-item">
+<span class="dot normal-dot"></span>
+Unvisited
+</div>
+
+<div class="legend-item">
+<span class="dot visited-dot"></span>
+Visited
+</div>
+
+<div class="legend-item">
+<span class="dot current-dot"></span>
+Current DFS Vertex
+</div>
+
+<div class="legend-item">
+<span class="dot art-dot"></span>
+Articulation Point
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- CONCEPT -->
+
+<div class="card">
+
+<h2>3. Important Concepts</h2>
+
+<div class="grid">
+
+<div class="feature">
+
+<h3>Discovery Time</h3>
+
+<p>
+disc[u] stores the time at which vertex u is first
+visited during DFS.
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>Low Value</h3>
+
+<p>
+low[u] stores the smallest discovery time reachable from
+u using DFS-tree edges and at most one back edge.
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>DFS Tree</h3>
+
+<p>
+DFS produces a tree containing the edges used to discover
+new vertices.
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>Back Edge</h3>
+
+<p>
+A back edge connects a vertex to an already visited ancestor
+in the DFS tree.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ALGORITHM -->
+
+<div class="card">
+
+<h2>4. Algorithm Steps</h2>
+
+<ol>
+
+<li>
+Perform DFS starting from an unvisited vertex.
+</li>
+
+<li>
+Assign a discovery time to every visited vertex.
+</li>
+
+<li>
+Initially set:
+<b>low[u] = disc[u]</b>.
+</li>
+
+<li>
+For every adjacent vertex v:
+if v is unvisited, recursively perform DFS.
+</li>
+
+<li>
+After processing v:
+update
+<b>low[u] = min(low[u], low[v])</b>.
+</li>
+
+<li>
+If u is not the DFS root and
+<b>low[v] >= disc[u]</b>,
+then u is an articulation point.
+</li>
+
+<li>
+If u is the DFS root and it has more than one DFS child,
+then u is an articulation point.
+</li>
+
+</ol>
+
+</div>
+
+<!-- PSEUDOCODE -->
+
+<div class="card">
+
+<h2>5. Pseudocode</h2>
+
+<pre><code>DFS(u):
+
+    visited[u] = true
+
+    disc[u] = low[u] = timer++
+
+    children = 0
+
+    for each v adjacent to u:
+
+        if v is not visited:
+
+            parent[v] = u
+
+            children++
+
+            DFS(v)
+
+            low[u] =
+                min(low[u], low[v])
+
+            if parent[u] == -1
+               and children > 1:
+
+                u is articulation point
+
+            if parent[u] != -1
+               and low[v] >= disc[u]:
+
+                u is articulation point
+
+        else if v != parent[u]:
+
+            low[u] =
+                min(low[u], disc[v])</code></pre>
+
+</div>
+
+<!-- C++ -->
+
+<div class="card">
+
+<h2>6. C++ Implementation</h2>
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+class Graph {
+
+    int V;
+
+    vector&lt;vector&lt;int&gt;&gt; adj;
+
+    vector&lt;int&gt; disc;
+    vector&lt;int&gt; low;
+    vector&lt;int&gt; parent;
+
+    vector&lt;bool&gt; visited;
+    vector&lt;bool&gt; articulation;
+
+    int timer;
+
+public:
+
+    Graph(int vertices) {
+
+        V = vertices;
+
+        adj.resize(V);
+
+        disc.resize(V, -1);
+        low.resize(V, -1);
+        parent.resize(V, -1);
+
+        visited.resize(V, false);
+        articulation.resize(V, false);
+
+        timer = 0;
+    }
+
+    void addEdge(int u, int v) {
+
+        adj[u].push_back(v);
+        adj[v].push_back(u);
+    }
+
+    void DFS(int u) {
+
+        visited[u] = true;
+
+        disc[u] = low[u] = timer++;
+
+        int children = 0;
+
+        for (int v : adj[u]) {
+
+            // Tree edge
+            if (!visited[v]) {
+
+                parent[v] = u;
+
+                children++;
+
+                DFS(v);
+
+                low[u] =
+                    min(low[u], low[v]);
+
+                // Root condition
+                if (parent[u] == -1 &&
+                    children > 1) {
+
+                    articulation[u] = true;
+                }
+
+                // Non-root condition
+                if (parent[u] != -1 &&
+                    low[v] >= disc[u]) {
+
+                    articulation[u] = true;
+                }
+            }
+
+            // Back edge
+            else if (v != parent[u]) {
+
+                low[u] =
+                    min(low[u], disc[v]);
+            }
+        }
+    }
+
+    void findArticulationPoints() {
+
+        for (int i = 0; i &lt; V; i++) {
+
+            if (!visited[i]) {
+
+                DFS(i);
+            }
+        }
+
+        cout &lt;&lt;
+            "Articulation Points:\n";
+
+        for (int i = 0; i &lt; V; i++) {
+
+            if (articulation[i]) {
+
+                cout &lt;&lt; i &lt;&lt; " ";
+            }
+        }
+
+        cout &lt;&lt; endl;
+    }
+};
+
+int main() {
+
+    Graph g(7);
+
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+
+    g.addEdge(1, 2);
+    g.addEdge(1, 3);
+
+    g.addEdge(3, 4);
+    g.addEdge(3, 5);
+
+    g.addEdge(4, 5);
+
+    g.addEdge(5, 6);
+
+    g.findArticulationPoints();
+
+    return 0;
+}</code></pre>
+
+</div>
+
+<!-- EXAMPLE -->
+
+<div class="card">
+
+<h2>7. Example</h2>
+
+<p>
+Consider the graph used in the program:
+</p>
+
+<div class="formula">
+
+0 — 1 — 3 — 4
+\ /    \  /
+2      5 — 6
+
+</div>
+
+<p>
+The important articulation points are:
+</p>
+
+<ul>
+
+<li><b>1</b> — removing it disconnects vertex 3 and its subtree.</li>
+
+<li><b>3</b> — removing it separates the 4/5/6 portion.</li>
+
+<li><b>5</b> — removing it disconnects vertex 6.</li>
+
+</ul>
+
+</div>
+
+<!-- COMPLEXITY -->
+
+<div class="card">
+
+<h2>8. Complexity Analysis</h2>
+
+<div class="grid">
+
+<div class="feature">
+
+<h3>Time Complexity</h3>
+
+<p>
+<b>O(V + E)</b>
+</p>
+
+<p>
+Every vertex and edge is processed a constant number
+of times.
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>Space Complexity</h3>
+
+<p>
+<b>O(V + E)</b>
+</p>
+
+<p>
+The adjacency list and DFS arrays require linear space.
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>Algorithm Type</h3>
+
+<p>
+Depth First Search (DFS)
+</p>
+
+</div>
+
+<div class="feature">
+
+<h3>Technique</h3>
+
+<p>
+DFS timestamps + low-link values.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- APPLICATIONS -->
+
+<div class="card">
+
+<h2>9. Applications of Articulation Points</h2>
+
+<ul>
+
+<li>Computer network reliability</li>
+
+<li>Road network analysis</li>
+
+<li>Power-grid reliability</li>
+
+<li>Communication network design</li>
+
+<li>Social network analysis</li>
+
+<li>Transportation network analysis</li>
+
+<li>Finding critical components in distributed systems</li>
+
+<li>Identifying single points of failure</li>
+
+</ul>
+
+</div>
+
+<!-- SUMMARY -->
+
+<div class="card">
+
+<h2>10. Quick Summary</h2>
+
+<table>
+
+<tr>
+<th>Concept</th>
+<th>Meaning</th>
+</tr>
+
+<tr>
+<td>disc[u]</td>
+<td>Discovery time of vertex u</td>
+</tr>
+
+<tr>
+<td>low[u]</td>
+<td>Earliest discovery time reachable from u</td>
+</tr>
+
+<tr>
+<td>Back Edge</td>
+<td>Edge to an ancestor in DFS</td>
+</tr>
+
+<tr>
+<td>Root Condition</td>
+<td>More than one DFS child</td>
+</tr>
+
+<tr>
+<td>Non-root Condition</td>
+<td>low[v] &gt;= disc[u]</td>
+</tr>
+
+<tr>
+<td>Time Complexity</td>
+<td>O(V + E)</td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<footer>
+    <h3>Data Structures  – Articulation Point — DFS / Tarjan Visualization </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+/* =========================
+   GRAPH DATA
+========================= */
+
+const vertices = [
+
+    {id:"0", x:90,  y:250},
+    {id:"1", x:260, y:120},
+    {id:"2", x:260, y:380},
+    {id:"3", x:450, y:120},
+    {id:"4", x:620, y:70},
+    {id:"5", x:620, y:250},
+    {id:"6", x:720, y:400}
+
+];
+
+const edges = [
+
+    ["0","1"],
+    ["0","2"],
+    ["1","2"],
+    ["1","3"],
+    ["3","4"],
+    ["3","5"],
+    ["4","5"],
+    ["5","6"]
+
+];
+
+
+/* =========================
+   VARIABLES
+========================= */
+
+let adjacency = {};
+
+let visited = {};
+let disc = {};
+let low = {};
+let parent = {};
+let articulation = {};
+
+let timer = 0;
+
+let initialized = false;
+let finished = false;
+
+let dfsStack = [];
+
+let currentVertex = null;
+
+let autoTimer = null;
+
+
+/* =========================
+   BUILD ADJACENCY LIST
+========================= */
+
+vertices.forEach(v => {
+
+    adjacency[v.id] = [];
+
+});
+
+edges.forEach(edge => {
+
+    let u = edge[0];
+    let v = edge[1];
+
+    adjacency[u].push(v);
+    adjacency[v].push(u);
+
+});
+
+
+/* =========================
+   DRAW GRAPH
+========================= */
+
+function createGraph() {
+
+    const svg =
+        document.getElementById("svg");
+
+    const nodes =
+        document.getElementById("nodes");
+
+    svg.innerHTML = "";
+    nodes.innerHTML = "";
+
+
+    edges.forEach((edge,index) => {
+
+        const u =
+            vertices.find(v =>
+                v.id === edge[0]);
+
+        const v =
+            vertices.find(v =>
+                v.id === edge[1]);
+
+
+        const line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+        line.setAttribute(
+            "x1", u.x);
+
+        line.setAttribute(
+            "y1", u.y);
+
+        line.setAttribute(
+            "x2", v.x);
+
+        line.setAttribute(
+            "y2", v.y);
+
+        line.setAttribute(
+            "class", "edge");
+
+        line.dataset.index = index;
+
+        svg.appendChild(line);
+
+    });
+
+
+    vertices.forEach(v => {
+
+        const node =
+            document.createElement("div");
+
+        node.className = "node";
+
+        node.id =
+            "node-" + v.id;
+
+        node.style.left =
+            v.x + "px";
+
+        node.style.top =
+            v.y + "px";
+
+        node.textContent =
+            v.id;
+
+        nodes.appendChild(node);
+
+    });
+
+}
+
+
+/* =========================
+   INITIALIZE
+========================= */
+
+function initialize() {
+
+    visited = {};
+    disc = {};
+    low = {};
+    parent = {};
+    articulation = {};
+
+    vertices.forEach(v => {
+
+        visited[v.id] = false;
+
+        disc[v.id] = -1;
+
+        low[v.id] = -1;
+
+        parent[v.id] = null;
+
+        articulation[v.id] = false;
+
+    });
+
+
+    timer = 0;
+
+    dfsStack = [];
+
+    currentVertex = null;
+
+    initialized = true;
+
+    finished = false;
+
+
+    /* Start DFS at vertex 0 */
+
+    dfsStack.push({
+        vertex: "0",
+        index: 0,
+        children: 0
+    });
+
+
+    visitVertex("0");
+
+    updateVisual();
+
+    updateTable();
+
+
+    document.getElementById("status").innerHTML =
+        "DFS started at vertex <b>0</b>. " +
+        "Discovery time assigned.";
+
+}
+
+
+/* =========================
+   VISIT VERTEX
+========================= */
+
+function visitVertex(v) {
+
+    visited[v] = true;
+
+    disc[v] = timer;
+
+    low[v] = timer;
+
+    timer++;
+
+    currentVertex = v;
+
+}
+
+
+/* =========================
+   NEXT DFS STEP
+========================= */
+
+function nextStep() {
+
+    if (!initialized) {
+
+        initialize();
+
+        return;
+    }
+
+
+    if (finished)
+        return;
+
+
+    if (dfsStack.length === 0) {
+
+        finished = true;
+
+        showFinalResult();
+
+        return;
+    }
+
+
+    let frame =
+        dfsStack[dfsStack.length - 1];
+
+    let u = frame.vertex;
+
+
+    currentVertex = u;
+
+
+    /* Finished all neighbors */
+
+    if (frame.index >= adjacency[u].length) {
+
+        dfsStack.pop();
+
+
+        let p = parent[u];
+
+
+        if (p !== null) {
+
+            /*
+             * Update parent's low value
+             */
+
+            low[p] =
+                Math.min(
+                    low[p],
+                    low[u]
+                );
+
+
+            /*
+             * Articulation condition
+             */
+
+            let pFrame =
+                dfsStack.length > 0
+                ? dfsStack[dfsStack.length - 1]
+                : null;
+
+
+            if (parent[p] === null) {
+
+                if (pFrame &&
+                    pFrame.children > 1) {
+
+                    articulation[p] = true;
+
+                }
+
+            } else {
+
+                if (low[u] >= disc[p]) {
+
+                    articulation[p] = true;
+
+                }
+
+            }
+
+        }
+
+
+        currentVertex = p;
+
+
+        updateVisual();
+        updateTable();
+
+
+        document.getElementById("status").innerHTML =
+            "Finished vertex <b>" +
+            u +
+            "</b>. Updated its parent's low value.";
+
+
+        return;
+    }
+
+
+    let v =
+        adjacency[u][frame.index];
+
+    frame.index++;
+
+
+    /* Tree edge */
+
+    if (!visited[v]) {
+
+        frame.children++;
+
+        parent[v] = u;
+
+        visitVertex(v);
+
+
+        dfsStack.push({
+            vertex: v,
+            index: 0,
+            children: 0
+        });
+
+
+        updateVisual();
+        updateTable();
+
+
+        document.getElementById("status").innerHTML =
+            "DFS moves from <b>" +
+            u +
+            "</b> to <b>" +
+            v +
+            "</b>. " +
+            "disc[" + v + "] = " +
+            disc[v] +
+            ", low[" + v + "] = " +
+            low[v] + ".";
+
+
+        return;
+    }
+
+
+    /* Back edge */
+
+    if (v !== parent[u]) {
+
+        low[u] =
+            Math.min(
+                low[u],
+                disc[v]
+            );
+
+
+        updateVisual();
+        updateTable();
+
+
+        document.getElementById("status").innerHTML =
+            "Back edge detected: <b>" +
+            u +
+            " → " +
+            v +
+            "</b>. " +
+            "low[" + u + "] updated to " +
+            low[u] + ".";
+
+    }
+
+}
+
+
+/* =========================
+   UPDATE VISUAL
+========================= */
+
+function updateVisual() {
+
+    vertices.forEach(v => {
+
+        let node =
+            document.getElementById(
+                "node-" + v.id
+            );
+
+        node.className = "node";
+
+
+        if (visited[v.id])
+            node.classList.add("visited");
+
+
+        if (articulation[v.id])
+            node.classList.add(
+                "articulation"
+            );
+
+
+        if (v.id === currentVertex)
+            node.classList.add("current");
+
+    });
+
+
+    document
+        .querySelectorAll(".edge")
+        .forEach(edge => {
+
+            edge.classList.remove(
+                "dfs",
+                "back"
+            );
+
+        });
+
+
+    /*
+     * Highlight DFS tree edges
+     */
+
+    edges.forEach((edge,index) => {
+
+        let u = edge[0];
+        let v = edge[1];
+
+        if (
+            parent[v] === u ||
+            parent[u] === v
+        ) {
+
+            let element =
+                document.querySelector(
+                    '.edge[data-index="' +
+                    index +
+                    '"]'
+                );
+
+            if (element)
+                element.classList.add("dfs");
+
+        }
+
+    });
+
+}
+
+
+/* =========================
+   UPDATE TABLE
+========================= */
+
+function updateTable() {
+
+    const tbody =
+        document.getElementById(
+            "tableBody"
+        );
+
+    tbody.innerHTML = "";
+
+
+    vertices.forEach(v => {
+
+        let tr =
+            document.createElement("tr");
+
+
+        if (articulation[v.id])
+            tr.classList.add(
+                "art-row"
+            );
+
+
+        let d =
+            disc[v.id] === -1
+            ? "—"
+            : disc[v.id];
+
+
+        let l =
+            low[v.id] === -1
+            ? "—"
+            : low[v.id];
+
+
+        let p =
+            parent[v.id] === null
+            ? "—"
+            : parent[v.id];
+
+
+        let status =
+            articulation[v.id]
+            ? "Articulation Point"
+            : visited[v.id]
+                ? "Visited"
+                : "Unvisited";
+
+
+        tr.innerHTML =
+
+            "<td><b>" +
+            v.id +
+            "</b></td>" +
+
+            "<td>" +
+            d +
+            "</td>" +
+
+            "<td>" +
+            l +
+            "</td>" +
+
+            "<td>" +
+            p +
+            "</td>" +
+
+            "<td>" +
+            status +
+            "</td>";
+
+
+        tbody.appendChild(tr);
+
+    });
+
+}
+
+
+/* =========================
+   FINAL RESULT
+========================= */
+
+function showFinalResult() {
+
+    finished = true;
+
+    currentVertex = null;
+
+    updateVisual();
+
+    updateTable();
+
+
+    let points = [];
+
+
+    vertices.forEach(v => {
+
+        if (articulation[v.id])
+            points.push(v.id);
+
+    });
+
+
+    document.getElementById("status")
+        .innerHTML =
+
+        "✅ DFS completed. " +
+        "<b>Articulation Points:</b> " +
+        (
+            points.length
+            ? points.join(", ")
+            : "None"
+        );
+
+}
+
+
+/* =========================
+   AUTOMATIC MODE
+========================= */
+
+function runAuto() {
+
+    if (!initialized)
+        initialize();
+
+
+    if (autoTimer)
+        clearInterval(autoTimer);
+
+
+    autoTimer =
+        setInterval(() => {
+
+            if (finished) {
+
+                clearInterval(autoTimer);
+
+                return;
+            }
+
+
+            nextStep();
+
+        }, 850);
+
+}
+
+
+/* =========================
+   RESET
+========================= */
+
+function resetGraph() {
+
+    if (autoTimer)
+        clearInterval(autoTimer);
+
+
+    initialized = false;
+
+    finished = false;
+
+    currentVertex = null;
+
+    dfsStack = [];
+
+
+    vertices.forEach(v => {
+
+        visited[v.id] = false;
+
+        disc[v.id] = -1;
+
+        low[v.id] = -1;
+
+        parent[v.id] = null;
+
+        articulation[v.id] = false;
+
+    });
+
+
+    updateVisual();
+
+    updateTable();
+
+
+    document.getElementById("status")
+        .innerHTML =
+        "Click <b>Initialize</b> to start DFS.";
+
+}
+
+
+/* =========================
+   START
+========================= */
+
+createGraph();
+
+resetGraph();
+
+</script>
+
+</body>
+</html>

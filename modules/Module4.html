@@ -1,0 +1,1834 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module 4 - Searching, Sorting and Hashing</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #172033;
+}
+
+header {
+    background: linear-gradient(135deg, #172554, #2563eb);
+    color: white;
+    padding: 35px 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 36px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #0f172a;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    padding: 9px 13px;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+nav a:hover {
+    background: #2563eb;
+}
+
+.container {
+    width: 94%;
+    max-width: 1250px;
+    margin: auto;
+}
+
+section {
+    background: white;
+    margin: 25px 0;
+    padding: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #1d4ed8;
+    border-bottom: 3px solid #dbeafe;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #1e40af;
+}
+
+.info {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 15px;
+    border-radius: 7px;
+    margin: 15px 0;
+}
+
+.warning {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    border-radius: 7px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 18px;
+}
+
+.card {
+    border: 1px solid #dbeafe;
+    padding: 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+}
+
+button {
+    border: none;
+    padding: 10px 16px;
+    margin: 5px;
+    border-radius: 7px;
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+input, select {
+    padding: 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    margin: 5px;
+}
+
+.visual {
+    min-height: 120px;
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 10px;
+    padding: 20px;
+    margin: 15px 0;
+}
+
+.array {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+    min-height: 150px;
+}
+
+.bar {
+    min-width: 45px;
+    padding: 10px 5px;
+    background: #3b82f6;
+    color: white;
+    text-align: center;
+    border-radius: 6px 6px 0 0;
+    transition: all .35s ease;
+    font-weight: bold;
+}
+
+.bar.active {
+    background: #f59e0b;
+    transform: translateY(-12px);
+}
+
+.bar.sorted {
+    background: #16a34a;
+}
+
+.bar.found {
+    background: #dc2626;
+    transform: translateY(-15px);
+}
+
+.bar.small {
+    min-width: 70px;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 18px;
+    overflow-x: auto;
+    border-radius: 9px;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #cbd5e1;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #dbeafe;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px,1fr));
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.complexity div {
+    background: #eff6ff;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.hash-table {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    max-width: 650px;
+    margin: 20px auto;
+}
+
+.hash-row {
+    display: grid;
+    grid-template-columns: 70px 100px 1fr;
+    gap: 5px;
+}
+
+.hash-cell {
+    padding: 12px;
+    background: #e0f2fe;
+    border-radius: 5px;
+    min-height: 42px;
+}
+
+footer {
+    background: #0f172a;
+    color: white;
+    text-align: center;
+    padding: 25px;
+    margin-top: 40px;
+}
+
+.badge {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin: 3px;
+}
+
+@media(max-width:600px) {
+    header h1 {
+        font-size: 27px;
+    }
+
+    section {
+        padding: 17px;
+    }
+
+    .hash-row {
+        grid-template-columns: 55px 75px 1fr;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>MODULE 4</h1>
+    <p>Searching, Sorting and Hashing Table ADT</p>
+    <div>
+        <span class="badge">Linear Search</span>
+        <span class="badge">Binary Search</span>
+        <span class="badge">Sorting</span>
+        <span class="badge">Hashing</span>
+    </div>
+</header>
+
+<nav>
+    <a href="../index.html">Home</a>
+    <a href="#search">Search</a>
+    <a href="#bubble">Bubble</a>
+    <a href="#insertion">Insertion</a>
+    <a href="#merge">Merge</a>
+    <a href="#bucket">Bucket</a>
+    <a href="#quick">Quick</a>
+    <a href="#heap">Heap</a>
+    <a href="#hash">Hashing</a>
+    <a href="#complexity">Complexity</a>
+</nav>
+
+<div class="container">
+
+<!-- SEARCHING -->
+
+<section id="search">
+<h2>1. Linear and Binary Search</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Linear Search</h3>
+<p>
+Linear search examines elements one by one until the required
+element is found.
+</p>
+
+<div class="info">
+<b>Example:</b><br>
+Array = [12, 25, 8, 40, 17]<br>
+Search = 40<br>
+The algorithm checks 12 → 25 → 8 → 40.
+</div>
+
+<h4>Pseudocode</h4>
+<pre><code>LinearSearch(A, n, key)
+
+for i = 0 to n-1
+if A[i] == key
+return i
+return -1</code></pre>
+
+<h4>C++</h4>
+<pre><code>int linearSearch(vector&lt;int&gt; A, int key) {
+    for (int i = 0; i &lt; A.size(); i++) {
+        if (A[i] == key)
+            return i;
+    }
+    return -1;
+}</code></pre>
+
+<p><b>Time:</b> O(n)</p>
+</div>
+
+<div class="card">
+<h3>Binary Search</h3>
+<p>
+Binary search repeatedly divides a <b>sorted array</b> into two
+halves.
+</p>
+
+<div class="info">
+<b>Important:</b> Binary search requires the array to be sorted.
+</div>
+
+<h4>Pseudocode</h4>
+<pre><code>BinarySearch(A, n, key)
+
+low = 0
+high = n - 1
+
+while low <= high
+mid = (low + high) / 2
+
+```
+if A[mid] == key
+    return mid
+
+else if key &lt; A[mid]
+    high = mid - 1
+
+else
+    low = mid + 1
+```
+
+return -1</code></pre>
+
+<h4>C++</h4>
+<pre><code>int binarySearch(vector&lt;int&gt; A, int key) {
+
+```
+int low = 0;
+int high = A.size() - 1;
+
+while (low &lt;= high) {
+
+    int mid = low + (high - low) / 2;
+
+    if (A[mid] == key)
+        return mid;
+
+    if (key &lt; A[mid])
+        high = mid - 1;
+    else
+        low = mid + 1;
+}
+
+return -1;
+```
+
+}</code></pre>
+
+<p><b>Time:</b> O(log n)</p>
+</div>
+
+</div>
+
+<h3>Interactive Search Visualization</h3>
+
+<input id="searchInput" type="number" placeholder="Enter value">
+<button onclick="linearDemo()">Linear Search</button>
+<button onclick="binaryDemo()">Binary Search</button>
+
+<div id="searchVisual" class="visual">
+    <div id="searchArray" class="array"></div>
+</div>
+
+<p id="searchStatus"></p>
+
+</section>
+
+<!-- BUBBLE -->
+
+<section id="bubble">
+<h2>2. Bubble Sort</h2>
+
+<p>
+Bubble Sort repeatedly compares adjacent elements and swaps them
+if they are in the wrong order. After every pass, the largest
+unsorted element moves to the end.
+</p>
+
+<div class="info">
+<b>Idea:</b> Compare → Swap → Repeat.
+</div>
+
+<div id="bubbleVisual" class="visual">
+    <div id="bubbleArray" class="array"></div>
+</div>
+
+<button onclick="startBubble()">Start Bubble Sort</button> <button onclick="shuffleAll()">Shuffle</button>
+
+<h3>Pseudocode</h3>
+
+<pre><code>BubbleSort(A, n)
+
+for i = 0 to n-2
+
+    for j = 0 to n-i-2
+
+        if A[j] &gt; A[j+1]
+
+            swap(A[j], A[j+1])</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>void bubbleSort(vector&lt;int&gt;&amp; A) {
+
+    int n = A.size();
+
+    for (int i = 0; i &lt; n - 1; i++) {
+
+        bool swapped = false;
+
+        for (int j = 0; j &lt; n - i - 1; j++) {
+
+            if (A[j] &gt; A[j + 1]) {
+
+                swap(A[j], A[j + 1]);
+                swapped = true;
+            }
+        }
+
+        if (!swapped)
+            break;
+    }
+}</code></pre>
+
+<p>
+<b>Best:</b> O(n) &nbsp;
+<b>Average:</b> O(n²) &nbsp;
+<b>Worst:</b> O(n²)
+</p>
+
+</section>
+
+<!-- INSERTION -->
+
+<section id="insertion">
+<h2>3. Insertion Sort</h2>
+
+<p>
+Insertion Sort builds the sorted array one element at a time.
+Each new element is inserted into its correct position.
+</p>
+
+<div id="insertionVisual" class="visual">
+    <div id="insertionArray" class="array"></div>
+</div>
+
+<button onclick="startInsertion()">Start Insertion Sort</button>
+
+<h3>Pseudocode</h3>
+
+<pre><code>InsertionSort(A, n)
+
+for i = 1 to n-1
+
+    key = A[i]
+    j = i - 1
+
+    while j &gt;= 0 and A[j] &gt; key
+
+        A[j+1] = A[j]
+        j = j - 1
+
+    A[j+1] = key</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>void insertionSort(vector&lt;int&gt;&amp; A) {
+
+    for (int i = 1; i &lt; A.size(); i++) {
+
+        int key = A[i];
+        int j = i - 1;
+
+        while (j &gt;= 0 &amp;&amp; A[j] &gt; key) {
+
+            A[j + 1] = A[j];
+            j--;
+        }
+
+        A[j + 1] = key;
+    }
+}</code></pre>
+
+<div class="complexity">
+<div><b>Best</b><br>O(n)</div>
+<div><b>Average</b><br>O(n²)</div>
+<div><b>Worst</b><br>O(n²)</div>
+<div><b>Space</b><br>O(1)</div>
+</div>
+
+</section>
+
+<!-- MERGE -->
+
+<section id="merge">
+<h2>4. Merge Sort</h2>
+
+<p>
+Merge Sort follows the <b>divide-and-conquer</b> strategy.
+The array is divided into smaller arrays, sorted recursively,
+and then merged.
+</p>
+
+<div id="mergeVisual" class="visual">
+    <div id="mergeArray" class="array"></div>
+</div>
+
+<button onclick="startMerge()">Start Merge Sort</button>
+
+<h3>Process</h3>
+
+<div class="grid">
+<div class="card"><b>1. Divide</b><br>Split the array into two halves.</div>
+<div class="card"><b>2. Conquer</b><br>Sort each half recursively.</div>
+<div class="card"><b>3. Merge</b><br>Combine sorted halves.</div>
+</div>
+
+<h3>Pseudocode</h3>
+
+<pre><code>MergeSort(A, left, right)
+
+if left &lt; right
+
+    mid = (left + right) / 2
+
+    MergeSort(A, left, mid)
+    MergeSort(A, mid + 1, right)
+
+    Merge(A, left, mid, right)</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>void merge(vector&lt;int&gt;&amp; A, int l, int m, int r) {
+
+    vector&lt;int&gt; temp;
+
+    int i = l;
+    int j = m + 1;
+
+    while (i &lt;= m &amp;&amp; j &lt;= r) {
+
+        if (A[i] &lt;= A[j])
+            temp.push_back(A[i++]);
+        else
+            temp.push_back(A[j++]);
+    }
+
+    while (i &lt;= m)
+        temp.push_back(A[i++]);
+
+    while (j &lt;= r)
+        temp.push_back(A[j++]);
+
+    for (int k = 0; k &lt; temp.size(); k++)
+        A[l + k] = temp[k];
+}
+
+void mergeSort(vector&lt;int&gt;&amp; A, int l, int r) {
+
+    if (l &lt; r) {
+
+        int m = l + (r - l) / 2;
+
+        mergeSort(A, l, m);
+        mergeSort(A, m + 1, r);
+
+        merge(A, l, m, r);
+    }
+}</code></pre>
+
+<p><b>Time:</b> O(n log n)</p>
+<p><b>Space:</b> O(n)</p>
+
+</section>
+
+<!-- BUCKET -->
+
+<section id="bucket">
+<h2>5. Bucket Sort</h2>
+
+<p>
+Bucket Sort distributes elements into several buckets. Each bucket
+is sorted separately and the buckets are concatenated.
+</p>
+
+<div class="info">
+Bucket Sort works particularly well when values are uniformly
+distributed over a known range.
+</div>
+
+<div class="visual">
+    <h3>Bucket Visualization</h3>
+
+```
+<div class="grid">
+    <div class="card">
+        <b>Bucket 0</b>
+        <div id="bucket0">Empty</div>
+    </div>
+    <div class="card">
+        <b>Bucket 1</b>
+        <div id="bucket1">Empty</div>
+    </div>
+    <div class="card">
+        <b>Bucket 2</b>
+        <div id="bucket2">Empty</div>
+    </div>
+    <div class="card">
+        <b>Bucket 3</b>
+        <div id="bucket3">Empty</div>
+    </div>
+    <div class="card">
+        <b>Bucket 4</b>
+        <div id="bucket4">Empty</div>
+    </div>
+</div>
+```
+
+</div>
+
+<button onclick="bucketDemo()">Distribute into Buckets</button>
+
+<h3>Pseudocode</h3>
+
+<pre><code>BucketSort(A)
+
+create k empty buckets
+
+for each element x in A
+
+    index = bucketIndex(x)
+    insert x into bucket[index]
+
+for each bucket
+
+    sort(bucket)
+
+concatenate all buckets</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>void bucketSort(vector&lt;float&gt;&amp; A) {
+
+    int n = A.size();
+
+    vector&lt;vector&lt;float&gt;&gt; buckets(n);
+
+    for (float x : A) {
+
+        int index = n * x;
+
+        if (index == n)
+            index = n - 1;
+
+        buckets[index].push_back(x);
+    }
+
+    for (auto&amp; bucket : buckets)
+        sort(bucket.begin(), bucket.end());
+
+    int k = 0;
+
+    for (auto&amp; bucket : buckets)
+        for (float x : bucket)
+            A[k++] = x;
+}</code></pre>
+
+<p><b>Average Time:</b> O(n + k)</p>
+
+</section>
+
+<!-- QUICK -->
+
+<section id="quick">
+<h2>6. Quick Sort</h2>
+
+<p>
+Quick Sort selects a <b>pivot</b>, partitions the array around the
+pivot, and recursively sorts the two partitions.
+</p>
+
+<div class="info">
+<b>Example:</b> Choose 45 as pivot. Values smaller than 45 go left
+and values larger than 45 go right.
+</div>
+
+<div class="visual">
+    <div id="quickArray" class="array"></div>
+</div>
+
+<button onclick="quickDemo()">Run Quick Sort</button>
+
+<h3>Pseudocode</h3>
+
+<pre><code>QuickSort(A, low, high)
+
+if low &lt; high
+
+    p = Partition(A, low, high)
+
+    QuickSort(A, low, p - 1)
+
+    QuickSort(A, p + 1, high)</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>int partition(vector&lt;int&gt;&amp; A, int low, int high) {
+
+    int pivot = A[high];
+
+    int i = low - 1;
+
+    for (int j = low; j &lt; high; j++) {
+
+        if (A[j] &lt; pivot) {
+
+            i++;
+            swap(A[i], A[j]);
+        }
+    }
+
+    swap(A[i + 1], A[high]);
+
+    return i + 1;
+}
+
+void quickSort(vector&lt;int&gt;&amp; A, int low, int high) {
+
+    if (low &lt; high) {
+
+        int p = partition(A, low, high);
+
+        quickSort(A, low, p - 1);
+        quickSort(A, p + 1, high);
+    }
+}</code></pre>
+
+<div class="complexity">
+<div><b>Best</b><br>O(n log n)</div>
+<div><b>Average</b><br>O(n log n)</div>
+<div><b>Worst</b><br>O(n²)</div>
+<div><b>Space</b><br>O(log n)</div>
+</div>
+
+</section>
+
+<!-- HEAP -->
+
+<section id="heap">
+<h2>7. Heap Sort</h2>
+
+<p>
+Heap Sort uses a <b>binary heap</b>. For ascending order, a Max Heap
+is constructed and the largest element is repeatedly moved to the
+end.
+</p>
+
+<div class="visual">
+    <div id="heapArray" class="array"></div>
+</div>
+
+<button onclick="heapDemo()">Run Heap Sort</button>
+
+<h3>Heap Representation</h3>
+
+<pre>
+              50
+            /    \
+          30      40
+         /  \    /  \
+       10   20  15   25
+
+Max Heap:
+Parent >= Children
+</pre>
+
+<h3>Pseudocode</h3>
+
+<pre><code>HeapSort(A)
+
+BuildMaxHeap(A)
+
+for i = n-1 down to 1
+
+    swap(A[0], A[i])
+
+    Heapify(A, 0, i)</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>void heapify(vector&lt;int&gt;&amp; A, int n, int i) {
+
+    int largest = i;
+
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left &lt; n &amp;&amp; A[left] &gt; A[largest])
+        largest = left;
+
+    if (right &lt; n &amp;&amp; A[right] &gt; A[largest])
+        largest = right;
+
+    if (largest != i) {
+
+        swap(A[i], A[largest]);
+
+        heapify(A, n, largest);
+    }
+}
+
+void heapSort(vector&lt;int&gt;&amp; A) {
+
+    int n = A.size();
+
+    for (int i = n / 2 - 1; i &gt;= 0; i--)
+        heapify(A, n, i);
+
+    for (int i = n - 1; i &gt; 0; i--) {
+
+        swap(A[0], A[i]);
+
+        heapify(A, i, 0);
+    }
+}</code></pre>
+
+<p><b>Time:</b> O(n log n)</p>
+<p><b>Space:</b> O(1)</p>
+
+</section>
+
+<!-- HASHING -->
+
+<section id="hash">
+<h2>8. Hashing Table ADT</h2>
+
+<p>
+A hash table stores key-value data using a hash function to
+calculate the location of a key.
+</p>
+
+<div class="info">
+<b>Hash Function:</b>
+<code>h(key) = key % tableSize</code>
+</div>
+
+<h3>Example</h3>
+
+<table>
+<tr>
+<th>Key</th>
+<th>Table Size</th>
+<th>Hash Value</th>
+</tr>
+<tr>
+<td>25</td>
+<td>10</td>
+<td>5</td>
+</tr>
+<tr>
+<td>37</td>
+<td>10</td>
+<td>7</td>
+</tr>
+<tr>
+<td>42</td>
+<td>10</td>
+<td>2</td>
+</tr>
+</table>
+
+<h2>8.1 Separate Chaining</h2>
+
+<p>
+In separate chaining, every hash-table position contains a list
+of elements. Multiple keys can therefore occupy the same index.
+</p>
+
+<div class="visual">
+    <div class="hash-table">
+
+```
+    <div class="hash-row">
+        <div class="hash-cell"><b>Index</b></div>
+        <div class="hash-cell"><b>Hash</b></div>
+        <div class="hash-cell"><b>Chain</b></div>
+    </div>
+
+    <div class="hash-row">
+        <div class="hash-cell">0</div>
+        <div class="hash-cell">k % 7</div>
+        <div class="hash-cell">—</div>
+    </div>
+
+    <div class="hash-row">
+        <div class="hash-cell">1</div>
+        <div class="hash-cell">k % 7</div>
+        <div class="hash-cell">15 → 22 → 29</div>
+    </div>
+
+    <div class="hash-row">
+        <div class="hash-cell">2</div>
+        <div class="hash-cell">k % 7</div>
+        <div class="hash-cell">9 → 16</div>
+    </div>
+
+    <div class="hash-row">
+        <div class="hash-cell">3</div>
+        <div class="hash-cell">k % 7</div>
+        <div class="hash-cell">10</div>
+    </div>
+
+</div>
+```
+
+</div>
+
+<h3>Pseudocode</h3>
+
+<pre><code>Insert(key)
+
+index = hash(key)
+
+chain[index].push_back(key)
+
+
+Search(key)
+
+index = hash(key)
+
+search key in chain[index]</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>class HashTable {
+
+    int size;
+
+    vector&lt;list&lt;int&gt;&gt; table;
+
+public:
+
+    HashTable(int s) {
+
+        size = s;
+        table.resize(size);
+    }
+
+    int hashFunction(int key) {
+
+        return key % size;
+    }
+
+    void insert(int key) {
+
+        int index = hashFunction(key);
+
+        table[index].push_back(key);
+    }
+
+    bool search(int key) {
+
+        int index = hashFunction(key);
+
+        for (int x : table[index]) {
+
+            if (x == key)
+                return true;
+        }
+
+        return false;
+    }
+
+    void display() {
+
+        for (int i = 0; i &lt; size; i++) {
+
+            cout &lt;&lt; i &lt;&lt; ": ";
+
+            for (int x : table[i])
+                cout &lt;&lt; x &lt;&lt; " -&gt; ";
+
+            cout &lt;&lt; "NULL\n";
+        }
+    }
+};</code></pre>
+
+<h2>8.2 Open Addressing</h2>
+
+<p>
+In open addressing, all elements are stored directly inside the
+hash table. When a collision occurs, another empty location is
+searched.
+</p>
+
+<h3>Linear Probing</h3>
+
+<p>
+A simple open-addressing technique is linear probing.
+</p>
+
+<div class="visual">
+
+<table>
+<tr>
+<th>Index</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+<th>5</th>
+<th>6</th>
+</tr>
+
+<tr>
+<th>Key</th>
+<td>—</td>
+<td>22</td>
+<td>15</td>
+<td>29</td>
+<td>—</td>
+<td>12</td>
+<td>—</td>
+</tr>
+</table>
+
+<p>
+If <code>22 % 7 = 1</code>, place 22 at index 1.
+If another key hashes to index 1, check index 2, then 3, etc.
+</p>
+
+</div>
+
+<h3>Pseudocode</h3>
+
+<pre><code>Insert(key)
+
+index = hash(key)
+
+while table[index] is occupied
+
+    index = (index + 1) % tableSize
+
+table[index] = key
+
+
+Search(key)
+
+index = hash(key)
+
+while table[index] is not empty
+
+    if table[index] == key
+        return true
+
+    index = (index + 1) % tableSize
+
+return false</code></pre>
+
+<h3>C++ Implementation</h3>
+
+<pre><code>class LinearProbingHash {
+
+    int size;
+    vector&lt;int&gt; table;
+    const int EMPTY = -1;
+
+public:
+
+    LinearProbingHash(int s) {
+
+        size = s;
+        table.assign(size, EMPTY);
+    }
+
+    int hashFunction(int key) {
+
+        return key % size;
+    }
+
+    bool insert(int key) {
+
+        int index = hashFunction(key);
+
+        for (int i = 0; i &lt; size; i++) {
+
+            int pos = (index + i) % size;
+
+            if (table[pos] == EMPTY) {
+
+                table[pos] = key;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool search(int key) {
+
+        int index = hashFunction(key);
+
+        for (int i = 0; i &lt; size; i++) {
+
+            int pos = (index + i) % size;
+
+            if (table[pos] == EMPTY)
+                return false;
+
+            if (table[pos] == key)
+                return true;
+        }
+
+        return false;
+    }
+
+    void display() {
+
+        for (int i = 0; i &lt; size; i++)
+            cout &lt;&lt; i &lt;&lt; " : " &lt;&lt; table[i] &lt;&lt; endl;
+    }
+};</code></pre>
+
+</section>
+
+<!-- COMPLEXITY -->
+
+<section id="complexity">
+<h2>9. Algorithm Complexity Comparison</h2>
+
+<table>
+<tr>
+<th>Algorithm</th>
+<th>Best</th>
+<th>Average</th>
+<th>Worst</th>
+<th>Space</th>
+</tr>
+
+<tr>
+<td>Linear Search</td>
+<td>O(1)</td>
+<td>O(n)</td>
+<td>O(n)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Binary Search</td>
+<td>O(1)</td>
+<td>O(log n)</td>
+<td>O(log n)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Bubble Sort</td>
+<td>O(n)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Insertion Sort</td>
+<td>O(n)</td>
+<td>O(n²)</td>
+<td>O(n²)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Merge Sort</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n)</td>
+</tr>
+
+<tr>
+<td>Bucket Sort</td>
+<td>O(n+k)</td>
+<td>O(n+k)</td>
+<td>O(n²)</td>
+<td>O(n+k)</td>
+</tr>
+
+<tr>
+<td>Quick Sort</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n²)</td>
+<td>O(log n)</td>
+</tr>
+
+<tr>
+<td>Heap Sort</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(n log n)</td>
+<td>O(1)</td>
+</tr>
+
+</table>
+
+<h2>10. Important Exam Points</h2>
+
+<div class="grid">
+
+<div class="card">
+<h3>Searching</h3>
+<ul>
+<li>Linear search works on sorted or unsorted data.</li>
+<li>Binary search requires sorted data.</li>
+<li>Binary search is faster for large sorted arrays.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Sorting</h3>
+<ul>
+<li>Bubble Sort uses adjacent swaps.</li>
+<li>Insertion Sort grows a sorted prefix.</li>
+<li>Merge Sort uses divide and conquer.</li>
+<li>Quick Sort uses partitioning.</li>
+<li>Heap Sort uses a binary heap.</li>
+<li>Bucket Sort distributes data into buckets.</li>
+</ul>
+</div>
+
+<div class="card">
+<h3>Hashing</h3>
+<ul>
+<li>Hash function maps keys to indexes.</li>
+<li>Collision occurs when two keys get the same index.</li>
+<li>Chaining stores collided values in lists.</li>
+<li>Open addressing searches another table location.</li>
+<li>Linear probing checks consecutive locations.</li>
+</ul>
+</div>
+
+</div>
+
+</section>
+
+</div>
+
+<footer>
+    <h3>Data Structures  – Searching, Sorting and Hashing </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+<script>
+
+/* =====================================================
+   COMMON DATA
+===================================================== */
+
+let baseArray = [64, 25, 12, 22, 11, 45, 8];
+
+function renderArray(id, arr, active = [], sorted = [], found = []) {
+
+    const container = document.getElementById(id);
+
+    container.innerHTML = "";
+
+    arr.forEach((value, index) => {
+
+        const bar = document.createElement("div");
+
+        bar.className = "bar";
+
+        bar.style.height = (value * 2 + 30) + "px";
+
+        bar.textContent = value;
+
+        if (active.includes(index))
+            bar.classList.add("active");
+
+        if (sorted.includes(index))
+            bar.classList.add("sorted");
+
+        if (found.includes(index))
+            bar.classList.add("found");
+
+        container.appendChild(bar);
+    });
+}
+
+
+/* =====================================================
+   SEARCH
+===================================================== */
+
+const searchData = [8, 12, 17, 25, 31, 40, 52];
+
+function showSearchArray(active=[], found=[]) {
+
+    const container = document.getElementById("searchArray");
+
+    container.innerHTML = "";
+
+    searchData.forEach((value, index) => {
+
+        const bar = document.createElement("div");
+
+        bar.className = "bar small";
+        bar.textContent = value;
+
+        if (active.includes(index))
+            bar.classList.add("active");
+
+        if (found.includes(index))
+            bar.classList.add("found");
+
+        container.appendChild(bar);
+    });
+}
+
+showSearchArray();
+
+async function linearDemo() {
+
+    let key = Number(document.getElementById("searchInput").value);
+
+    if (isNaN(key)) {
+        document.getElementById("searchStatus").textContent =
+            "Enter a search value.";
+        return;
+    }
+
+    for (let i = 0; i < searchData.length; i++) {
+
+        showSearchArray([i]);
+
+        document.getElementById("searchStatus").textContent =
+            "Checking index " + i + " : " + searchData[i];
+
+        await delay(1200);
+
+        if (searchData[i] === key) {
+
+            showSearchArray([], [i]);
+
+            document.getElementById("searchStatus").textContent =
+                "Found " + key + " at index " + i;
+
+            return;
+        }
+    }
+
+    document.getElementById("searchStatus").textContent =
+        key + " was not found.";
+}
+
+async function binaryDemo() {
+
+    let key = Number(document.getElementById("searchInput").value);
+
+    if (isNaN(key)) {
+        document.getElementById("searchStatus").textContent =
+            "Enter a search value.";
+        return;
+    }
+
+    let low = 0;
+    let high = searchData.length - 1;
+
+    while (low <= high) {
+
+        let mid = Math.floor((low + high) / 2);
+
+        showSearchArray([mid]);
+
+        document.getElementById("searchStatus").textContent =
+            "Low = " + low +
+            ", Mid = " + mid +
+            ", High = " + high;
+
+        await delay(1200);
+
+        if (searchData[mid] === key) {
+
+            showSearchArray([], [mid]);
+
+            document.getElementById("searchStatus").textContent =
+                "Found " + key + " at index " + mid;
+
+            return;
+        }
+
+        if (key < searchData[mid])
+            high = mid - 1;
+        else
+            low = mid + 1;
+    }
+
+    document.getElementById("searchStatus").textContent =
+        key + " was not found.";
+}
+
+
+/* =====================================================
+   BUBBLE SORT
+===================================================== */
+
+let bubbleData = [...baseArray];
+
+function renderBubble(active=[], sorted=[]) {
+    renderArray("bubbleArray", bubbleData, active, sorted);
+}
+
+renderBubble();
+
+async function startBubble() {
+
+    bubbleData = [...baseArray];
+
+    for (let i = 0; i < bubbleData.length - 1; i++) {
+
+        for (let j = 0; j < bubbleData.length - i - 1; j++) {
+
+            renderBubble([j, j + 1],
+                Array.from(
+                    {length: i},
+                    (_, k) => bubbleData.length - 1 - k
+                )
+            );
+
+            await delay(1200);
+
+            if (bubbleData[j] > bubbleData[j + 1]) {
+
+                [bubbleData[j], bubbleData[j + 1]] =
+                [bubbleData[j + 1], bubbleData[j]];
+            }
+        }
+    }
+
+    renderBubble([], bubbleData.map((_, i) => i));
+}
+
+
+/* =====================================================
+   INSERTION SORT
+===================================================== */
+
+let insertionData = [...baseArray];
+
+function renderInsertion(active=[], sortedCount=0) {
+
+    renderArray(
+        "insertionArray",
+        insertionData,
+        active,
+        Array.from({length: sortedCount}, (_, i) => i)
+    );
+}
+
+renderInsertion();
+
+async function startInsertion() {
+
+    insertionData = [...baseArray];
+
+    for (let i = 1; i < insertionData.length; i++) {
+
+        let key = insertionData[i];
+        let j = i - 1;
+
+        renderInsertion([i], i);
+        await delay(1200);
+
+        while (j >= 0 && insertionData[j] > key) {
+
+            insertionData[j + 1] = insertionData[j];
+
+            renderInsertion([j, j + 1], i);
+
+            await delay(1000);
+
+            j--;
+        }
+
+        insertionData[j + 1] = key;
+
+        renderInsertion([j + 1], i + 1);
+
+        await delay(1200);
+    }
+
+    renderInsertion([], insertionData.length);
+}
+
+
+/* =====================================================
+   MERGE SORT
+===================================================== */
+
+let mergeData = [...baseArray];
+
+function renderMerge(active=[], sorted=[]) {
+    renderArray("mergeArray", mergeData, active, sorted);
+}
+
+renderMerge();
+
+async function startMerge() {
+
+    mergeData = [...baseArray];
+
+    await mergeSortVisual(0, mergeData.length - 1);
+
+    renderMerge([], mergeData.map((_, i) => i));
+}
+
+async function mergeSortVisual(left, right) {
+
+    if (left >= right)
+        return;
+
+    const mid = Math.floor((left + right) / 2);
+
+    renderMerge(
+        Array.from(
+            {length: right-left+1},
+            (_, i) => left+i
+        )
+    );
+
+    await delay(1200);
+
+    await mergeSortVisual(left, mid);
+    await mergeSortVisual(mid + 1, right);
+
+    let temp = [];
+
+    let i = left;
+    let j = mid + 1;
+
+    while (i <= mid && j <= right) {
+
+        if (mergeData[i] <= mergeData[j])
+            temp.push(mergeData[i++]);
+        else
+            temp.push(mergeData[j++]);
+    }
+
+    while (i <= mid)
+        temp.push(mergeData[i++]);
+
+    while (j <= right)
+        temp.push(mergeData[j++]);
+
+    for (let k = 0; k < temp.length; k++)
+        mergeData[left + k] = temp[k];
+
+    renderMerge(
+        [],
+        Array.from(
+            {length: right-left+1},
+            (_, i) => left+i
+        )
+    );
+
+    await delay(1200);
+}
+
+
+/* =====================================================
+   BUCKET SORT
+===================================================== */
+
+function bucketDemo() {
+
+    let values = [12, 5, 28, 45, 32, 7, 19, 39];
+
+    let buckets = [[], [], [], [], []];
+
+    values.forEach(x => {
+
+        let index = Math.floor(x / 10);
+
+        if (index > 4)
+            index = 4;
+
+        buckets[index].push(x);
+    });
+
+    buckets.forEach((bucket, i) => {
+
+        bucket.sort((a,b) => a-b);
+
+        document.getElementById("bucket" + i).textContent =
+            bucket.length ? bucket.join(" → ") : "Empty";
+    });
+}
+
+
+/* =====================================================
+   QUICK SORT
+===================================================== */
+
+let quickData = [...baseArray];
+
+function renderQuick() {
+
+    renderArray(
+        "quickArray",
+        quickData,
+        [],
+        quickData.map((_,i)=>i)
+    );
+}
+
+renderQuick();
+
+async function quickDemo() {
+
+    quickData = [...baseArray];
+
+    await quickVisual(0, quickData.length - 1);
+
+    renderQuick();
+}
+
+async function quickVisual(low, high) {
+
+    if (low >= high)
+        return;
+
+    let pivot = quickData[high];
+
+    let i = low - 1;
+
+    for (let j = low; j < high; j++) {
+
+        renderArray(
+            "quickArray",
+            quickData,
+            [j, high]
+        );
+
+        await delay(1200);
+
+        if (quickData[j] < pivot) {
+
+            i++;
+
+            [quickData[i], quickData[j]] =
+            [quickData[j], quickData[i]];
+        }
+    }
+
+    [quickData[i + 1], quickData[high]] =
+    [quickData[high], quickData[i + 1]];
+
+    let p = i + 1;
+
+    await quickVisual(low, p - 1);
+    await quickVisual(p + 1, high);
+}
+
+
+/* =====================================================
+   HEAP SORT
+===================================================== */
+
+let heapData = [...baseArray];
+
+function renderHeap() {
+
+    renderArray(
+        "heapArray",
+        heapData,
+        [],
+        heapData.map((_,i)=>i)
+    );
+}
+
+renderHeap();
+
+async function heapDemo() {
+
+    heapData = [...baseArray];
+
+    let n = heapData.length;
+
+    for (let i = Math.floor(n / 2) - 1; i >= 0; i--) {
+
+        await heapifyVisual(n, i);
+    }
+
+    for (let i = n - 1; i > 0; i--) {
+
+        [heapData[0], heapData[i]] =
+        [heapData[i], heapData[0]];
+
+        renderArray(
+            "heapArray",
+            heapData,
+            [0, i],
+            Array.from(
+                {length: n-i},
+                (_,k)=>i+k
+            )
+        );
+
+        await delay(1200);
+
+        await heapifyVisual(i, 0);
+    }
+
+    renderHeap();
+}
+
+async function heapifyVisual(n, i) {
+
+    let largest = i;
+
+    let left = 2 * i + 1;
+    let right = 2 * i + 2;
+
+    if (left < n && heapData[left] > heapData[largest])
+        largest = left;
+
+    if (right < n && heapData[right] > heapData[largest])
+        largest = right;
+
+    if (largest !== i) {
+
+        [heapData[i], heapData[largest]] =
+        [heapData[largest], heapData[i]];
+
+        renderArray(
+            "heapArray",
+            heapData,
+            [i, largest]
+        );
+
+        await delay(1200);
+
+        await heapifyVisual(n, largest);
+    }
+}
+
+
+/* =====================================================
+   UTILITIES
+===================================================== */
+
+function shuffleAll() {
+
+    bubbleData = [...baseArray]
+        .sort(() => Math.random() - 0.5);
+
+    renderBubble();
+}
+
+function delay(ms) {
+
+    return new Promise(resolve =>
+        setTimeout(resolve, ms)
+    );
+}
+
+</script>
+
+</body>
+</html>

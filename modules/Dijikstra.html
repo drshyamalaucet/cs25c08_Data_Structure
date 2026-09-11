@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dijkstra's Shortest Path Algorithm</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Poppins", Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+header {
+    background: linear-gradient(135deg, #172554, #2563eb);
+    color: white;
+    padding: 28px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.container {
+    width: 95%;
+    max-width: 1400px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #1d4ed8;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+button, select {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 7px;
+    font-size: 14px;
+}
+
+button {
+    background: #2563eb;
+    color: white;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.reset {
+    background: #dc2626;
+}
+
+button.step {
+    background: #059669;
+}
+
+select {
+    border: 1px solid #cbd5e1;
+    background: white;
+}
+
+.graph-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+#graph {
+    position: relative;
+    width: 760px;
+    height: 500px;
+    max-width: 100%;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    background:
+        linear-gradient(#e5e7eb 1px, transparent 1px),
+        linear-gradient(90deg, #e5e7eb 1px, transparent 1px);
+    background-size: 40px 40px;
+    overflow: hidden;
+}
+
+svg {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    left: 0;
+    top: 0;
+}
+
+.edge {
+    stroke: #64748b;
+    stroke-width: 3;
+}
+
+.edge.active {
+    stroke: #f59e0b;
+    stroke-width: 6;
+}
+
+.edge.path {
+    stroke: #16a34a;
+    stroke-width: 8;
+}
+
+.edge-label {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #111827;
+}
+
+.node {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #3b82f6;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border: 4px solid white;
+    box-shadow: 0 3px 8px rgba(0,0,0,.25);
+    transform: translate(-50%, -50%);
+    z-index: 5;
+    transition: .3s;
+}
+
+.node.current {
+    background: #f59e0b;
+    transform: translate(-50%, -50%) scale(1.15);
+}
+
+.node.visited {
+    background: #16a34a;
+}
+
+.node.source {
+    background: #7c3aed;
+}
+
+.node.destination {
+    background: #dc2626;
+}
+
+.info-panel {
+    flex: 1;
+    min-width: 280px;
+}
+
+.status {
+    padding: 14px;
+    border-radius: 8px;
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    margin-bottom: 15px;
+}
+
+.distance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.distance-table th,
+.distance-table td {
+    border: 1px solid #cbd5e1;
+    padding: 9px;
+    text-align: center;
+}
+
+.distance-table th {
+    background: #dbeafe;
+}
+
+.infinity {
+    color: #dc2626;
+    font-weight: bold;
+}
+
+.formula {
+    background: #111827;
+    color: #f9fafb;
+    padding: 15px;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    overflow-x: auto;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.feature {
+    padding: 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.feature h3 {
+    color: #2563eb;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 12px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.dot {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+}
+
+.source-dot { background: #7c3aed; }
+.destination-dot { background: #dc2626; }
+.visited-dot { background: #16a34a; }
+.current-dot { background: #f59e0b; }
+.normal-dot { background: #3b82f6; }
+
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #172554;
+    color: white;
+    margin-top: 30px;
+}
+
+@media(max-width: 800px) {
+    #graph {
+        height: 400px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>🚀 Dijkstra's Shortest Path Algorithm</h1>
+    <p>Interactive visualization + C++ implementation</p>
+</header>
+
+<div class="container">
+
+<!-- INTRODUCTION -->
+
+<div class="card">
+    <h2>1. What is Dijkstra's Algorithm?</h2>
+
+```
+<p>
+    Dijkstra's algorithm is a <b>shortest path algorithm</b> used to find
+    the minimum-cost path from a source vertex to all other vertices in
+    a weighted graph.
+</p>
+
+<p>
+    It repeatedly selects the unvisited vertex having the smallest
+    tentative distance and relaxes all of its neighboring edges.
+</p>
+
+<div class="formula">
+    If dist[u] + weight(u,v) &lt; dist[v],
+    then dist[v] = dist[u] + weight(u,v)
+</div>
+
+<div class="grid">
+
+    <div class="feature">
+        <h3>Input</h3>
+        <p>A weighted graph with non-negative edge weights.</p>
+    </div>
+
+    <div class="feature">
+        <h3>Output</h3>
+        <p>Shortest distance from the source to every reachable vertex.</p>
+    </div>
+
+    <div class="feature">
+        <h3>Greedy Method</h3>
+        <p>Always chooses the currently closest unvisited vertex.</p>
+    </div>
+
+    <div class="feature">
+        <h3>Important</h3>
+        <p>Dijkstra's algorithm does not work correctly with negative edge weights.</p>
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- VISUALIZATION -->
+
+<div class="card">
+
+```
+<h2>2. Interactive Visualization</h2>
+
+<div class="controls">
+
+    <label>
+        Source:
+        <select id="sourceSelect"></select>
+    </label>
+
+    <label>
+        Destination:
+        <select id="destinationSelect"></select>
+    </label>
+
+    <button onclick="initializeAlgorithm()">
+        Initialize
+    </button>
+
+    <button class="step" onclick="dijkstraStep()">
+        Next Step
+    </button>
+
+    <button onclick="runAutomatically()">
+        ▶ Run Automatically
+    </button>
+
+    <button class="reset" onclick="resetVisualization()">
+        Reset
+    </button>
+
+</div>
+
+<div class="graph-wrapper">
+
+    <div id="graph">
+        <svg id="edges"></svg>
+        <div id="nodes"></div>
+    </div>
+
+    <div class="info-panel">
+
+        <div class="status" id="status">
+            Select source and destination, then click Initialize.
+        </div>
+
+        <h3>Distance Table</h3>
+
+        <table class="distance-table">
+            <thead>
+                <tr>
+                    <th>Vertex</th>
+                    <th>Distance</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="distanceTable"></tbody>
+        </table>
+
+        <h3>Legend</h3>
+
+        <div class="legend">
+
+            <div class="legend-item">
+                <span class="dot source-dot"></span>
+                Source
+            </div>
+
+            <div class="legend-item">
+                <span class="dot destination-dot"></span>
+                Destination
+            </div>
+
+            <div class="legend-item">
+                <span class="dot visited-dot"></span>
+                Visited
+            </div>
+
+            <div class="legend-item">
+                <span class="dot current-dot"></span>
+                Current
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- ALGORITHM -->
+
+<div class="card">
+
+```
+<h2>3. How Dijkstra's Algorithm Works</h2>
+
+<ol>
+    <li>Set the source vertex distance to <b>0</b>.</li>
+    <li>Set all other vertex distances to <b>∞</b>.</li>
+    <li>Select the unvisited vertex with the smallest distance.</li>
+    <li>Mark that vertex as visited.</li>
+    <li>Examine all neighboring vertices.</li>
+    <li>Relax each edge.</li>
+    <li>Update the distance if a shorter path is found.</li>
+    <li>Repeat until all vertices are processed.</li>
+    <li>Use the predecessor array to reconstruct the shortest path.</li>
+</ol>
+```
+
+</div>
+
+<!-- EXAMPLE -->
+
+<div class="card">
+
+```
+<h2>4. Example Graph</h2>
+
+<p>The visualization uses the following weighted graph:</p>
+
+<div class="formula">
+    A --4-- B --5-- D --3-- F<br>
+    |       |       |<br>
+    2       1       2<br>
+    |       |       |<br>
+    C --8-- E --1-- F
+</div>
+
+<p>
+    Try selecting <b>A</b> as the source and <b>F</b> as the destination.
+    The algorithm will gradually determine the shortest path.
+</p>
+```
+
+</div>
+
+<!-- PSEUDOCODE -->
+
+<div class="card">
+
+```
+<h2>5. Pseudocode</h2>
+```
+
+<pre><code>DIJKSTRA(Graph, source)
+
+for every vertex v:
+    distance[v] = INFINITY
+    previous[v] = NULL
+    visited[v] = false
+
+distance[source] = 0
+
+repeat:
+
+    u = unvisited vertex with minimum distance
+
+    if u does not exist:
+        break
+
+    visited[u] = true
+
+    for each neighbor v of u:
+
+        newDistance =
+            distance[u] + weight(u, v)
+
+        if newDistance &lt; distance[v]:
+
+            distance[v] = newDistance
+            previous[v] = u
+
+return distance[] and previous[]</code></pre>
+
+</div>
+
+<!-- C++ -->
+
+<div class="card">
+
+```
+<h2>6. C++ Implementation</h2>
+```
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;vector&gt;
+#include &lt;queue&gt;
+#include &lt;climits&gt;
+#include &lt;algorithm&gt;
+
+using namespace std;
+
+typedef pair&lt;int, int&gt; PII;
+
+void dijkstra(
+    int V,
+    vector&lt;vector&lt;PII&gt;&gt;&amp; graph,
+    int source
+) {
+    vector&lt;int&gt; dist(V, INT_MAX);
+    vector&lt;int&gt; parent(V, -1);
+
+    priority_queue&lt;
+        PII,
+        vector&lt;PII&gt;,
+        greater&lt;PII&gt;
+    &gt; pq;
+
+    dist[source] = 0;
+
+    pq.push({0, source});
+
+    while (!pq.empty()) {
+
+        int currentDistance = pq.top().first;
+        int u = pq.top().second;
+
+        pq.pop();
+
+        if (currentDistance &gt; dist[u])
+            continue;
+
+        for (auto edge : graph[u]) {
+
+            int v = edge.first;
+            int weight = edge.second;
+
+            if (dist[u] != INT_MAX &amp;&amp;
+                dist[u] + weight &lt; dist[v]) {
+
+                dist[v] = dist[u] + weight;
+
+                parent[v] = u;
+
+                pq.push({
+                    dist[v],
+                    v
+                });
+            }
+        }
+    }
+
+    cout &lt;&lt; "Shortest distances from source "
+         &lt;&lt; source &lt;&lt; ":\n";
+
+    for (int i = 0; i &lt; V; i++) {
+
+        cout &lt;&lt; "Vertex " &lt;&lt; i
+             &lt;&lt; " : ";
+
+        if (dist[i] == INT_MAX)
+            cout &lt;&lt; "INF";
+
+        else
+            cout &lt;&lt; dist[i];
+
+        cout &lt;&lt; endl;
+    }
+}
+
+int main() {
+
+    int V = 6;
+
+    vector&lt;vector&lt;PII&gt;&gt; graph(V);
+
+    auto addEdge = [&amp;](int u, int v, int w) {
+
+        graph[u].push_back({v, w});
+        graph[v].push_back({u, w});
+
+    };
+
+    addEdge(0, 1, 4);
+    addEdge(0, 2, 2);
+    addEdge(1, 2, 1);
+    addEdge(1, 3, 5);
+    addEdge(2, 4, 8);
+    addEdge(3, 4, 2);
+    addEdge(3, 5, 3);
+    addEdge(4, 5, 1);
+
+    dijkstra(V, graph, 0);
+
+    return 0;
+}</code></pre>
+
+</div>
+
+<!-- COMPLEXITY -->
+
+<div class="card">
+
+```
+<h2>7. Complexity Analysis</h2>
+
+<div class="grid">
+
+    <div class="feature">
+        <h3>Using Priority Queue</h3>
+        <p><b>O((V + E) log V)</b></p>
+    </div>
+
+    <div class="feature">
+        <h3>Using Adjacency Matrix</h3>
+        <p><b>O(V²)</b></p>
+    </div>
+
+    <div class="feature">
+        <h3>Space Complexity</h3>
+        <p><b>O(V + E)</b></p>
+    </div>
+
+    <div class="feature">
+        <h3>Edge Restriction</h3>
+        <p>Edge weights must be non-negative.</p>
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- APPLICATIONS -->
+
+<div class="card">
+
+```
+<h2>8. Applications</h2>
+
+<ul>
+    <li>GPS navigation systems</li>
+    <li>Road network routing</li>
+    <li>Computer network routing</li>
+    <li>Internet packet routing</li>
+    <li>Robot navigation</li>
+    <li>Game AI pathfinding</li>
+    <li>Public transportation route planning</li>
+    <li>Network optimization</li>
+</ul>
+```
+
+</div>
+
+<!-- COMPARISON -->
+
+<div class="card">
+
+```
+<h2>9. Dijkstra vs Other Shortest Path Algorithms</h2>
+
+<table class="distance-table">
+
+    <thead>
+        <tr>
+            <th>Algorithm</th>
+            <th>Negative Edges</th>
+            <th>Typical Complexity</th>
+            <th>Use</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        <tr>
+            <td><b>Dijkstra</b></td>
+            <td>No</td>
+            <td>O((V+E) log V)</td>
+            <td>Non-negative weighted graph</td>
+        </tr>
+
+        <tr>
+            <td>Bellman-Ford</td>
+            <td>Yes</td>
+            <td>O(VE)</td>
+            <td>Negative edges</td>
+        </tr>
+
+        <tr>
+            <td>Floyd-Warshall</td>
+            <td>Yes*</td>
+            <td>O(V³)</td>
+            <td>All-pairs shortest paths</td>
+        </tr>
+
+        <tr>
+            <td>BFS</td>
+            <td>Not applicable</td>
+            <td>O(V+E)</td>
+            <td>Unweighted graphs</td>
+        </tr>
+
+    </tbody>
+
+</table>
+
+<p>
+    *Floyd-Warshall can handle negative edge weights provided there is
+    no negative cycle.
+</p>
+```
+
+</div>
+
+</div>
+
+<footer>
+    <h3>Data Structures  – Dijkstra's : Finding Shortest Path </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+   
+ 
+<script>
+
+const vertices = [
+    {id:"A", x:100, y:120},
+    {id:"B", x:300, y:90},
+    {id:"C", x:100, y:350},
+    {id:"D", x:500, y:100},
+    {id:"E", x:350, y:350},
+    {id:"F", x:620, y:300}
+];
+
+const edges = [
+    ["A","B",4],
+    ["A","C",2],
+    ["B","C",1],
+    ["B","D",5],
+    ["C","E",8],
+    ["D","E",2],
+    ["D","F",3],
+    ["E","F",1]
+];
+
+let adjacency = {};
+let distances = {};
+let previous = {};
+let visited = {};
+let algorithmStarted = false;
+let finished = false;
+let source = "A";
+let destination = "F";
+let currentVertex = null;
+
+vertices.forEach(v => {
+    adjacency[v.id] = [];
+});
+
+edges.forEach(e => {
+
+    let u = e[0];
+    let v = e[1];
+    let w = e[2];
+
+    adjacency[u].push({node:v, weight:w});
+    adjacency[v].push({node:u, weight:w});
+});
+
+function createGraph() {
+
+    const svg = document.getElementById("edges");
+    const nodeContainer =
+        document.getElementById("nodes");
+
+    svg.innerHTML = "";
+    nodeContainer.innerHTML = "";
+
+    edges.forEach((e,index) => {
+
+        let u = vertices.find(v => v.id === e[0]);
+        let v = vertices.find(v => v.id === e[1]);
+
+        let line =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+        line.setAttribute("x1", u.x);
+        line.setAttribute("y1", u.y);
+        line.setAttribute("x2", v.x);
+        line.setAttribute("y2", v.y);
+
+        line.setAttribute(
+            "class",
+            "edge"
+        );
+
+        line.dataset.index = index;
+
+        svg.appendChild(line);
+
+        let text =
+            document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "text"
+            );
+
+        text.setAttribute(
+            "x",
+            (u.x + v.x) / 2
+        );
+
+        text.setAttribute(
+            "y",
+            (u.y + v.y) / 2 - 8
+        );
+
+        text.setAttribute(
+            "class",
+            "edge-label"
+        );
+
+        text.textContent = e[2];
+
+        svg.appendChild(text);
+    });
+
+    vertices.forEach(v => {
+
+        let node =
+            document.createElement("div");
+
+        node.className = "node";
+        node.id = "node-" + v.id;
+
+        node.style.left = v.x + "px";
+        node.style.top = v.y + "px";
+
+        node.textContent = v.id;
+
+        nodeContainer.appendChild(node);
+    });
+}
+
+function populateSelects() {
+
+    const s =
+        document.getElementById("sourceSelect");
+
+    const d =
+        document.getElementById("destinationSelect");
+
+    s.innerHTML = "";
+    d.innerHTML = "";
+
+    vertices.forEach(v => {
+
+        let option1 =
+            document.createElement("option");
+
+        option1.value = v.id;
+        option1.textContent = v.id;
+
+        let option2 =
+            document.createElement("option");
+
+        option2.value = v.id;
+        option2.textContent = v.id;
+
+        s.appendChild(option1);
+        d.appendChild(option2);
+    });
+
+    s.value = "A";
+    d.value = "F";
+}
+
+function initializeAlgorithm() {
+
+    source =
+        document.getElementById(
+            "sourceSelect"
+        ).value;
+
+    destination =
+        document.getElementById(
+            "destinationSelect"
+        ).value;
+
+    distances = {};
+    previous = {};
+    visited = {};
+
+    vertices.forEach(v => {
+
+        distances[v.id] = Infinity;
+        previous[v.id] = null;
+        visited[v.id] = false;
+
+    });
+
+    distances[source] = 0;
+
+    algorithmStarted = true;
+    finished = false;
+    currentVertex = null;
+
+    updateGraph();
+
+    updateTable();
+
+    document.getElementById("status").innerHTML =
+        "Algorithm initialized. " +
+        "Source <b>" + source +
+        "</b> has distance 0. Click " +
+        "<b>Next Step</b> to continue.";
+
+}
+
+function getNextVertex() {
+
+    let best = null;
+
+    vertices.forEach(v => {
+
+        if (!visited[v.id] &&
+            distances[v.id] !== Infinity) {
+
+            if (
+                best === null ||
+                distances[v.id] < distances[best]
+            ) {
+                best = v.id;
+            }
+        }
+
+    });
+
+    return best;
+}
+
+function dijkstraStep() {
+
+    if (!algorithmStarted) {
+
+        initializeAlgorithm();
+        return;
+    }
+
+    if (finished) return;
+
+    currentVertex = getNextVertex();
+
+    if (currentVertex === null) {
+
+        finished = true;
+
+        document.getElementById("status").innerHTML =
+            "No more reachable vertices. " +
+            "Algorithm completed.";
+
+        return;
+    }
+
+    visited[currentVertex] = true;
+
+    let updated = [];
+
+    adjacency[currentVertex].forEach(edge => {
+
+        let neighbor = edge.node;
+        let weight = edge.weight;
+
+        if (!visited[neighbor]) {
+
+            let newDistance =
+                distances[currentVertex] +
+                weight;
+
+            if (
+                newDistance <
+                distances[neighbor]
+            ) {
+
+                distances[neighbor] =
+                    newDistance;
+
+                previous[neighbor] =
+                    currentVertex;
+
+                updated.push(
+                    neighbor +
+                    " = " +
+                    newDistance
+                );
+            }
+        }
+    });
+
+    if (currentVertex === destination) {
+
+        finished = true;
+
+        highlightPath();
+
+        document.getElementById("status").innerHTML =
+            "🎯 Destination <b>" +
+            destination +
+            "</b> reached! " +
+            "Shortest distance = <b>" +
+            distances[destination] +
+            "</b>";
+
+    } else {
+
+        let message =
+            "Processing vertex <b>" +
+            currentVertex +
+            "</b>. ";
+
+        if (updated.length > 0) {
+
+            message +=
+                "Updated: " +
+                updated.join(", ");
+
+        } else {
+
+            message +=
+                "No shorter distances found.";
+        }
+
+        document.getElementById("status")
+            .innerHTML = message;
+    }
+
+    updateGraph();
+    updateTable();
+}
+
+function updateGraph() {
+
+    vertices.forEach(v => {
+
+        let node =
+            document.getElementById(
+                "node-" + v.id
+            );
+
+        node.className = "node";
+
+        if (v.id === source)
+            node.classList.add("source");
+
+        if (v.id === destination)
+            node.classList.add("destination");
+
+        if (visited[v.id])
+            node.classList.add("visited");
+
+        if (v.id === currentVertex)
+            node.classList.add("current");
+
+    });
+
+    document
+        .querySelectorAll(".edge")
+        .forEach(edge => {
+
+            edge.classList.remove(
+                "active",
+                "path"
+            );
+        });
+}
+
+function updateTable() {
+
+    const tbody =
+        document.getElementById(
+            "distanceTable"
+        );
+
+    tbody.innerHTML = "";
+
+    vertices.forEach(v => {
+
+        let tr =
+            document.createElement("tr");
+
+        let distance =
+            distances[v.id];
+
+        let distanceText =
+            distance === Infinity
+            ? "∞"
+            : distance;
+
+        tr.innerHTML =
+            "<td><b>" + v.id + "</b></td>" +
+            "<td>" +
+            (distance === Infinity
+                ? '<span class="infinity">∞</span>'
+                : distance) +
+            "</td>" +
+            "<td>" +
+            (visited[v.id]
+                ? "Visited"
+                : "Unvisited") +
+            "</td>";
+
+        tbody.appendChild(tr);
+    });
+}
+
+function highlightPath() {
+
+    if (distances[destination] === Infinity)
+        return;
+
+    let path = [];
+
+    let current = destination;
+
+    while (current !== null) {
+
+        path.push(current);
+
+        if (current === source)
+            break;
+
+        current = previous[current];
+    }
+
+    path.reverse();
+
+    for (let i = 0; i < path.length - 1; i++) {
+
+        let u = path[i];
+        let v = path[i + 1];
+
+        edges.forEach((e,index) => {
+
+            if (
+                (e[0] === u && e[1] === v) ||
+                (e[0] === v && e[1] === u)
+            ) {
+
+                let edge =
+                    document.querySelector(
+                        '.edge[data-index="' +
+                        index +
+                        '"]'
+                    );
+
+                edge.classList.add("path");
+            }
+
+        });
+    }
+}
+
+function runAutomatically() {
+
+    if (!algorithmStarted)
+        initializeAlgorithm();
+
+    let interval =
+        setInterval(() => {
+
+            if (finished) {
+
+                clearInterval(interval);
+                return;
+            }
+
+            dijkstraStep();
+
+        }, 900);
+}
+
+function resetVisualization() {
+
+    algorithmStarted = false;
+    finished = false;
+    currentVertex = null;
+
+    distances = {};
+    previous = {};
+    visited = {};
+
+    vertices.forEach(v => {
+
+        distances[v.id] = Infinity;
+        previous[v.id] = null;
+        visited[v.id] = false;
+
+    });
+
+    updateGraph();
+    updateTable();
+
+    document.getElementById("status").innerHTML =
+        "Visualization reset. Select source and destination, then click Initialize.";
+
+}
+
+createGraph();
+populateSelects();
+resetVisualization();
+
+</script>
+
+</body>
+</html>
