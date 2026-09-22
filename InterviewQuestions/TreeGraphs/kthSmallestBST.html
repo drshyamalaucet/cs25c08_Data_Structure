@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Kth Smallest Element in BST</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+    }
+
+    .problem {
+        line-height: 1.7;
+    }
+
+    .example {
+        background: #f8fafc;
+        border-left: 5px solid #4f46e5;
+        padding: 15px;
+        border-radius: 7px;
+        line-height: 1.7;
+        margin-top: 15px;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        padding: 13px;
+        border-radius: 7px;
+        font-family: Consolas, monospace;
+        margin: 10px 0;
+    }
+
+    .input-area {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        width: 100px;
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #4f46e5;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .auto {
+        background: #059669;
+    }
+
+    .reset {
+        background: #64748b;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .stat {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 24px;
+        margin-top: 5px;
+    }
+
+    .tree-container {
+        overflow-x: auto;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+        min-height: 420px;
+    }
+
+    svg {
+        display: block;
+        margin: auto;
+        min-width: 850px;
+    }
+
+    .edge {
+        stroke: #94a3b8;
+        stroke-width: 3;
+    }
+
+    .node {
+        fill: white;
+        stroke: #334155;
+        stroke-width: 3;
+    }
+
+    .node.visited {
+        fill: #dbeafe;
+        stroke: #2563eb;
+        stroke-width: 4;
+    }
+
+    .node.current {
+        fill: #fde68a;
+        stroke: #d97706;
+        stroke-width: 5;
+    }
+
+    .node.answer {
+        fill: #86efac;
+        stroke: #15803d;
+        stroke-width: 6;
+    }
+
+    .node-text {
+        font-size: 17px;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+    }
+
+    .rank-text {
+        font-size: 13px;
+        font-weight: bold;
+        text-anchor: middle;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #eef2ff;
+        border-left: 5px solid #4f46e5;
+        min-height: 50px;
+        line-height: 1.5;
+    }
+
+    .success {
+        background: #dcfce7;
+        border-left-color: #16a34a;
+    }
+
+    .warning {
+        background: #fef3c7;
+        border-left-color: #d97706;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .observation {
+        padding: 15px;
+        background: #f8fafc;
+        border-left: 4px solid #0ea5e9;
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    .inorder-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 12px;
+    }
+
+    .value-box {
+        background: #e0e7ff;
+        padding: 8px 13px;
+        border-radius: 6px;
+        font-weight: bold;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 15px;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .legend-circle {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid;
+    }
+
+    .blue {
+        background: #dbeafe;
+        border-color: #2563eb;
+    }
+
+    .yellow {
+        background: #fde68a;
+        border-color: #d97706;
+    }
+
+    .green {
+        background: #86efac;
+        border-color: #15803d;
+    }
+
+    @media (max-width: 800px) {
+        body {
+            padding: 12px;
+        }
+
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌳 Kth Smallest Element in a BST</h1>
+
+    <div class="subtitle">
+        Interactive Inorder Traversal + Pseudocode + Python Implementation
+    </div>
+
+
+    <!-- =====================================================
+         1. Problem Statement
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>1. Problem Statement</h2>
+
+        <div class="problem">
+            Given the root of a Binary Search Tree and an integer
+            <strong>k</strong>, return the <strong>kth smallest value</strong>
+            in the tree.
+        </div>
+
+        <div class="example">
+
+            <strong>Example BST:</strong>
+
+            <div class="formula">
+                         5
+                       /   \
+                      3     7
+                     / \   / \
+                    2   4 6   8
+                   /
+                  1
+            </div>
+
+            Inorder traversal:
+
+            <strong>1, 2, 3, 4, 5, 6, 7, 8</strong>
+
+            <br><br>
+
+            If <strong>k = 3</strong>:
+
+            <div class="formula">
+                3rd smallest = 3
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         2. Key Property
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>2. Key BST Property</h2>
+
+        <div class="observation">
+
+            In a Binary Search Tree, an
+            <strong>inorder traversal</strong>
+            visits nodes in ascending order.
+
+        </div>
+
+        <div class="formula">
+            Inorder = Left → Root → Right
+        </div>
+
+        <div class="inorder-box">
+            <span class="value-box">1</span>
+            <span class="value-box">2</span>
+            <span class="value-box">3</span>
+            <span class="value-box">4</span>
+            <span class="value-box">5</span>
+            <span class="value-box">6</span>
+            <span class="value-box">7</span>
+            <span class="value-box">8</span>
+        </div>
+
+        <p>
+            Therefore, the <strong>kth visited node</strong> during inorder
+            traversal is the kth smallest element.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         3. Interactive Visualization
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>3. Interactive Visualization</h2>
+
+        <div class="input-area">
+
+            <div class="input-group">
+
+                <label for="kInput">
+                    Enter k
+                </label>
+
+                <input
+                    id="kInput"
+                    type="number"
+                    min="1"
+                    max="8"
+                    value="3"
+                >
+
+            </div>
+
+            <button id="startBtn">
+                ▶ Start
+            </button>
+
+            <button id="nextBtn">
+                ➡ Next Step
+            </button>
+
+            <button id="autoBtn" class="auto">
+                ⏩ Auto Run
+            </button>
+
+            <button id="resetBtn" class="reset">
+                ↺ Reset
+            </button>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+                Target k
+                <strong id="kDisplay">3</strong>
+            </div>
+
+            <div class="stat">
+                Current Node
+                <strong id="currentDisplay">—</strong>
+            </div>
+
+            <div class="stat">
+                Rank
+                <strong id="rankDisplay">0</strong>
+            </div>
+
+            <div class="stat">
+                Answer
+                <strong id="answerDisplay">—</strong>
+            </div>
+
+        </div>
+
+
+        <div class="tree-container">
+
+            <svg
+                id="treeSvg"
+                width="900"
+                height="420"
+                viewBox="0 0 900 420">
+            </svg>
+
+        </div>
+
+
+        <div class="legend">
+
+            <div class="legend-item">
+                <span class="legend-circle blue"></span>
+                Visited
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-circle yellow"></span>
+                Current
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-circle green"></span>
+                kth Smallest
+            </div>
+
+        </div>
+
+
+        <div id="status" class="status">
+
+            Click <strong>Start</strong> to begin inorder traversal.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         4. Algorithm
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>4. Algorithm</h2>
+
+        <ol>
+
+            <li>
+                Perform an inorder traversal of the BST.
+            </li>
+
+            <li>
+                Visit the left subtree first.
+            </li>
+
+            <li>
+                When a node is visited, increment the counter.
+            </li>
+
+            <li>
+                If the counter equals <strong>k</strong>,
+                that node is the kth smallest value.
+            </li>
+
+            <li>
+                Stop the traversal.
+            </li>
+
+        </ol>
+
+    </div>
+
+
+    <!-- =====================================================
+         5. Pseudocode
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>5. Pseudocode</h2>
+
+<pre><code>FUNCTION kthSmallest(root, k):
+
+    stack = empty stack
+    current = root
+
+    WHILE current is not NULL OR stack is not empty:
+
+        WHILE current is not NULL:
+            PUSH current into stack
+            current = current.left
+
+        current = POP stack
+
+        k = k - 1
+
+        IF k == 0:
+            RETURN current.value
+
+        current = current.right
+
+    RETURN -1</code></pre>
+
+    </div>
+
+
+    <!-- =====================================================
+         6. Python Implementation
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>6. Python Implementation – Iterative</h2>
+
+<pre><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def kthSmallest(root, k):
+
+    stack = []
+    current = root
+
+    while current or stack:
+
+        # Go as far left as possible
+        while current:
+            stack.append(current)
+            current = current.left
+
+        # Visit node
+        current = stack.pop()
+
+        k -= 1
+
+        if k == 0:
+            return current.val
+
+        # Explore right subtree
+        current = current.right
+
+    return -1</code></pre>
+
+    </div>
+
+
+    <!-- =====================================================
+         7. Recursive Python
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>7. Python Implementation – Recursive</h2>
+
+<pre><code>def kthSmallest(root, k):
+
+    result = []
+
+    def inorder(node):
+
+        if node is None:
+            return
+
+        inorder(node.left)
+
+        result.append(node.val)
+
+        inorder(node.right)
+
+    inorder(root)
+
+    return result[k - 1]</code></pre>
+
+        <div class="observation">
+
+            The recursive version is easy to understand, but it stores the
+            inorder traversal. The iterative version can stop as soon as
+            the kth element is found.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         8. Step-by-Step Example
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>8. Step-by-Step Example</h2>
+
+        <h3>Find the 3rd smallest value</h3>
+
+        <div class="formula">
+            k = 3
+        </div>
+
+        <p>
+            Inorder traversal starts from the smallest node:
+        </p>
+
+        <div class="formula">
+            1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
+        </div>
+
+        <p>
+            Visit <strong>1</strong> → rank = 1
+        </p>
+
+        <p>
+            Visit <strong>2</strong> → rank = 2
+        </p>
+
+        <p>
+            Visit <strong>3</strong> → rank = 3
+        </p>
+
+        <div class="formula">
+            Answer = 3
+        </div>
+
+        <p>
+            The traversal can stop immediately because the kth smallest
+            element has been found.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         9. Complexity
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>9. Complexity Analysis</h2>
+
+        <div class="two-column">
+
+            <div>
+
+                <h3>Time Complexity</h3>
+
+                <div class="formula">
+                    O(H + k)
+                </div>
+
+                <p>
+                    where H is the height of the BST.
+                    In the worst case, this becomes O(N).
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3>Space Complexity</h3>
+
+                <div class="formula">
+                    O(H)
+                </div>
+
+                <p>
+                    The stack contains nodes along the current
+                    root-to-leaf path.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         10. Important Observations
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>10. Important Observations</h2>
+
+        <div class="observation">
+
+            <strong>1. BST ordering:</strong>
+            Inorder traversal produces values in sorted ascending order.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>2. 1-indexed:</strong>
+            The smallest element corresponds to k = 1.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>3. Early stopping:</strong>
+            Once the counter reaches k, no additional nodes need to be
+            visited.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>4. No sorting required:</strong>
+            We do not need to extract all values and sort them because
+            the BST already provides sorted order through inorder traversal.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>5. Balanced BST:</strong>
+            For a balanced BST, the height H is approximately log N.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+
+/* =====================================================
+   BST
+===================================================== */
+
+const bst = {
+
+    id: "n5",
+    value: 5,
+
+    left: {
+
+        id: "n3",
+        value: 3,
+
+        left: {
+
+            id: "n2",
+            value: 2,
+
+            left: {
+
+                id: "n1",
+                value: 1,
+
+                left: null,
+                right: null
+
+            },
+
+            right: null
+
+        },
+
+        right: {
+
+            id: "n4",
+            value: 4,
+
+            left: null,
+            right: null
+
+        }
+
+    },
+
+    right: {
+
+        id: "n7",
+        value: 7,
+
+        left: {
+
+            id: "n6",
+            value: 6,
+
+            left: null,
+            right: null
+
+        },
+
+        right: {
+
+            id: "n8",
+            value: 8,
+
+            left: null,
+            right: null
+
+        }
+
+    }
+
+};
+
+
+/* =====================================================
+   Global variables
+===================================================== */
+
+let k = 3;
+
+let steps = [];
+
+let currentStep = -1;
+
+let autoTimer = null;
+
+
+/* =====================================================
+   Positions
+===================================================== */
+
+function getPositions() {
+
+    return {
+
+        n5: { x: 450, y: 55 },
+
+        n3: { x: 250, y: 145 },
+        n7: { x: 650, y: 145 },
+
+        n2: { x: 150, y: 235 },
+        n4: { x: 350, y: 235 },
+
+        n6: { x: 550, y: 235 },
+        n8: { x: 750, y: 235 },
+
+        n1: { x: 100, y: 325 }
+
+    };
+
+}
+
+
+/* =====================================================
+   Node Map
+===================================================== */
+
+function getNodeMap() {
+
+    return {
+
+        n5: bst,
+
+        n3: bst.left,
+        n7: bst.right,
+
+        n2: bst.left.left,
+        n4: bst.left.right,
+
+        n6: bst.right.left,
+        n8: bst.right.right,
+
+        n1: bst.left.left.left
+
+    };
+
+}
+
+
+/* =====================================================
+   SVG Helper
+===================================================== */
+
+const svg = document.getElementById("treeSvg");
+
+
+function createSVGElement(type, attributes) {
+
+    const element =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            type
+        );
+
+    Object.entries(attributes).forEach(
+        ([key, value]) => {
+            element.setAttribute(key, value);
+        }
+    );
+
+    return element;
+
+}
+
+
+/* =====================================================
+   Clear SVG
+===================================================== */
+
+function clearSVG() {
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+
+}
+
+
+/* =====================================================
+   Draw Edges
+===================================================== */
+
+function drawEdges() {
+
+    const positions = getPositions();
+
+    const edges = [
+
+        ["n5", "n3"],
+        ["n5", "n7"],
+
+        ["n3", "n2"],
+        ["n3", "n4"],
+
+        ["n7", "n6"],
+        ["n7", "n8"],
+
+        ["n2", "n1"]
+
+    ];
+
+    edges.forEach(([from, to]) => {
+
+        const p1 = positions[from];
+        const p2 = positions[to];
+
+        const line =
+            createSVGElement(
+                "line",
+                {
+                    x1: p1.x,
+                    y1: p1.y,
+                    x2: p2.x,
+                    y2: p2.y,
+                    class: "edge"
+                }
+            );
+
+        svg.appendChild(line);
+
+    });
+
+}
+
+
+/* =====================================================
+   Draw Tree
+===================================================== */
+
+function drawTree(
+    currentId = null,
+    visitedIds = [],
+    answerId = null
+) {
+
+    clearSVG();
+
+    drawEdges();
+
+    const positions = getPositions();
+    const nodes = getNodeMap();
+
+    Object.keys(nodes).forEach(id => {
+
+        const node = nodes[id];
+        const pos = positions[id];
+
+        let className = "node";
+
+        if (id === answerId) {
+
+            className = "node answer";
+
+        }
+        else if (id === currentId) {
+
+            className = "node current";
+
+        }
+        else if (visitedIds.includes(id)) {
+
+            className = "node visited";
+
+        }
+
+
+        const circle =
+            createSVGElement(
+                "circle",
+                {
+                    cx: pos.x,
+                    cy: pos.y,
+                    r: 27,
+                    class: className
+                }
+            );
+
+        const text =
+            createSVGElement(
+                "text",
+                {
+                    x: pos.x,
+                    y: pos.y,
+                    class: "node-text"
+                }
+            );
+
+        text.textContent = node.value;
+
+        svg.appendChild(circle);
+        svg.appendChild(text);
+
+
+        /* Display inorder rank */
+
+        const visitedStep =
+            steps.find(
+                step =>
+                    step.nodeId === id &&
+                    step.type === "visit"
+            );
+
+        if (visitedIds.includes(id) && visitedStep) {
+
+            const rankText =
+                createSVGElement(
+                    "text",
+                    {
+                        x: pos.x,
+                        y: pos.y - 40,
+                        class: "rank-text"
+                    }
+                );
+
+            rankText.textContent =
+                "rank " + visitedStep.rank;
+
+            svg.appendChild(rankText);
+
+        }
+
+    });
+
+}
+
+
+/* =====================================================
+   Build Inorder Steps
+===================================================== */
+
+function buildSteps() {
+
+    steps = [];
+
+    const stack = [];
+
+    let current = bst;
+
+    let rank = 0;
+
+    while (current !== null || stack.length > 0) {
+
+        while (current !== null) {
+
+            stack.push(current);
+
+            current = current.left;
+
+        }
+
+
+        current = stack.pop();
+
+        rank++;
+
+
+        steps.push({
+
+            type: "visit",
+
+            nodeId: current.id,
+
+            value: current.value,
+
+            rank: rank
+
+        });
+
+
+        if (rank === k) {
+
+            steps.push({
+
+                type: "answer",
+
+                nodeId: current.id,
+
+                value: current.value,
+
+                rank: rank
+
+            });
+
+            break;
+
+        }
+
+
+        current = current.right;
+
+    }
+
+}
+
+
+/* =====================================================
+   Start
+===================================================== */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    k =
+        Number(
+            document.getElementById("kInput").value
+        );
+
+
+    if (
+        !Number.isInteger(k) ||
+        k < 1 ||
+        k > 8
+    ) {
+
+        document.getElementById("status").className =
+            "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Please enter k between <strong>1</strong> and <strong>8</strong>.";
+
+        return;
+
+    }
+
+
+    document.getElementById("kDisplay").textContent = k;
+
+    document.getElementById("currentDisplay").textContent = "—";
+
+    document.getElementById("rankDisplay").textContent = "0";
+
+    document.getElementById("answerDisplay").textContent = "—";
+
+
+    buildSteps();
+
+    currentStep = -1;
+
+    drawTree();
+
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        `Ready to find the <strong>${k}th smallest</strong>
+         value using inorder traversal.`;
+
+}
+
+
+/* =====================================================
+   Next Step
+===================================================== */
+
+function nextStep() {
+
+    if (steps.length === 0) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+
+    }
+
+
+    if (currentStep >= steps.length - 1) {
+
+        return;
+
+    }
+
+
+    currentStep++;
+
+    const step = steps[currentStep];
+
+
+    const visitedIds =
+        steps
+            .slice(0, currentStep + 1)
+            .filter(s => s.type === "visit")
+            .map(s => s.nodeId);
+
+
+    document.getElementById("currentDisplay").textContent =
+        step.value;
+
+    document.getElementById("rankDisplay").textContent =
+        step.rank;
+
+
+    if (step.type === "visit") {
+
+        drawTree(
+            step.nodeId,
+            visitedIds
+        );
+
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `Visited node <strong>${step.value}</strong>.
+             Its inorder rank is <strong>${step.rank}</strong>.`;
+
+    }
+
+
+    else if (step.type === "answer") {
+
+        drawTree(
+            null,
+            visitedIds,
+            step.nodeId
+        );
+
+
+        document.getElementById("answerDisplay").textContent =
+            step.value;
+
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerHTML =
+            `🎉 <strong>Answer Found!</strong><br>
+             The ${k}th smallest value is
+             <strong>${step.value}</strong>.`;
+
+    }
+
+}
+
+
+/* =====================================================
+   Auto Run
+===================================================== */
+
+function autoRun() {
+
+    if (autoTimer !== null) {
+
+        stopAuto();
+
+        return;
+
+    }
+
+
+    if (
+        steps.length === 0 ||
+        currentStep >= steps.length - 1
+    ) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+
+    }
+
+
+    autoTimer =
+        setInterval(() => {
+
+            if (currentStep >= steps.length - 1) {
+
+                stopAuto();
+
+                return;
+
+            }
+
+            nextStep();
+
+        }, 1100);
+
+}
+
+
+/* =====================================================
+   Stop Auto
+===================================================== */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+    }
+
+}
+
+
+/* =====================================================
+   Reset
+===================================================== */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    k = 3;
+
+    steps = [];
+
+    currentStep = -1;
+
+
+    document.getElementById("kInput").value = 3;
+
+    document.getElementById("kDisplay").textContent = 3;
+
+    document.getElementById("currentDisplay").textContent = "—";
+
+    document.getElementById("rankDisplay").textContent = 0;
+
+    document.getElementById("answerDisplay").textContent = "—";
+
+
+    drawTree();
+
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        "Click <strong>Start</strong> to begin inorder traversal.";
+
+}
+
+
+/* =====================================================
+   Event Listeners
+===================================================== */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetAlgorithm
+    );
+
+
+/* =====================================================
+   Initial Render
+===================================================== */
+
+drawTree();
+
+</script>
+
+</body>
+</html>

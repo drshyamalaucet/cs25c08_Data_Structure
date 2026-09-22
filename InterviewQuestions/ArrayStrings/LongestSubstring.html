@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longest Substring Without Duplicate Characters</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1200px;
+        margin: 30px auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #1f3c88;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        color: #1f3c88;
+        border-bottom: 2px solid #1f3c88;
+        padding-bottom: 8px;
+    }
+
+    .card {
+        background: white;
+        padding: 22px;
+        margin: 20px 0;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+    }
+
+    .problem {
+        line-height: 1.7;
+        font-size: 17px;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        min-width: 250px;
+        padding: 13px;
+        font-size: 17px;
+        border: 2px solid #ccc;
+        border-radius: 7px;
+    }
+
+    button {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    #startBtn {
+        background: #2563eb;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #16a34a;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #9333ea;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .string-display {
+        margin-top: 25px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 7px;
+    }
+
+    .char {
+        width: 52px;
+        height: 58px;
+        border: 2px solid #aaa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        font-weight: bold;
+        background: white;
+        position: relative;
+    }
+
+    .window {
+        background: #dbeafe;
+        border: 3px solid #2563eb;
+    }
+
+    .duplicate {
+        background: #fee2e2;
+        border: 3px solid #dc2626;
+    }
+
+    .best {
+        background: #dcfce7;
+        border: 3px solid #16a34a;
+    }
+
+    .index {
+        position: absolute;
+        bottom: -19px;
+        font-size: 11px;
+        color: #555;
+        font-weight: normal;
+    }
+
+    .pointer {
+        position: absolute;
+        top: -25px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+
+    .left-pointer {
+        color: #2563eb;
+    }
+
+    .right-pointer {
+        color: #9333ea;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 30px;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .info-box h3 {
+        margin: 5px 0;
+        color: #1f3c88;
+    }
+
+    .info-value {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .status {
+        text-align: center;
+        padding: 15px;
+        margin-top: 20px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .warning {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .step {
+        background: #f8fafc;
+        border-left: 5px solid #2563eb;
+        padding: 12px;
+        margin-top: 10px;
+        line-height: 1.5;
+    }
+
+    .best-result {
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        background: #ecfdf5;
+        border-radius: 10px;
+        font-size: 22px;
+        font-weight: bold;
+        color: #166534;
+    }
+
+    pre {
+        background: #111827;
+        color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .example {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        padding: 15px;
+        margin: 12px 0;
+        line-height: 1.6;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 25px;
+    }
+
+    .legend span {
+        padding: 8px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Longest Substring Without Duplicate Characters</h1>
+
+    <!-- Problem -->
+    <div class="card problem">
+
+        <h2>1. Problem Statement</h2>
+
+        <p>
+            Given a string, find the length of the
+            <b>longest substring</b> that contains no duplicate characters.
+        </p>
+
+        <div class="example">
+            <b>Example 1:</b><br>
+            Input: <code>"abcabcbb"</code><br>
+            Longest substring: <code>"abc"</code><br>
+            Length: <b>3</b>
+        </div>
+
+        <div class="example">
+            <b>Example 2:</b><br>
+            Input: <code>"bbbbb"</code><br>
+            Longest substring: <code>"b"</code><br>
+            Length: <b>1</b>
+        </div>
+
+        <div class="example">
+            <b>Example 3:</b><br>
+            Input: <code>"pwwkew"</code><br>
+            Longest substring: <code>"wke"</code><br>
+            Length: <b>3</b>
+        </div>
+
+    </div>
+
+
+    <!-- Visualization -->
+    <div class="card">
+
+        <h2>2. Interactive Visualization</h2>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="stringInput"
+                value="abcabcbb"
+                placeholder="Enter a string..."
+            >
+
+            <button id="startBtn">Start</button>
+            <button id="nextBtn">Next Step</button>
+            <button id="autoBtn">Auto Run</button>
+            <button id="resetBtn">Reset</button>
+
+        </div>
+
+        <div id="stringDisplay" class="string-display"></div>
+
+        <div class="legend">
+            <span style="background:#dbeafe;">Current Window</span>
+            <span style="background:#fee2e2;">Duplicate</span>
+            <span style="background:#dcfce7;">Best Window</span>
+        </div>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+                <h3>Left</h3>
+                <div id="leftValue" class="info-value">-</div>
+            </div>
+
+            <div class="info-box">
+                <h3>Right</h3>
+                <div id="rightValue" class="info-value">-</div>
+            </div>
+
+            <div class="info-box">
+                <h3>Current Length</h3>
+                <div id="currentLength" class="info-value">0</div>
+            </div>
+
+            <div class="info-box">
+                <h3>Maximum Length</h3>
+                <div id="maxLength" class="info-value">0</div>
+            </div>
+
+        </div>
+
+        <div id="status" class="status">
+            Click <b>Start</b> to begin.
+        </div>
+
+        <div id="stepLog"></div>
+
+        <div id="bestResult" class="best-result" style="display:none;">
+        </div>
+
+    </div>
+
+
+    <!-- Algorithm -->
+    <div class="card">
+
+        <h2>3. Sliding Window Algorithm</h2>
+
+        <ol>
+            <li>Create a window using two pointers: <b>left</b> and <b>right</b>.</li>
+            <li>Move the right pointer through the string.</li>
+            <li>Store characters currently inside the window.</li>
+            <li>If a duplicate character is found, move the left pointer.</li>
+            <li>Continue until the duplicate is removed.</li>
+            <li>Calculate the current window length.</li>
+            <li>Update the maximum length.</li>
+        </ol>
+
+        <p>
+            This technique is called the
+            <b>Sliding Window Algorithm</b>.
+        </p>
+
+    </div>
+
+
+    <!-- Pseudocode -->
+    <div class="card">
+
+        <h2>4. Pseudocode</h2>
+
+<pre><code>LONGEST_SUBSTRING(s)
+
+    left = 0
+    maxLength = 0
+    characters = empty set
+
+    for right = 0 to length(s) - 1
+
+        while s[right] is already in characters
+
+            remove s[left] from characters
+            left = left + 1
+
+        add s[right] to characters
+
+        currentLength = right - left + 1
+
+        maxLength =
+            maximum(maxLength, currentLength)
+
+    return maxLength</code></pre>
+
+    </div>
+
+
+    <!-- Python -->
+    <div class="card">
+
+        <h2>5. Python Implementation</h2>
+
+<pre><code>def length_of_longest_substring(s):
+
+    characters = set()
+
+    left = 0
+    max_length = 0
+
+    for right in range(len(s)):
+
+        while s[right] in characters:
+            characters.remove(s[left])
+            left += 1
+
+        characters.add(s[right])
+
+        current_length = right - left + 1
+
+        max_length = max(
+            max_length,
+            current_length
+        )
+
+    return max_length
+
+
+# Example
+s = "abcabcbb"
+
+result = length_of_longest_substring(s)
+
+print("Longest length:", result)</code></pre>
+
+        <div class="example">
+            <b>Output:</b>
+            <code>Longest length: 3</code>
+        </div>
+
+    </div>
+
+
+    <!-- Optimized Python -->
+    <div class="card">
+
+        <h2>6. Optimized Python Implementation</h2>
+
+<pre><code>def length_of_longest_substring(s):
+
+    last_seen = {}
+
+    left = 0
+    max_length = 0
+
+    for right, ch in enumerate(s):
+
+        if ch in last_seen and last_seen[ch] >= left:
+            left = last_seen[ch] + 1
+
+        last_seen[ch] = right
+
+        max_length = max(
+            max_length,
+            right - left + 1
+        )
+
+    return max_length
+
+
+s = "abcabcbb"
+
+print(length_of_longest_substring(s))</code></pre>
+
+        <p>
+            The dictionary stores the last position at which each
+            character was found. Therefore, the left pointer can jump
+            directly to the required position.
+        </p>
+
+    </div>
+
+
+    <!-- Walkthrough -->
+    <div class="card">
+
+        <h2>7. Example Walkthrough</h2>
+
+        <div class="example">
+            <b>Input:</b> <code>abcabcbb</code>
+        </div>
+
+        <table style="width:100%; border-collapse:collapse; text-align:center;">
+
+            <tr style="background:#eef4ff;">
+                <th style="padding:10px; border:1px solid #ccc;">Right</th>
+                <th style="padding:10px; border:1px solid #ccc;">Character</th>
+                <th style="padding:10px; border:1px solid #ccc;">Window</th>
+                <th style="padding:10px; border:1px solid #ccc;">Length</th>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">0</td>
+                <td style="padding:10px; border:1px solid #ccc;">a</td>
+                <td style="padding:10px; border:1px solid #ccc;">a</td>
+                <td style="padding:10px; border:1px solid #ccc;">1</td>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">1</td>
+                <td style="padding:10px; border:1px solid #ccc;">b</td>
+                <td style="padding:10px; border:1px solid #ccc;">ab</td>
+                <td style="padding:10px; border:1px solid #ccc;">2</td>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">2</td>
+                <td style="padding:10px; border:1px solid #ccc;">c</td>
+                <td style="padding:10px; border:1px solid #ccc;">abc</td>
+                <td style="padding:10px; border:1px solid #ccc;">3</td>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">3</td>
+                <td style="padding:10px; border:1px solid #ccc;">a</td>
+                <td style="padding:10px; border:1px solid #ccc;">bca</td>
+                <td style="padding:10px; border:1px solid #ccc;">3</td>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">4</td>
+                <td style="padding:10px; border:1px solid #ccc;">b</td>
+                <td style="padding:10px; border:1px solid #ccc;">cab</td>
+                <td style="padding:10px; border:1px solid #ccc;">3</td>
+            </tr>
+
+            <tr>
+                <td style="padding:10px; border:1px solid #ccc;">5</td>
+                <td style="padding:10px; border:1px solid #ccc;">c</td>
+                <td style="padding:10px; border:1px solid #ccc;">abc</td>
+                <td style="padding:10px; border:1px solid #ccc;">3</td>
+            </tr>
+
+        </table>
+
+        <p style="margin-top:20px;">
+            Therefore, the longest substring is <b>"abc"</b>
+            and its length is <b>3</b>.
+        </p>
+
+    </div>
+
+
+    <!-- Complexity -->
+    <div class="card">
+
+        <h2>8. Complexity Analysis</h2>
+
+        <div class="info-grid">
+
+            <div class="info-box">
+                <h3>Time Complexity</h3>
+                <div class="info-value">O(n)</div>
+                <p>Each character is processed efficiently.</p>
+            </div>
+
+            <div class="info-box">
+                <h3>Space Complexity</h3>
+                <div class="info-value">O(k)</div>
+                <p>k = number of distinct characters.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Important concepts -->
+    <div class="card">
+
+        <h2>9. Important Concepts</h2>
+
+        <ul>
+            <li>
+                <b>Substring:</b>
+                A contiguous portion of a string.
+            </li>
+
+            <li>
+                <b>Duplicate Character:</b>
+                A character that appears more than once in the current window.
+            </li>
+
+            <li>
+                <b>Sliding Window:</b>
+                A dynamic range represented by left and right pointers.
+            </li>
+
+            <li>
+                <b>Set:</b>
+                Used to keep track of characters currently in the window.
+            </li>
+
+            <li>
+                <b>Two Pointers:</b>
+                The left pointer removes duplicates while the right pointer
+                expands the window.
+            </li>
+        </ul>
+
+    </div>
+
+</div>
+
+<footer>
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+let inputString = "";
+let left = 0;
+let right = 0;
+let maxLength = 0;
+let bestStart = 0;
+let bestEnd = -1;
+let characterSet = new Set();
+let running = false;
+let step = 0;
+let autoTimer = null;
+
+const stringInput = document.getElementById("stringInput");
+const stringDisplay = document.getElementById("stringDisplay");
+const status = document.getElementById("status");
+const stepLog = document.getElementById("stepLog");
+const bestResult = document.getElementById("bestResult");
+
+function renderString() {
+
+    stringDisplay.innerHTML = "";
+
+    for (let i = 0; i < inputString.length; i++) {
+
+        const box = document.createElement("div");
+
+        box.className = "char";
+
+        box.textContent = inputString[i];
+
+        const index = document.createElement("span");
+
+        index.className = "index";
+        index.textContent = i;
+
+        box.appendChild(index);
+
+        if (
+            i >= left &&
+            i <= right &&
+            running
+        ) {
+            box.classList.add("window");
+        }
+
+        if (
+            i >= bestStart &&
+            i <= bestEnd &&
+            maxLength > 0
+        ) {
+            box.classList.add("best");
+        }
+
+        if (i === left) {
+
+            const pointer = document.createElement("span");
+
+            pointer.className = "pointer left-pointer";
+            pointer.textContent = "L";
+
+            box.appendChild(pointer);
+        }
+
+        if (i === right) {
+
+            const pointer = document.createElement("span");
+
+            pointer.className = "pointer right-pointer";
+            pointer.textContent = "R";
+
+            box.appendChild(pointer);
+        }
+
+        stringDisplay.appendChild(box);
+    }
+}
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    inputString = stringInput.value;
+
+    left = 0;
+    right = -1;
+
+    maxLength = 0;
+
+    bestStart = 0;
+    bestEnd = -1;
+
+    characterSet = new Set();
+
+    running = true;
+
+    step = 0;
+
+    stepLog.innerHTML = "";
+
+    bestResult.style.display = "none";
+
+    updateInfo();
+
+    renderString();
+
+    if (inputString.length === 0) {
+
+        running = false;
+
+        status.className = "status warning";
+
+        status.textContent = "Please enter a string.";
+
+        return;
+    }
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Algorithm started. Click <b>Next Step</b>.";
+}
+
+function nextStep() {
+
+    if (!running) {
+
+        status.className = "status warning";
+
+        status.innerHTML =
+            "Click <b>Start</b> before running the algorithm.";
+
+        return;
+    }
+
+    if (right >= inputString.length - 1) {
+
+        running = false;
+
+        showFinalResult();
+
+        return;
+    }
+
+    right++;
+
+    step++;
+
+    const currentChar = inputString[right];
+
+    if (characterSet.has(currentChar)) {
+
+        status.className = "status warning";
+
+        status.innerHTML =
+            "Duplicate <b>" +
+            currentChar +
+            "</b> found. Move the left pointer.";
+
+        addStep(
+            "Step " +
+            step +
+            ": Duplicate '" +
+            currentChar +
+            "' found at index " +
+            right +
+            "."
+        );
+
+        while (
+            characterSet.has(currentChar) &&
+            left <= right
+        ) {
+
+            characterSet.delete(inputString[left]);
+
+            left++;
+        }
+
+        characterSet.add(currentChar);
+
+    } else {
+
+        characterSet.add(currentChar);
+
+        status.className = "status success";
+
+        status.innerHTML =
+            "Added <b>" +
+            currentChar +
+            "</b> to the current window.";
+
+        addStep(
+            "Step " +
+            step +
+            ": Added '" +
+            currentChar +
+            "' to the window."
+        );
+    }
+
+    const currentLength = right - left + 1;
+
+    if (currentLength > maxLength) {
+
+        maxLength = currentLength;
+
+        bestStart = left;
+        bestEnd = right;
+
+        addStep(
+            "New maximum found: " +
+            maxLength +
+            " characters."
+        );
+    }
+
+    updateInfo();
+
+    renderString();
+}
+
+function updateInfo() {
+
+    document.getElementById("leftValue").textContent =
+        inputString.length > 0 ? left : "-";
+
+    document.getElementById("rightValue").textContent =
+        right >= 0 ? right : "-";
+
+    const current =
+        right >= left && right >= 0
+        ? right - left + 1
+        : 0;
+
+    document.getElementById("currentLength").textContent =
+        current;
+
+    document.getElementById("maxLength").textContent =
+        maxLength;
+}
+
+function showFinalResult() {
+
+    renderString();
+
+    bestResult.style.display = "block";
+
+    const bestSubstring =
+        inputString.substring(
+            bestStart,
+            bestEnd + 1
+        );
+
+    bestResult.innerHTML =
+        "✓ Longest Substring: \"" +
+        bestSubstring +
+        "\"<br><br>" +
+        "Length = " +
+        maxLength;
+
+    status.className = "status success";
+
+    status.innerHTML =
+        "Algorithm completed successfully.";
+
+    addStep(
+        "Final answer: longest substring = \"" +
+        bestSubstring +
+        "\", length = " +
+        maxLength
+    );
+
+    updateInfo();
+}
+
+function addStep(text) {
+
+    const div = document.createElement("div");
+
+    div.className = "step";
+
+    div.textContent = text;
+
+    stepLog.appendChild(div);
+}
+
+function autoRun() {
+
+    if (!running) {
+
+        startAlgorithm();
+    }
+
+    stopAuto();
+
+    autoTimer = setInterval(() => {
+
+        if (!running) {
+
+            stopAuto();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 800);
+}
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+function resetVisualizer() {
+
+    stopAuto();
+
+    inputString = "";
+
+    left = 0;
+    right = 0;
+
+    maxLength = 0;
+
+    bestStart = 0;
+    bestEnd = -1;
+
+    characterSet.clear();
+
+    running = false;
+
+    step = 0;
+
+    stringDisplay.innerHTML = "";
+
+    stepLog.innerHTML = "";
+
+    bestResult.style.display = "none";
+
+    document.getElementById("leftValue").textContent = "-";
+    document.getElementById("rightValue").textContent = "-";
+    document.getElementById("currentLength").textContent = "0";
+    document.getElementById("maxLength").textContent = "0";
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Click <b>Start</b> to begin.";
+}
+
+
+// Event listeners
+document
+    .getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document
+    .getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document
+    .getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", resetVisualizer);
+
+</script>
+
+</body>
+</html>

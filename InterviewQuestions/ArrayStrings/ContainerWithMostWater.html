@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Container With Most Water - Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1e293b;
+}
+
+header {
+    background: linear-gradient(135deg, #0f766e, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 34px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 14px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    color: #0f766e;
+    margin-top: 0;
+    border-bottom: 2px solid #ccfbf1;
+    padding-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+label {
+    font-weight: bold;
+}
+
+input {
+    padding: 11px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+    width: 300px;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.secondary {
+    background: #64748b;
+}
+
+button.secondary:hover {
+    background: #475569;
+}
+
+.visual-area {
+    height: 430px;
+    border-bottom: 4px solid #334155;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 10px 0;
+    margin-top: 25px;
+    overflow-x: auto;
+}
+
+.bar-wrapper {
+    height: 100%;
+    min-width: 48px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.bar {
+    width: 40px;
+    background: #94a3b8;
+    border-radius: 6px 6px 0 0;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.bar::after {
+    content: attr(data-height);
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.bar.left {
+    background: #2563eb;
+}
+
+.bar.right {
+    background: #f59e0b;
+}
+
+.bar.current {
+    background: #8b5cf6;
+}
+
+.bar.best {
+    background: #16a34a;
+}
+
+.index {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.pointer-row {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    margin: 15px 0;
+    font-weight: bold;
+}
+
+.left-pointer {
+    color: #2563eb;
+}
+
+.right-pointer {
+    color: #d97706;
+}
+
+.status {
+    margin-top: 20px;
+    padding: 15px;
+    border-left: 5px solid #2563eb;
+    background: #eff6ff;
+    border-radius: 6px;
+    font-size: 17px;
+}
+
+.success {
+    background: #dcfce7;
+    border-left-color: #16a34a;
+    color: #166534;
+}
+
+.warning {
+    background: #fef3c7;
+    border-left-color: #d97706;
+    color: #92400e;
+}
+
+.step-box {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.step {
+    margin-top: 10px;
+    padding: 10px;
+    border-left: 4px solid #2563eb;
+    background: white;
+}
+
+.step-number {
+    display: inline-block;
+    background: #2563eb;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 15px;
+    margin-right: 8px;
+    font-weight: bold;
+}
+
+.formula {
+    background: #f1f5f9;
+    padding: 15px;
+    margin: 15px 0;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th, td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #0f766e;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.legend-box {
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+}
+
+.legend-left {
+    background: #2563eb;
+}
+
+.legend-right {
+    background: #f59e0b;
+}
+
+.legend-best {
+    background: #16a34a;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    background: #f0fdfa;
+    border: 1px solid #99f6e4;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.complexity-box h3 {
+    color: #0f766e;
+    margin-top: 0;
+}
+
+footer {
+    background: #1e293b;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 25px;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    .visual-area {
+        justify-content: flex-start;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Container With Most Water</h1>
+    <p>Visualizing the Two-Pointer Algorithm</p>
+</header>
+
+<div class="container">
+
+<!-- Problem -->
+
+<div class="card">
+    <h2>1. Problem Statement</h2>
+
+```
+<p>
+    You are given an array <strong>height</strong>, where each element
+    represents the height of a vertical line.
+</p>
+
+<p>
+    Find two lines that, together with the x-axis, form a container
+    that holds the <strong>maximum amount of water</strong>.
+</p>
+
+<div class="formula">
+    Area = min(height[left], height[right]) × (right − left)
+</div>
+
+<p>
+    The two selected lines cannot be tilted. The container is determined
+    by the shorter line and the distance between the two lines.
+</p>
+```
+
+</div>
+
+<!-- Example -->
+
+<div class="card">
+    <h2>2. Example</h2>
+
+```
+<pre><code>height = [1,8,6,2,5,4,8,3,7]</code></pre>
+
+<p>
+    The maximum container is formed using heights
+    <strong>8</strong> and <strong>7</strong>.
+</p>
+
+<div class="formula">
+    Area = min(8, 7) × (8 − 1)
+    = 7 × 7
+    = 49
+</div>
+
+<p><strong>Maximum Water = 49</strong></p>
+```
+
+</div>
+
+<!-- Interactive -->
+
+<div class="card">
+    <h2>3. Interactive Visual Representation</h2>
+
+```
+<div class="controls">
+
+    <label for="heightInput">
+        Heights:
+    </label>
+
+    <input
+        id="heightInput"
+        type="text"
+        value="1,8,6,2,5,4,8,3,7"
+        placeholder="Example: 1,8,6,2,5,4,8,3,7"
+    >
+
+    <button onclick="startAlgorithm()">
+        Start
+    </button>
+
+    <button onclick="nextStep()">
+        Next Step
+    </button>
+
+    <button onclick="autoRun()">
+        Auto Run
+    </button>
+
+    <button class="secondary" onclick="resetVisualizer()">
+        Reset
+    </button>
+
+</div>
+
+<div class="legend">
+
+    <div class="legend-item">
+        <div class="legend-box legend-left"></div>
+        Left Pointer
+    </div>
+
+    <div class="legend-item">
+        <div class="legend-box legend-right"></div>
+        Right Pointer
+    </div>
+
+    <div class="legend-item">
+        <div class="legend-box legend-best"></div>
+        Best Container
+    </div>
+
+</div>
+
+<div id="visualArea" class="visual-area"></div>
+
+<div id="pointerRow" class="pointer-row"></div>
+
+<div id="status" class="status">
+    Enter the heights and click <strong>Start</strong>.
+</div>
+
+<div class="step-box">
+    <strong>Execution Steps</strong>
+    <div id="steps">
+        Waiting to start...
+    </div>
+</div>
+```
+
+</div>
+
+<!-- Algorithm -->
+
+<div class="card">
+    <h2>4. Two-Pointer Algorithm</h2>
+
+```
+<p>
+    Place one pointer at the beginning of the array and another pointer
+    at the end.
+</p>
+
+<ol>
+    <li>Set <strong>left = 0</strong>.</li>
+    <li>Set <strong>right = n - 1</strong>.</li>
+    <li>Calculate the current width.</li>
+    <li>Find the shorter of the two lines.</li>
+    <li>Calculate the current container area.</li>
+    <li>Update the maximum area if necessary.</li>
+    <li>Move the pointer at the shorter line.</li>
+    <li>Continue until left and right meet.</li>
+</ol>
+
+<div class="formula">
+    Current Area =
+    min(height[left], height[right])
+    × (right - left)
+</div>
+```
+
+</div>
+
+<!-- Pseudocode -->
+
+<div class="card">
+    <h2>5. Pseudocode</h2>
+
+<pre><code>MaxArea(height)
+
+    left  ← 0
+    right ← length(height) - 1
+    maxArea ← 0
+
+    while left &lt; right
+
+        width ← right - left
+
+        currentHeight ←
+            min(height[left], height[right])
+
+        currentArea ←
+            currentHeight × width
+
+        maxArea ←
+            max(maxArea, currentArea)
+
+        if height[left] &lt; height[right]
+            left ← left + 1
+        else
+            right ← right - 1
+
+    return maxArea</code></pre>
+
+</div>
+
+<!-- Python -->
+
+<div class="card">
+    <h2>6. Python Implementation</h2>
+
+<pre><code>def max_area(height):
+    left = 0
+    right = len(height) - 1
+
+    max_water = 0
+
+    while left &lt; right:
+
+        width = right - left
+
+        current_height = min(
+            height[left],
+            height[right]
+        )
+
+        current_area = current_height * width
+
+        max_water = max(
+            max_water,
+            current_area
+        )
+
+        if height[left] &lt; height[right]:
+            left += 1
+        else:
+            right -= 1
+
+    return max_water
+
+
+# Example
+height = [1,8,6,2,5,4,8,3,7]
+
+result = max_area(height)
+
+print("Maximum water:", result)</code></pre>
+
+```
+<p><strong>Output:</strong></p>
+```
+
+<pre><code>Maximum water: 49</code></pre>
+
+</div>
+
+<!-- Step Example -->
+
+<div class="card">
+    <h2>7. Step-by-Step Example</h2>
+
+```
+<table>
+    <tr>
+        <th>Step</th>
+        <th>Left</th>
+        <th>Right</th>
+        <th>Heights</th>
+        <th>Width</th>
+        <th>Area</th>
+        <th>Move</th>
+    </tr>
+
+    <tr>
+        <td>1</td>
+        <td>0</td>
+        <td>8</td>
+        <td>1, 7</td>
+        <td>8</td>
+        <td>8</td>
+        <td>Left →</td>
+    </tr>
+
+    <tr>
+        <td>2</td>
+        <td>1</td>
+        <td>8</td>
+        <td>8, 7</td>
+        <td>7</td>
+        <td><strong>49</strong></td>
+        <td>Right ←</td>
+    </tr>
+
+    <tr>
+        <td>3</td>
+        <td>1</td>
+        <td>7</td>
+        <td>8, 3</td>
+        <td>6</td>
+        <td>18</td>
+        <td>Right ←</td>
+    </tr>
+
+    <tr>
+        <td>4</td>
+        <td>1</td>
+        <td>6</td>
+        <td>8, 8</td>
+        <td>5</td>
+        <td>40</td>
+        <td>Right ←</td>
+    </tr>
+</table>
+```
+
+</div>
+
+<!-- Why -->
+
+<div class="card">
+    <h2>8. Why Move the Shorter Line?</h2>
+
+```
+<p>
+    The amount of water is limited by the shorter line:
+</p>
+
+<div class="formula">
+    Area = shorter height × width
+</div>
+
+<p>
+    Suppose the left line is shorter than the right line.
+    Moving the right pointer cannot increase the height limit because
+    the left line is still the limiting line.
+</p>
+
+<p>
+    Therefore, we move the <strong>left pointer</strong> in an attempt
+    to find a taller line.
+</p>
+
+<p>
+    The same logic applies when the right line is shorter.
+</p>
+```
+
+</div>
+
+<!-- Complexity -->
+
+<div class="card">
+    <h2>9. Complexity Analysis</h2>
+
+```
+<div class="complexity">
+
+    <div class="complexity-box">
+        <h3>Time Complexity</h3>
+        <p><strong>O(n)</strong></p>
+        <p>
+            Each pointer moves toward the other only once.
+        </p>
+    </div>
+
+    <div class="complexity-box">
+        <h3>Space Complexity</h3>
+        <p><strong>O(1)</strong></p>
+        <p>
+            Only a few variables are used.
+        </p>
+    </div>
+
+    <div class="complexity-box">
+        <h3>Brute Force</h3>
+        <p><strong>O(n²)</strong></p>
+        <p>
+            Every pair of lines is checked.
+        </p>
+    </div>
+
+</div>
+```
+
+</div>
+
+<!-- Comparison -->
+
+<div class="card">
+    <h2>10. Brute Force vs Two Pointers</h2>
+
+```
+<table>
+    <tr>
+        <th>Approach</th>
+        <th>Time</th>
+        <th>Space</th>
+    </tr>
+
+    <tr>
+        <td>Brute Force</td>
+        <td>O(n²)</td>
+        <td>O(1)</td>
+    </tr>
+
+    <tr>
+        <td><strong>Two Pointer</strong></td>
+        <td><strong>O(n)</strong></td>
+        <td><strong>O(1)</strong></td>
+    </tr>
+</table>
+```
+
+</div>
+
+<!-- Applications -->
+
+<div class="card">
+    <h2>11. Applications</h2>
+
+```
+<ul>
+    <li>Two-pointer algorithm practice</li>
+    <li>Array optimization problems</li>
+    <li>Maximum-area problems</li>
+    <li>Interview and competitive programming</li>
+    <li>Foundation for other pointer-based algorithms</li>
+</ul>
+```
+
+</div>
+
+</div>
+
+<footer>
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+<script>
+
+let heights = [];
+let left = 0;
+let right = 0;
+let maxWater = 0;
+let bestLeft = -1;
+let bestRight = -1;
+let stepCount = 0;
+let running = false;
+let finished = false;
+let timer = null;
+
+
+/* Read input */
+function parseInput() {
+
+    const input =
+        document.getElementById("heightInput").value;
+
+    heights = input
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => !Number.isNaN(x));
+
+    return heights.length >= 2;
+}
+
+
+/* Render bars */
+function renderBars() {
+
+    const area =
+        document.getElementById("visualArea");
+
+    area.innerHTML = "";
+
+    if (heights.length === 0) {
+        return;
+    }
+
+    const maxHeight =
+        Math.max(...heights);
+
+    heights.forEach((height, index) => {
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className = "bar-wrapper";
+
+        const bar =
+            document.createElement("div");
+
+        bar.className = "bar";
+
+        const percentage =
+            (height / maxHeight) * 330;
+
+        bar.style.height =
+            Math.max(10, percentage) + "px";
+
+        bar.setAttribute(
+            "data-height",
+            height
+        );
+
+        if (running && index === left) {
+            bar.classList.add("left");
+        }
+
+        if (running && index === right) {
+            bar.classList.add("right");
+        }
+
+        if (
+            index === bestLeft ||
+            index === bestRight
+        ) {
+            bar.classList.add("best");
+        }
+
+        wrapper.appendChild(bar);
+
+        const indexLabel =
+            document.createElement("div");
+
+        indexLabel.className = "index";
+
+        indexLabel.textContent =
+            "Index " + index;
+
+        wrapper.appendChild(indexLabel);
+
+        area.appendChild(wrapper);
+    });
+}
+
+
+/* Start */
+function startAlgorithm() {
+
+    if (!parseInput()) {
+
+        document.getElementById("status").className =
+            "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Please enter at least two valid heights.";
+
+        return;
+    }
+
+    left = 0;
+    right = heights.length - 1;
+
+    maxWater = 0;
+
+    bestLeft = -1;
+    bestRight = -1;
+
+    stepCount = 0;
+
+    running = true;
+    finished = false;
+
+    document.getElementById("steps").innerHTML =
+        "Click <strong>Next Step</strong> to perform the next comparison.";
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        "Algorithm started. Left is at the first line and Right is at the last line.";
+
+    updatePointers();
+
+    renderBars();
+}
+
+
+/* Update pointer labels */
+function updatePointers() {
+
+    const row =
+        document.getElementById("pointerRow");
+
+    if (running && !finished) {
+
+        row.innerHTML = `
+            <span class="left-pointer">
+                ← Left = ${left}
+            </span>
+
+            <span class="right-pointer">
+                Right = ${right} →
+            </span>
+        `;
+
+    } else {
+
+        row.innerHTML = "";
+    }
+}
+
+
+/* Execute one step */
+function nextStep() {
+
+    if (!running) {
+
+        document.getElementById("status").className =
+            "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Click <strong>Start</strong> first.";
+
+        return;
+    }
+
+    if (finished) {
+        return;
+    }
+
+    if (left >= right) {
+
+        finishAlgorithm();
+
+        return;
+    }
+
+    stepCount++;
+
+    const width = right - left;
+
+    const currentHeight =
+        Math.min(
+            heights[left],
+            heights[right]
+        );
+
+    const currentArea =
+        currentHeight * width;
+
+    const oldMax = maxWater;
+
+    if (currentArea > maxWater) {
+
+        maxWater = currentArea;
+
+        bestLeft = left;
+        bestRight = right;
+    }
+
+    let movement;
+
+    if (heights[left] < heights[right]) {
+
+        movement =
+            `Height[${left}] = ${heights[left]}
+             is shorter than Height[${right}] = ${heights[right]}.
+             Move Left pointer right.`;
+
+        left++;
+
+    } else {
+
+        movement =
+            `Height[${right}] = ${heights[right]}
+             is shorter than or equal to Height[${left}] = ${heights[left]}.
+             Move Right pointer left.`;
+
+        right--;
+    }
+
+    const step =
+        document.createElement("div");
+
+    step.className = "step";
+
+    step.innerHTML = `
+        <span class="step-number">${stepCount}</span>
+
+        Left = ${left === 0 ? 0 : left - 1},
+        Right = ${right === heights.length - 1 ? right : right + 1}
+
+        → Height =
+        min(${heights[left === 0 ? 0 : left - 1]},
+        ${heights[right === heights.length - 1 ? right : right + 1]})
+
+        → Width = ${width}
+
+        → Area = ${currentArea}
+
+        <br>
+
+        ${movement}
+
+        <br>
+
+        Maximum Area =
+        <strong>${maxWater}</strong>
+    `;
+
+    document.getElementById("steps")
+        .appendChild(step);
+
+    if (currentArea > oldMax) {
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerHTML =
+            `New maximum found:
+             <strong>${currentArea}</strong> square units.`;
+    } else {
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `Current area = <strong>${currentArea}</strong>.
+             Maximum so far = <strong>${maxWater}</strong>.`;
+    }
+
+    if (left >= right) {
+
+        setTimeout(finishAlgorithm, 500);
+    }
+
+    updatePointers();
+    renderBars();
+}
+
+
+/* Finish */
+function finishAlgorithm() {
+
+    running = false;
+    finished = true;
+
+    clearInterval(timer);
+
+    document.getElementById("pointerRow")
+        .innerHTML = "";
+
+    document.getElementById("status").className =
+        "status success";
+
+    document.getElementById("status").innerHTML =
+        `Algorithm completed!
+         Maximum water = <strong>${maxWater}</strong>
+         square units, using lines at indices
+         <strong>${bestLeft}</strong> and
+         <strong>${bestRight}</strong>.`;
+
+    renderBars();
+}
+
+
+/* Automatic execution */
+function autoRun() {
+
+    if (!running) {
+        startAlgorithm();
+    }
+
+    clearInterval(timer);
+
+    timer = setInterval(() => {
+
+        if (finished) {
+
+            clearInterval(timer);
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* Reset */
+function resetVisualizer() {
+
+    clearInterval(timer);
+
+    heights = [];
+
+    left = 0;
+    right = 0;
+
+    maxWater = 0;
+
+    bestLeft = -1;
+    bestRight = -1;
+
+    stepCount = 0;
+
+    running = false;
+    finished = false;
+
+    document.getElementById("visualArea").innerHTML = "";
+
+    document.getElementById("pointerRow").innerHTML = "";
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        "Enter the heights and click <strong>Start</strong>.";
+
+    document.getElementById("steps").innerHTML =
+        "Waiting to start...";
+}
+
+</script>
+
+</body>
+</html>

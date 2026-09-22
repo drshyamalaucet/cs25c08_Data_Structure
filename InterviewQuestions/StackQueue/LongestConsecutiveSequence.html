@@ -1,0 +1,1459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Longest Consecutive Sequence</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    color: #1e3a8a;
+    border-bottom: 2px solid #dbeafe;
+    padding-bottom: 10px;
+    margin-top: 0;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 300px;
+    padding: 13px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 15px;
+    background: #2563eb;
+    color: white;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.success {
+    background: #16a34a;
+}
+
+button.success:hover {
+    background: #15803d;
+}
+
+button.secondary {
+    background: #64748b;
+}
+
+button.secondary:hover {
+    background: #475569;
+}
+
+.array {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 25px 0;
+    justify-content: center;
+}
+
+.number-box {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #93c5fd;
+    background: #eff6ff;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 21px;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.number-box .index {
+    position: absolute;
+    top: -11px;
+    left: -8px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    border-radius: 50%;
+    background: #1e3a8a;
+    color: white;
+    font-size: 11px;
+    text-align: center;
+}
+
+.number-box.current {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    transform: scale(1.12);
+}
+
+.number-box.sequence {
+    background: #dcfce7;
+    border-color: #22c55e;
+}
+
+.number-box.best {
+    background: #bbf7d0;
+    border-color: #16a34a;
+    box-shadow: 0 0 15px rgba(22,163,74,0.5);
+}
+
+.status {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 15px;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.progress-container {
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: #2563eb;
+    transition: width 0.4s;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.set-display {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+}
+
+.set-item {
+    display: inline-block;
+    padding: 8px 12px;
+    margin: 5px;
+    background: #e0e7ff;
+    border: 1px solid #818cf8;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.sequence-box {
+    margin-top: 20px;
+    padding: 18px;
+    background: #f0fdf4;
+    border: 2px solid #22c55e;
+    border-radius: 10px;
+}
+
+.sequence-items {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 12px;
+}
+
+.sequence-item {
+    padding: 10px 16px;
+    background: #dcfce7;
+    border: 2px solid #22c55e;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.result {
+    text-align: center;
+    padding: 25px;
+    margin-top: 20px;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+}
+
+.result-number {
+    font-size: 42px;
+    font-weight: bold;
+    color: #1e3a8a;
+    margin: 10px;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+
+.explanation {
+    line-height: 1.8;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 15px;
+}
+
+.step {
+    background: #f8fafc;
+    padding: 18px;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+}
+
+.step strong {
+    display: block;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    padding: 18px;
+    background: #f1f5f9;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+}
+
+.complexity-box strong {
+    display: block;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+.footer {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 24px;
+    }
+
+    input {
+        min-width: 100%;
+    }
+
+    .number-box {
+        width: 58px;
+        height: 58px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Longest Consecutive Sequence</h1>
+    <p>Interactive Array Algorithm Visualizer</p>
+</header>
+
+<div class="container">
+
+<!-- Problem -->
+<section class="card">
+    <h2>1. Problem Statement</h2>
+
+    <div class="explanation">
+
+        <p>
+            Given an <strong>unsorted array of integers</strong>, find the
+            length of the longest sequence of consecutive elements.
+        </p>
+
+        <p>
+            The algorithm should run in approximately
+            <strong>O(n)</strong> time.
+        </p>
+
+        <p><strong>Example:</strong></p>
+
+        <pre>
+Input:
+[100, 4, 200, 1, 3, 2]
+
+Consecutive sequence:
+1 → 2 → 3 → 4
+
+Output:
+4
+        </pre>
+
+    </div>
+</section>
+
+
+<!-- Input -->
+<section class="card">
+    <h2>2. Input Array</h2>
+
+    <div class="input-area">
+
+        <input
+            id="inputArray"
+            value="100, 4, 200, 1, 3, 2"
+            placeholder="Enter integers separated by commas"
+        >
+
+        <button id="loadButton">
+            Load Array
+        </button>
+
+    </div>
+
+    <div id="arrayDisplay" class="array"></div>
+</section>
+
+
+<!-- Visualization -->
+<section class="card">
+
+    <h2>3. Step-by-Step Visualization</h2>
+
+    <div id="status" class="status">
+        Click <strong>Start</strong> to begin.
+    </div>
+
+    <div class="progress-container">
+        <div id="progress" class="progress"></div>
+    </div>
+
+    <div class="controls">
+
+        <button id="startButton">
+            Start
+        </button>
+
+        <button id="nextButton">
+            Next Step
+        </button>
+
+        <button id="autoButton" class="success">
+            Auto Run
+        </button>
+
+        <button id="resetButton" class="secondary">
+            Reset
+        </button>
+
+    </div>
+
+    <div class="set-display">
+        <strong>Hash Set:</strong>
+        <div id="setDisplay"></div>
+    </div>
+
+    <div class="sequence-box">
+
+        <strong>Current Consecutive Sequence:</strong>
+
+        <div
+            id="currentSequence"
+            class="sequence-items">
+        </div>
+
+    </div>
+
+    <div class="result">
+
+        <div>
+            Longest Consecutive Sequence Length
+        </div>
+
+        <div
+            id="resultNumber"
+            class="result-number">
+            -
+        </div>
+
+        <div>
+            Best Sequence:
+            <strong id="bestSequence">-</strong>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Algorithm -->
+<section class="card">
+
+    <h2>4. Algorithm</h2>
+
+    <div class="steps">
+
+        <div class="step">
+            <strong>Step 1</strong>
+            Put every number into a hash set.
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong>
+            Pick each number from the set.
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong>
+            Check whether the previous number
+            <code>num - 1</code> exists.
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong>
+            If it does not exist, this number is
+            the beginning of a sequence.
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong>
+            Keep checking:
+            <code>num + 1</code>,
+            <code>num + 2</code>, etc.
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong>
+            Keep track of the longest sequence.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Walkthrough -->
+<section class="card">
+
+    <h2>5. Example Walkthrough</h2>
+
+    <pre>
+Array:
+[100, 4, 200, 1, 3, 2]
+
+Hash Set:
+{100, 4, 200, 1, 3, 2}
+
+Check 100:
+99 does not exist
+100 starts a sequence
+100 → length 1
+
+Check 4:
+3 exists
+Therefore 4 is NOT the beginning.
+
+Check 200:
+199 does not exist
+200 → length 1
+
+Check 1:
+0 does not exist
+1 starts a sequence
+
+1 → 2 → 3 → 4
+
+Length = 4
+
+Answer = 4
+    </pre>
+
+</section>
+
+
+<!-- Pseudocode -->
+<section class="card">
+
+    <h2>6. Pseudocode</h2>
+
+    <pre><code>function longestConsecutive(nums):
+
+    create a hash set from nums
+
+    longest = 0
+
+    for each num in set:
+
+        if num - 1 is not in set:
+
+            current = num
+            length = 1
+
+            while current + 1 is in set:
+
+                current = current + 1
+                length = length + 1
+
+            longest = max(longest, length)
+
+    return longest</code></pre>
+
+</section>
+
+
+<!-- Python -->
+<section class="card">
+
+    <h2>7. Python Implementation</h2>
+
+    <pre><code>def longest_consecutive(nums):
+
+    # Store all numbers in a set
+    num_set = set(nums)
+
+    longest = 0
+
+    for num in num_set:
+
+        # Start only if num is the beginning
+        # of a sequence
+        if num - 1 not in num_set:
+
+            current = num
+            length = 1
+
+            # Find consecutive numbers
+            while current + 1 in num_set:
+
+                current += 1
+                length += 1
+
+            longest = max(longest, length)
+
+    return longest
+
+
+# Example
+nums = [100, 4, 200, 1, 3, 2]
+
+result = longest_consecutive(nums)
+
+print(result)</code></pre>
+
+    <p><strong>Output:</strong></p>
+
+    <pre><code>4</code></pre>
+
+</section>
+
+
+<!-- Explanation -->
+<section class="card">
+
+    <h2>8. Python Code Explanation</h2>
+
+    <div class="explanation">
+
+        <p>
+            The key idea is to use a Python <strong>set</strong>.
+            Searching for an element in a set takes approximately
+            <strong>O(1)</strong> average time.
+        </p>
+
+        <p>
+            For every number, we first check:
+        </p>
+
+        <pre><code>num - 1 not in num_set</code></pre>
+
+        <p>
+            If this is true, then <code>num</code> is the
+            <strong>start of a consecutive sequence</strong>.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <pre>
+1 → 2 → 3 → 4
+
+For 1:
+0 does not exist
+Therefore 1 is the starting point.
+        </pre>
+
+        <p>
+            We then repeatedly check:
+        </p>
+
+        <pre><code>2
+3
+4
+5</code></pre>
+
+        <p>
+            When <code>5</code> is not present, the sequence ends.
+            Its length is 4.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- Why not sort -->
+<section class="card">
+
+    <h2>9. Why Use a Hash Set?</h2>
+
+    <div class="explanation">
+
+        <p>
+            A simple solution is to sort the array first.
+        </p>
+
+        <pre><code>sorted(nums)</code></pre>
+
+        <p>
+            But sorting requires:
+        </p>
+
+        <pre><code>O(n log n)</code></pre>
+
+        <p>
+            The hash-set solution avoids sorting and achieves approximately:
+        </p>
+
+        <pre><code>O(n)</code></pre>
+
+        <p>
+            This is why the hash-set approach is commonly used for this
+            problem.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- Complexity -->
+<section class="card">
+
+    <h2>10. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-box">
+
+            <strong>Time Complexity</strong>
+
+            O(n)
+
+            <br><br>
+
+            Each number is processed a constant number of times
+            on average.
+
+        </div>
+
+        <div class="complexity-box">
+
+            <strong>Space Complexity</strong>
+
+            O(n)
+
+            <br><br>
+
+            The hash set stores the numbers.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Important observation -->
+<section class="card">
+
+    <h2>11. Important Observation</h2>
+
+    <div class="explanation">
+
+        <p>
+            The most important condition is:
+        </p>
+
+        <pre><code>if num - 1 not in num_set:</code></pre>
+
+        <p>
+            This ensures that we only start counting from the beginning
+            of a sequence.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <pre>
+1 → 2 → 3 → 4
+
+1:
+0 does not exist → START
+
+2:
+1 exists → don't start
+
+3:
+2 exists → don't start
+
+4:
+3 exists → don't start
+        </pre>
+
+        <p>
+            Therefore, the sequence is counted only once rather than
+            repeatedly from every element.
+        </p>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<div class="footer">
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</div>
+
+
+<script>
+"use strict";
+
+/* ============================================
+   GLOBAL STATE
+============================================ */
+
+let numbers = [];
+let numSet = new Set();
+
+let currentSetIndex = -1;
+let currentNumber = null;
+
+let currentSequence = [];
+let bestSequence = [];
+
+let phase = 0;
+let timer = null;
+
+
+/* ============================================
+   DOM ELEMENTS
+============================================ */
+
+const inputArray =
+    document.getElementById("inputArray");
+
+const arrayDisplay =
+    document.getElementById("arrayDisplay");
+
+const setDisplay =
+    document.getElementById("setDisplay");
+
+const currentSequenceDisplay =
+    document.getElementById("currentSequence");
+
+const bestSequenceDisplay =
+    document.getElementById("bestSequence");
+
+const resultNumber =
+    document.getElementById("resultNumber");
+
+const status =
+    document.getElementById("status");
+
+const progress =
+    document.getElementById("progress");
+
+const loadButton =
+    document.getElementById("loadButton");
+
+const startButton =
+    document.getElementById("startButton");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const autoButton =
+    document.getElementById("autoButton");
+
+const resetButton =
+    document.getElementById("resetButton");
+
+
+/* ============================================
+   LOAD ARRAY
+============================================ */
+
+function loadArray() {
+
+    stopTimer();
+
+    const input =
+        inputArray.value.trim();
+
+    if (!input) {
+
+        numbers = [];
+
+        renderArray();
+
+        status.innerHTML =
+            "Please enter some integers.";
+
+        return;
+    }
+
+    const values =
+        input.split(",")
+        .map(value => Number(value.trim()))
+        .filter(value => !Number.isNaN(value));
+
+    numbers = values;
+
+    resetState();
+
+    renderArray();
+
+    status.innerHTML =
+        "Array loaded. Click <strong>Start</strong>.";
+
+}
+
+
+/* ============================================
+   RENDER ARRAY
+============================================ */
+
+function renderArray() {
+
+    arrayDisplay.innerHTML = "";
+
+    numbers.forEach((number, index) => {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "number-box";
+        box.id = "number-" + index;
+
+        const indexLabel =
+            document.createElement("span");
+
+        indexLabel.className = "index";
+        indexLabel.textContent = index;
+
+        box.appendChild(indexLabel);
+
+        box.appendChild(
+            document.createTextNode(number)
+        );
+
+        arrayDisplay.appendChild(box);
+    });
+
+}
+
+
+/* ============================================
+   START
+============================================ */
+
+function startAlgorithm() {
+
+    if (numbers.length === 0) {
+
+        status.innerHTML =
+            "Please load an array first.";
+
+        return;
+    }
+
+    stopTimer();
+
+    numSet = new Set(numbers);
+
+    currentSetIndex = -1;
+    currentNumber = null;
+
+    currentSequence = [];
+    bestSequence = [];
+
+    phase = 1;
+
+    resultNumber.textContent = "0";
+    bestSequenceDisplay.textContent = "-";
+
+    progress.style.width = "0%";
+
+    clearNumberHighlights();
+
+    renderSet();
+
+    renderCurrentSequence();
+
+    status.innerHTML =
+        "<strong>Hash Set created.</strong> " +
+        "Click Next Step to examine each number.";
+
+}
+
+
+/* ============================================
+   NEXT STEP
+============================================ */
+
+function nextStep() {
+
+    if (phase === 0) {
+
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === 2) {
+
+        status.innerHTML =
+            "Algorithm completed.";
+
+        return;
+    }
+
+
+    /* -----------------------------------------
+       Move to next number
+    ----------------------------------------- */
+
+    currentSetIndex++;
+
+    if (currentSetIndex >= numbers.length) {
+
+        finishAlgorithm();
+        return;
+    }
+
+    clearNumberHighlights();
+
+    currentSequence = [];
+
+    const number =
+        numbers[currentSetIndex];
+
+    currentNumber = number;
+
+    const box =
+        document.getElementById(
+            "number-" + currentSetIndex
+        );
+
+    if (box) {
+        box.classList.add("current");
+    }
+
+    const percentage =
+        ((currentSetIndex + 1) /
+        numbers.length) * 100;
+
+    progress.style.width =
+        percentage + "%";
+
+
+    /* -----------------------------------------
+       Check sequence start
+    ----------------------------------------- */
+
+    if (!numSet.has(number - 1)) {
+
+        status.innerHTML =
+            "<strong>" +
+            number +
+            "</strong> has no predecessor " +
+            "<strong>" +
+            (number - 1) +
+            "</strong>. " +
+            "Therefore, it starts a sequence.";
+
+        buildSequence(number);
+
+    } else {
+
+        status.innerHTML =
+            "<strong>" +
+            number +
+            "</strong> has predecessor " +
+            "<strong>" +
+            (number - 1) +
+            "</strong>. " +
+            "It is not the beginning of a sequence.";
+
+        renderCurrentSequence();
+    }
+
+}
+
+
+/* ============================================
+   BUILD SEQUENCE
+============================================ */
+
+function buildSequence(start) {
+
+    let current =
+        start;
+
+    currentSequence = [];
+
+    while (numSet.has(current)) {
+
+        currentSequence.push(current);
+
+        current++;
+
+    }
+
+    renderCurrentSequence();
+
+    highlightSequence();
+
+    const length =
+        currentSequence.length;
+
+    if (length > bestSequence.length) {
+
+        bestSequence =
+            [...currentSequence];
+
+        resultNumber.textContent =
+            bestSequence.length;
+
+        bestSequenceDisplay.textContent =
+            bestSequence.join(" → ");
+
+        markBestSequence();
+
+        status.innerHTML +=
+            "<br><strong>New longest sequence:</strong> " +
+            bestSequence.join(" → ") +
+            " (length " +
+            bestSequence.length +
+            ")";
+
+    } else {
+
+        status.innerHTML +=
+            "<br>Sequence: " +
+            currentSequence.join(" → ") +
+            " (length " +
+            length +
+            ")";
+
+    }
+
+}
+
+
+/* ============================================
+   HIGHLIGHT SEQUENCE
+============================================ */
+
+function highlightSequence() {
+
+    numbers.forEach((number, index) => {
+
+        if (currentSequence.includes(number)) {
+
+            const box =
+                document.getElementById(
+                    "number-" + index
+                );
+
+            if (box) {
+                box.classList.add("sequence");
+            }
+        }
+
+    });
+
+}
+
+
+/* ============================================
+   MARK BEST SEQUENCE
+============================================ */
+
+function markBestSequence() {
+
+    numbers.forEach((number, index) => {
+
+        if (bestSequence.includes(number)) {
+
+            const box =
+                document.getElementById(
+                    "number-" + index
+                );
+
+            if (box) {
+                box.classList.add("best");
+            }
+        }
+
+    });
+
+}
+
+
+/* ============================================
+   RENDER HASH SET
+============================================ */
+
+function renderSet() {
+
+    setDisplay.innerHTML = "";
+
+    const sorted =
+        [...numSet].sort((a, b) => a - b);
+
+    sorted.forEach(number => {
+
+        const item =
+            document.createElement("span");
+
+        item.className = "set-item";
+        item.textContent = number;
+
+        setDisplay.appendChild(item);
+
+    });
+
+}
+
+
+/* ============================================
+   RENDER CURRENT SEQUENCE
+============================================ */
+
+function renderCurrentSequence() {
+
+    currentSequenceDisplay.innerHTML = "";
+
+    if (currentSequence.length === 0) {
+
+        currentSequenceDisplay.innerHTML =
+            "<span>No sequence currently being built.</span>";
+
+        return;
+    }
+
+    currentSequence.forEach(number => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "sequence-item";
+        item.textContent = number;
+
+        currentSequenceDisplay.appendChild(item);
+
+    });
+
+}
+
+
+/* ============================================
+   CLEAR HIGHLIGHTS
+============================================ */
+
+function clearNumberHighlights() {
+
+    document.querySelectorAll(".number-box")
+        .forEach(box => {
+
+            box.classList.remove("current");
+            box.classList.remove("sequence");
+            box.classList.remove("best");
+
+        });
+
+}
+
+
+/* ============================================
+   FINISH
+============================================ */
+
+function finishAlgorithm() {
+
+    phase = 2;
+
+    progress.style.width = "100%";
+
+    clearNumberHighlights();
+
+    bestSequence.forEach(number => {
+
+        numbers.forEach((value, index) => {
+
+            if (value === number) {
+
+                const box =
+                    document.getElementById(
+                        "number-" + index
+                    );
+
+                if (box) {
+                    box.classList.add("best");
+                }
+            }
+
+        });
+
+    });
+
+    resultNumber.textContent =
+        bestSequence.length;
+
+    bestSequenceDisplay.textContent =
+        bestSequence.length > 0
+            ? bestSequence.join(" → ")
+            : "-";
+
+    status.innerHTML =
+        "<strong>Algorithm completed!</strong><br>" +
+        "Longest consecutive sequence: " +
+        "<strong>" +
+        bestSequence.join(" → ") +
+        "</strong><br>" +
+        "Length = <strong>" +
+        bestSequence.length +
+        "</strong>";
+
+}
+
+
+/* ============================================
+   AUTO RUN
+============================================ */
+
+function autoRun() {
+
+    if (numbers.length === 0) {
+
+        status.innerHTML =
+            "Please load an array first.";
+
+        return;
+    }
+
+    if (timer !== null) {
+
+        stopTimer();
+
+        return;
+    }
+
+    if (phase === 0) {
+        startAlgorithm();
+    }
+
+    autoButton.textContent =
+        "Stop";
+
+    timer = setInterval(() => {
+
+        if (phase === 2) {
+
+            stopTimer();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+
+}
+
+
+/* ============================================
+   STOP TIMER
+============================================ */
+
+function stopTimer() {
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+    }
+
+    autoButton.textContent =
+        "Auto Run";
+}
+
+
+/* ============================================
+   RESET STATE
+============================================ */
+
+function resetState() {
+
+    stopTimer();
+
+    numSet = new Set();
+
+    currentSetIndex = -1;
+    currentNumber = null;
+
+    currentSequence = [];
+    bestSequence = [];
+
+    phase = 0;
+
+    resultNumber.textContent = "-";
+    bestSequenceDisplay.textContent = "-";
+
+    progress.style.width = "0%";
+
+    setDisplay.innerHTML = "";
+
+    currentSequenceDisplay.innerHTML = "";
+
+    clearNumberHighlights();
+
+}
+
+
+/* ============================================
+   RESET BUTTON
+============================================ */
+
+function resetVisualization() {
+
+    resetState();
+
+    renderArray();
+
+    status.innerHTML =
+        "Visualization reset. Click <strong>Start</strong>.";
+
+}
+
+
+/* ============================================
+   EVENT LISTENERS
+============================================ */
+
+loadButton.addEventListener(
+    "click",
+    loadArray
+);
+
+startButton.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextButton.addEventListener(
+    "click",
+    nextStep
+);
+
+autoButton.addEventListener(
+    "click",
+    autoRun
+);
+
+resetButton.addEventListener(
+    "click",
+    resetVisualization
+);
+
+
+/* ============================================
+   INITIALIZE
+============================================ */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

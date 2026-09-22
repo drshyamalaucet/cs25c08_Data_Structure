@@ -1,0 +1,1465 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rotting Oranges - BFS Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+header {
+    background: linear-gradient(135deg, #ea580c, #f97316);
+    color: white;
+    padding: 28px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.section {
+    background: white;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.section h2 {
+    margin-top: 0;
+    color: #c2410c;
+    border-bottom: 2px solid #fed7aa;
+    padding-bottom: 10px;
+}
+
+.problem {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 140px;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.input-help {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.88;
+}
+
+.btn-start {
+    background: #16a34a;
+}
+
+.btn-next {
+    background: #2563eb;
+}
+
+.btn-auto {
+    background: #9333ea;
+}
+
+.btn-reset {
+    background: #dc2626;
+}
+
+.status {
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-weight: bold;
+    min-height: 50px;
+}
+
+.grid-wrapper {
+    overflow-x: auto;
+    padding: 20px 5px;
+}
+
+.grid {
+    display: grid;
+    gap: 5px;
+    width: max-content;
+    margin: auto;
+}
+
+.cell {
+    width: 62px;
+    height: 62px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 28px;
+    font-weight: bold;
+    border: 2px solid #cbd5e1;
+    transition: all 0.25s ease;
+}
+
+.empty {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.fresh {
+    background: #bbf7d0;
+    color: #15803d;
+    border-color: #22c55e;
+}
+
+.rotten {
+    background: #fed7aa;
+    color: #c2410c;
+    border-color: #f97316;
+}
+
+.new-rotten {
+    background: #fecaca;
+    color: #b91c1c;
+    border-color: #ef4444;
+    transform: scale(1.08);
+    box-shadow: 0 0 0 4px #fca5a5;
+}
+
+.processing {
+    background: #fde68a;
+    color: #92400e;
+    border-color: #f59e0b;
+    transform: scale(1.08);
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.info-card {
+    padding: 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.info-card h3 {
+    margin-top: 0;
+    color: #c2410c;
+    font-size: 16px;
+}
+
+.big-number {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legend-box {
+    width: 25px;
+    height: 25px;
+    border-radius: 5px;
+    border: 2px solid #cbd5e1;
+}
+
+.legend-empty {
+    background: #f1f5f9;
+}
+
+.legend-fresh {
+    background: #bbf7d0;
+}
+
+.legend-rotten {
+    background: #fed7aa;
+}
+
+.legend-new {
+    background: #fecaca;
+}
+
+.step-box {
+    margin-top: 18px;
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.explanation {
+    background: #f0fdf4;
+    border-left: 5px solid #16a34a;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 18px;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+code {
+    font-family: Consolas, Monaco, monospace;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.info-panel {
+    padding: 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.info-panel h3 {
+    margin-top: 0;
+    color: #c2410c;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.complexity-card {
+    background: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.complexity-card strong {
+    display: block;
+    font-size: 24px;
+    color: #c2410c;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #ffedd5;
+}
+
+@media (max-width: 850px) {
+    .info-grid,
+    .complexity,
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .cell {
+        width: 50px;
+        height: 50px;
+        font-size: 22px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Rotting Oranges</h1>
+    <p>Interactive Multi-Source BFS Visualization</p>
+</header>
+
+<!-- =====================================================
+     1. Problem Statement
+====================================================== -->
+<section class="section">
+
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+
+        <p>
+            You are given a grid where:
+        </p>
+
+        <ul>
+            <li><strong>0</strong> = Empty cell</li>
+            <li><strong>1</strong> = Fresh orange</li>
+            <li><strong>2</strong> = Rotten orange</li>
+        </ul>
+
+        <p>
+            Every minute, a fresh orange adjacent to a rotten orange
+            becomes rotten.
+        </p>
+
+        <p>
+            Return the <strong>minimum number of minutes</strong> required
+            until no fresh oranges remain.
+        </p>
+
+        <p>
+            If some fresh orange can never become rotten, return
+            <strong>-1</strong>.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     2. Input
+====================================================== -->
+<section class="section">
+
+    <h2>2. Enter Grid</h2>
+
+    <textarea id="gridInput">2 1 1
+1 1 0
+0 1 1</textarea>
+
+    <div class="input-help">
+        Enter 0, 1 and 2 values. Separate columns with spaces and rows with new lines.
+    </div>
+
+    <div class="controls">
+
+        <button class="btn-start" id="startBtn">
+            Start
+        </button>
+
+        <button class="btn-next" id="nextBtn">
+            Next Minute
+        </button>
+
+        <button class="btn-auto" id="autoBtn">
+            Auto Run
+        </button>
+
+        <button class="btn-reset" id="resetBtn">
+            Reset
+        </button>
+
+    </div>
+
+    <div class="status" id="statusBox">
+        Click Start to load the grid.
+    </div>
+
+</section>
+
+<!-- =====================================================
+     3. Visualization
+====================================================== -->
+<section class="section">
+
+    <h2>3. Interactive Visualization</h2>
+
+    <div class="grid-wrapper">
+        <div class="grid" id="gridDisplay"></div>
+    </div>
+
+    <div class="info-grid">
+
+        <div class="info-card">
+            <h3>Minutes</h3>
+            <div class="big-number" id="minuteDisplay">0</div>
+        </div>
+
+        <div class="info-card">
+            <h3>Fresh Oranges</h3>
+            <div class="big-number" id="freshDisplay">0</div>
+        </div>
+
+        <div class="info-card">
+            <h3>Rotten Oranges</h3>
+            <div class="big-number" id="rottenDisplay">0</div>
+        </div>
+
+        <div class="info-card">
+            <h3>Queue Size</h3>
+            <div class="big-number" id="queueDisplay">0</div>
+        </div>
+
+    </div>
+
+    <div class="legend">
+
+        <div class="legend-item">
+            <div class="legend-box legend-empty"></div>
+            Empty
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-fresh"></div>
+            Fresh
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-rotten"></div>
+            Rotten
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-new"></div>
+            Newly Rotten
+        </div>
+
+    </div>
+
+    <div class="step-box" id="stepExplanation">
+        Initially, all rotten oranges are placed into the BFS queue.
+    </div>
+
+</section>
+
+<!-- =====================================================
+     4. Approach
+====================================================== -->
+<section class="section">
+
+    <h2>4. Approach – Multi-Source BFS</h2>
+
+    <div class="two-column">
+
+        <div class="info-panel">
+
+            <h3>Step 1 – Initialize Queue</h3>
+
+            <p>
+                Put every rotten orange into the queue.
+            </p>
+
+            <p>
+                Also count the number of fresh oranges.
+            </p>
+
+        </div>
+
+        <div class="info-panel">
+
+            <h3>Step 2 – BFS by Minute</h3>
+
+            <p>
+                Process all rotten oranges currently in the queue.
+            </p>
+
+            <p>
+                Their adjacent fresh oranges become rotten and are added
+                to the queue.
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="explanation">
+
+        <strong>Why BFS?</strong>
+
+        <p>
+            All initially rotten oranges spread simultaneously.
+            BFS processes oranges level by level, so each BFS level
+            corresponds to exactly one minute.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     5. Pseudocode
+====================================================== -->
+<section class="section">
+
+    <h2>5. Pseudocode</h2>
+
+<pre><code>function orangesRotting(grid):
+
+    queue = empty queue
+    fresh = 0
+    minutes = 0
+
+    for every cell:
+
+        if cell == 2:
+            add cell to queue
+
+        if cell == 1:
+            fresh += 1
+
+    while queue is not empty AND fresh > 0:
+
+        size = queue.size()
+
+        repeat size times:
+
+            (r, c) = queue.pop()
+
+            for each of four directions:
+
+                nr = r + dr
+                nc = c + dc
+
+                if grid[nr][nc] == 1:
+
+                    grid[nr][nc] = 2
+
+                    fresh -= 1
+
+                    queue.push(nr, nc)
+
+        minutes += 1
+
+    if fresh == 0:
+        return minutes
+
+    return -1</code></pre>
+
+</section>
+
+<!-- =====================================================
+     6. Python Implementation
+====================================================== -->
+<section class="section">
+
+    <h2>6. Python Implementation</h2>
+
+<pre><code>from collections import deque
+
+
+class Solution:
+
+    def orangesRotting(self, grid):
+
+        rows = len(grid)
+        cols = len(grid[0])
+
+        queue = deque()
+        fresh = 0
+
+        # Find all rotten and fresh oranges
+        for r in range(rows):
+
+            for c in range(cols):
+
+                if grid[r][c] == 2:
+                    queue.append((r, c))
+
+                elif grid[r][c] == 1:
+                    fresh += 1
+
+        minutes = 0
+
+        directions = [
+            (1, 0),
+            (-1, 0),
+            (0, 1),
+            (0, -1)
+        ]
+
+        # Multi-source BFS
+        while queue and fresh > 0:
+
+            size = len(queue)
+
+            for _ in range(size):
+
+                r, c = queue.popleft()
+
+                for dr, dc in directions:
+
+                    nr = r + dr
+                    nc = c + dc
+
+                    if (
+                        0 <= nr < rows
+                        and
+                        0 <= nc < cols
+                        and
+                        grid[nr][nc] == 1
+                    ):
+
+                        grid[nr][nc] = 2
+
+                        fresh -= 1
+
+                        queue.append((nr, nc))
+
+            minutes += 1
+
+        return minutes if fresh == 0 else -1
+
+
+# Example
+grid = [
+    [2, 1, 1],
+    [1, 1, 0],
+    [0, 1, 1]
+]
+
+solution = Solution()
+
+print(solution.orangesRotting(grid))
+# Output: 4</code></pre>
+
+</section>
+
+<!-- =====================================================
+     7. Example
+====================================================== -->
+<section class="section">
+
+    <h2>7. Example Walkthrough</h2>
+
+<pre><code>Initial:
+
+2 1 1
+1 1 0
+0 1 1
+
+
+Minute 1:
+
+2 2 1
+2 1 0
+0 1 1
+
+
+Minute 2:
+
+2 2 2
+2 2 0
+0 1 1
+
+
+Minute 3:
+
+2 2 2
+2 2 0
+0 2 1
+
+
+Minute 4:
+
+2 2 2
+2 2 0
+0 2 2
+
+No fresh oranges remain.
+
+Answer = 4</code></pre>
+
+</section>
+
+<!-- =====================================================
+     8. Impossible Case
+====================================================== -->
+<section class="section">
+
+    <h2>8. When Is the Answer -1?</h2>
+
+    <p>
+        Consider:
+    </p>
+
+<pre><code>2 1 0
+0 1 0
+0 0 0</code></pre>
+
+    <p>
+        The fresh oranges connected to the rotten orange can become rotten,
+        but if a fresh orange is separated by empty cells and cannot be
+        reached, it remains fresh.
+    </p>
+
+    <p>
+        Therefore:
+    </p>
+
+    <div class="step-box">
+        If BFS finishes and the number of fresh oranges is greater than zero,
+        return <strong>-1</strong>.
+    </div>
+
+</section>
+
+<!-- =====================================================
+     9. Complexity
+====================================================== -->
+<section class="section">
+
+    <h2>9. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-card">
+
+            <strong>O(m × n)</strong>
+
+            Time Complexity
+
+            <p>
+                Every cell is processed at most once.
+            </p>
+
+        </div>
+
+        <div class="complexity-card">
+
+            <strong>O(m × n)</strong>
+
+            Space Complexity
+
+            <p>
+                In the worst case, the BFS queue contains many cells.
+            </p>
+
+        </div>
+
+        <div class="complexity-card">
+
+            <strong>4 Directions</strong>
+
+            Neighbor Check
+
+            <p>
+                Up, down, left and right.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     10. Important Observations
+====================================================== -->
+<section class="section">
+
+    <h2>10. Important Observations</h2>
+
+    <ul>
+
+        <li>
+            All initially rotten oranges must enter the queue before BFS starts.
+        </li>
+
+        <li>
+            This is called <strong>multi-source BFS</strong>.
+        </li>
+
+        <li>
+            Each BFS level represents one minute.
+        </li>
+
+        <li>
+            Only horizontally and vertically adjacent oranges can rot each other.
+        </li>
+
+        <li>
+            Empty cells do not participate in the process.
+        </li>
+
+        <li>
+            The fresh-orange count makes it easy to detect whether all oranges
+            have eventually become rotten.
+        </li>
+
+        <li>
+            If fresh oranges remain after BFS finishes, the answer is
+            <strong>-1</strong>.
+        </li>
+
+    </ul>
+
+</section>
+
+<!-- =====================================================
+     11. BFS Concept
+====================================================== -->
+<section class="section">
+
+    <h2>11. Key Concept: Multi-Source BFS</h2>
+
+    <p>
+        Ordinary BFS starts from one source.
+        Here, there may be several rotten oranges initially.
+    </p>
+
+    <p>
+        All of them are inserted into the queue at the same time:
+    </p>
+
+<pre><code>Queue initially:
+
+[ Rotten A, Rotten B, Rotten C ]
+
+             ↓
+       Multi-Source BFS
+
+Minute 1:
+All three sources spread.
+
+Minute 2:
+Their newly rotten neighbors spread.
+
+Minute 3:
+The next layer spreads.
+
+...</code></pre>
+
+    <p>
+        This guarantees that every fresh orange is reached in the minimum
+        possible number of minutes.
+    </p>
+
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   Rotting Oranges Visualizer
+   Multi-Source BFS
+========================================================= */
+
+let originalGrid = [];
+let currentGrid = [];
+
+let rows = 0;
+let cols = 0;
+
+let queue = [];
+let freshCount = 0;
+let rottenCount = 0;
+let minutes = 0;
+
+let started = false;
+let finished = false;
+
+let autoTimer = null;
+
+let newlyRotten = [];
+
+/* =========================================================
+   DOM Elements
+========================================================= */
+
+const gridInput = document.getElementById("gridInput");
+
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const gridDisplay = document.getElementById("gridDisplay");
+
+const statusBox = document.getElementById("statusBox");
+const stepExplanation = document.getElementById("stepExplanation");
+
+const minuteDisplay = document.getElementById("minuteDisplay");
+const freshDisplay = document.getElementById("freshDisplay");
+const rottenDisplay = document.getElementById("rottenDisplay");
+const queueDisplay = document.getElementById("queueDisplay");
+
+/* =========================================================
+   Parse Grid
+========================================================= */
+
+function parseGrid() {
+
+    const text = gridInput.value.trim();
+
+    if (!text) {
+        throw new Error("Grid cannot be empty.");
+    }
+
+    const lines = text.split(/\n+/);
+
+    const result = [];
+
+    for (let i = 0; i < lines.length; i++) {
+
+        const line = lines[i].trim();
+
+        if (!line) {
+            continue;
+        }
+
+        const values = line.split(/[\s,]+/);
+
+        const row = [];
+
+        for (let j = 0; j < values.length; j++) {
+
+            if (
+                values[j] !== "0" &&
+                values[j] !== "1" &&
+                values[j] !== "2"
+            ) {
+
+                throw new Error(
+                    "Only 0, 1 and 2 are allowed."
+                );
+            }
+
+            row.push(Number(values[j]));
+        }
+
+        result.push(row);
+    }
+
+    if (result.length === 0) {
+        throw new Error("Grid cannot be empty.");
+    }
+
+    const columnCount = result[0].length;
+
+    for (let i = 1; i < result.length; i++) {
+
+        if (result[i].length !== columnCount) {
+
+            throw new Error(
+                "All rows must contain the same number of columns."
+            );
+        }
+    }
+
+    return result;
+}
+
+/* =========================================================
+   Count Oranges
+========================================================= */
+
+function countOranges() {
+
+    freshCount = 0;
+    rottenCount = 0;
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            if (currentGrid[r][c] === 1) {
+                freshCount++;
+            }
+
+            if (currentGrid[r][c] === 2) {
+                rottenCount++;
+            }
+        }
+    }
+}
+
+/* =========================================================
+   Render Grid
+========================================================= */
+
+function renderGrid() {
+
+    gridDisplay.innerHTML = "";
+
+    gridDisplay.style.gridTemplateColumns =
+        "repeat(" + cols + ", 62px)";
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            const cell = document.createElement("div");
+
+            cell.className = "cell";
+
+            const value = currentGrid[r][c];
+
+            if (value === 0) {
+
+                cell.classList.add("empty");
+                cell.textContent = "0";
+
+            } else if (value === 1) {
+
+                cell.classList.add("fresh");
+                cell.textContent = "🍊";
+
+            } else if (value === 2) {
+
+                cell.classList.add("rotten");
+                cell.textContent = "🍂";
+            }
+
+            for (let i = 0; i < newlyRotten.length; i++) {
+
+                if (
+                    newlyRotten[i][0] === r &&
+                    newlyRotten[i][1] === c
+                ) {
+
+                    cell.classList.remove("rotten");
+                    cell.classList.add("new-rotten");
+                    cell.textContent = "☠";
+                }
+            }
+
+            gridDisplay.appendChild(cell);
+        }
+    }
+
+    minuteDisplay.textContent = minutes;
+    freshDisplay.textContent = freshCount;
+    rottenDisplay.textContent = rottenCount;
+    queueDisplay.textContent = queue.length;
+}
+
+/* =========================================================
+   Start
+========================================================= */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    try {
+
+        originalGrid = parseGrid();
+
+    } catch (error) {
+
+        statusBox.textContent = error.message;
+
+        return;
+    }
+
+    currentGrid = originalGrid.map(function(row) {
+        return row.slice();
+    });
+
+    rows = currentGrid.length;
+    cols = currentGrid[0].length;
+
+    queue = [];
+
+    minutes = 0;
+
+    newlyRotten = [];
+
+    finished = false;
+
+    countOranges();
+
+    /*
+       Multi-source BFS:
+       Add every initially rotten orange.
+    */
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            if (currentGrid[r][c] === 2) {
+
+                queue.push([r, c]);
+            }
+        }
+    }
+
+    started = true;
+
+    renderGrid();
+
+    if (freshCount === 0) {
+
+        finished = true;
+
+        statusBox.textContent =
+            "There are no fresh oranges. Answer = 0 minutes.";
+
+        stepExplanation.textContent =
+            "Since no fresh oranges exist initially, no time is required.";
+
+        return;
+    }
+
+    if (queue.length === 0) {
+
+        finished = true;
+
+        statusBox.textContent =
+            "No rotten oranges exist, so the fresh oranges cannot rot. Answer = -1.";
+
+        stepExplanation.textContent =
+            "BFS cannot start because there is no rotten orange.";
+
+        return;
+    }
+
+    statusBox.textContent =
+        "Started multi-source BFS with " +
+        queue.length +
+        " rotten orange(s) in the queue.";
+
+    stepExplanation.textContent =
+        "All initially rotten oranges are placed into the queue. Each BFS level represents one minute.";
+}
+
+/* =========================================================
+   Process One Minute
+========================================================= */
+
+function nextStep() {
+
+    if (!started) {
+
+        statusBox.textContent =
+            "Click Start first.";
+
+        return;
+    }
+
+    if (finished) {
+
+        statusBox.textContent =
+            "Algorithm has already finished.";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    if (freshCount === 0) {
+
+        finished = true;
+
+        statusBox.textContent =
+            "All fresh oranges are rotten. Answer = " +
+            minutes +
+            " minute(s).";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    const queueSize = queue.length;
+
+    if (queueSize === 0) {
+
+        finished = true;
+
+        statusBox.textContent =
+            "Fresh oranges remain, but no rotten orange can reach them. Answer = -1.";
+
+        stepExplanation.textContent =
+            "The BFS queue is empty while fresh oranges still remain. Therefore, some oranges are unreachable.";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    newlyRotten = [];
+
+    const directions = [
+        [-1, 0],
+        [1, 0],
+        [0, -1],
+        [0, 1]
+    ];
+
+    /*
+       Process exactly the oranges that were rotten
+       at the beginning of this minute.
+    */
+
+    for (let i = 0; i < queueSize; i++) {
+
+        const position = queue.shift();
+
+        const r = position[0];
+        const c = position[1];
+
+        for (let d = 0; d < directions.length; d++) {
+
+            const nr = r + directions[d][0];
+            const nc = c + directions[d][1];
+
+            if (
+                nr >= 0 &&
+                nr < rows &&
+                nc >= 0 &&
+                nc < cols &&
+                currentGrid[nr][nc] === 1
+            ) {
+
+                currentGrid[nr][nc] = 2;
+
+                freshCount--;
+                rottenCount++;
+
+                queue.push([nr, nc]);
+
+                newlyRotten.push([nr, nc]);
+            }
+        }
+    }
+
+    minutes++;
+
+    renderGrid();
+
+    if (newlyRotten.length === 0) {
+
+        if (freshCount > 0) {
+
+            finished = true;
+
+            statusBox.textContent =
+                "No new oranges became rotten, but " +
+                freshCount +
+                " fresh orange(s) remain. Answer = -1.";
+
+            stepExplanation.textContent =
+                "The BFS frontier cannot reach the remaining fresh oranges.";
+
+            stopAutoRun();
+
+            return;
+        }
+    }
+
+    statusBox.textContent =
+        "Minute " +
+        minutes +
+        ": " +
+        newlyRotten.length +
+        " fresh orange(s) became rotten.";
+
+    stepExplanation.textContent =
+        "The rotten oranges from the previous BFS level spread to their fresh neighbors. " +
+        "There are now " +
+        freshCount +
+        " fresh orange(s) remaining.";
+
+    if (freshCount === 0) {
+
+        finished = true;
+
+        statusBox.textContent =
+            "All fresh oranges are rotten. Minimum time = " +
+            minutes +
+            " minute(s).";
+
+        stepExplanation.textContent =
+            "No fresh oranges remain, so the minimum required time is " +
+            minutes +
+            " minute(s).";
+
+        stopAutoRun();
+    }
+}
+
+/* =========================================================
+   Auto Run
+========================================================= */
+
+function autoRun() {
+
+    if (!started) {
+
+        startAlgorithm();
+
+        if (!started || finished) {
+            return;
+        }
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(function() {
+
+        if (finished) {
+
+            stopAutoRun();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+}
+
+/* =========================================================
+   Stop Auto
+========================================================= */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+/* =========================================================
+   Reset
+========================================================= */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    originalGrid = [];
+    currentGrid = [];
+
+    rows = 0;
+    cols = 0;
+
+    queue = [];
+
+    freshCount = 0;
+    rottenCount = 0;
+    minutes = 0;
+
+    newlyRotten = [];
+
+    started = false;
+    finished = false;
+
+    gridDisplay.innerHTML = "";
+
+    minuteDisplay.textContent = "0";
+    freshDisplay.textContent = "0";
+    rottenDisplay.textContent = "0";
+    queueDisplay.textContent = "0";
+
+    statusBox.textContent =
+        "Visualizer reset. Enter a grid and click Start.";
+
+    stepExplanation.textContent =
+        "Initially, all rotten oranges are placed into the BFS queue.";
+}
+
+/* =========================================================
+   Event Listeners
+========================================================= */
+
+startBtn.addEventListener("click", startAlgorithm);
+
+nextBtn.addEventListener("click", nextStep);
+
+autoBtn.addEventListener("click", autoRun);
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+/* =========================================================
+   Initial State
+========================================================= */
+
+resetAlgorithm();
+
+</script>
+
+</body>
+</html>

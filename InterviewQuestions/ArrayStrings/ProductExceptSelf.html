@@ -1,0 +1,1440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product of Array Except Self - Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 1250px;
+        margin: 25px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1e40af, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 14px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    .section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        color: #1d4ed8;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        padding: 11px 13px;
+        border: 2px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 16px;
+        width: 320px;
+    }
+
+    button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        margin: 15px 5px 5px 0;
+    }
+
+    button:hover {
+        opacity: 0.9;
+        transform: translateY(-1px);
+    }
+
+    #startBtn {
+        background: #2563eb;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #16a34a;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #9333ea;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    .array-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin: 25px 0;
+        padding: 25px 15px;
+        background: #f8fafc;
+        border-radius: 10px;
+    }
+
+    .array-box {
+        width: 75px;
+        height: 75px;
+        border: 2px solid #64748b;
+        border-radius: 9px;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        font-size: 19px;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .array-box .index {
+        position: absolute;
+        top: -23px;
+        font-size: 12px;
+        color: #475569;
+    }
+
+    .array-box.current {
+        background: #dbeafe;
+        border-color: #2563eb;
+        transform: translateY(-7px);
+    }
+
+    .array-box.left-side {
+        background: #dcfce7;
+        border-color: #16a34a;
+    }
+
+    .array-box.right-side {
+        background: #fef3c7;
+        border-color: #d97706;
+    }
+
+    .array-box.result {
+        background: #ede9fe;
+        border-color: #7c3aed;
+    }
+
+    .table-container {
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 650px;
+    }
+
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 12px;
+        text-align: center;
+    }
+
+    th {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    .highlight {
+        background: #dcfce7;
+        font-weight: bold;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        border-left: 5px solid #2563eb;
+        padding: 18px;
+        margin: 15px 0;
+        line-height: 1.8;
+        font-size: 17px;
+    }
+
+    .status {
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 20px;
+        line-height: 1.6;
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .status.success {
+        background: #f0fdf4;
+        border-left-color: #16a34a;
+    }
+
+    .status.warning {
+        background: #fffbeb;
+        border-left-color: #d97706;
+    }
+
+    .status.failure {
+        background: #fef2f2;
+        border-left-color: #dc2626;
+    }
+
+    .result {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .result-card {
+        background: #f8fafc;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .result-card .number {
+        font-size: 27px;
+        font-weight: bold;
+        color: #2563eb;
+    }
+
+    .code {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        white-space: pre;
+        line-height: 1.6;
+        font-family: Consolas, monospace;
+    }
+
+    .step {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 9px;
+        padding: 18px;
+        margin: 15px 0;
+        line-height: 1.7;
+    }
+
+    .step strong {
+        color: #1d4ed8;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity-card {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        padding: 18px;
+        border-radius: 9px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 6px 11px;
+        margin: 3px;
+        border-radius: 20px;
+        background: #dbeafe;
+        color: #1e40af;
+        font-size: 13px;
+    }
+
+    ul, ol {
+        line-height: 1.8;
+    }
+
+    @media(max-width: 700px) {
+        header h1 {
+            font-size: 25px;
+        }
+
+        input {
+            width: 100%;
+        }
+
+        .array-box {
+            width: 60px;
+            height: 60px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Product of Array Except Self</h1>
+    
+</header>
+
+
+<!-- Problem -->
+<div class="section">
+
+    <h2>1. Problem Statement <h3><p>
+        Return an array where each position contains the product of all
+        elements except the element at that position.
+        <b>Division is not used.</b>
+    </p></h3> 
+
+    <p>
+        Given an integer array <b>nums</b>, return an array
+        <b>answer</b> such that:
+    </p> </h2>
+
+    <div class="formula">
+        answer[i] = product of every element in nums
+        except nums[i]
+    </div>
+
+    <p>
+        The solution must not use the division operator.
+    </p>
+
+    <h3>Example</h3>
+
+    <div class="formula">
+        Input: [1, 2, 3, 4]
+        <br><br>
+        Output: [24, 12, 8, 6]
+    </div>
+
+</div>
+
+
+<!-- Input -->
+<div class="section">
+
+    <h2>2. Enter Array</h2>
+
+    <div class="input-row">
+
+        <label for="arrayInput">Array:</label>
+
+        <input
+            type="text"
+            id="arrayInput"
+            value="1,2,3,4"
+            placeholder="Example: 1,2,3,4"
+        >
+
+    </div>
+
+    <button id="startBtn">Start Algorithm</button>
+    <button id="nextBtn">Next Step</button>
+    <button id="autoBtn">Auto Run</button>
+    <button id="resetBtn">Reset</button>
+
+</div>
+
+
+<!-- Visualization -->
+<div class="section">
+
+    <h2>3. Input Array</h2>
+
+    <div id="inputArray" class="array-row">
+        Enter an array and click Start Algorithm.
+    </div>
+
+    <h2>Output Array</h2>
+
+    <div id="outputArray" class="array-row">
+        Output will appear here.
+    </div>
+
+    <div class="result">
+
+        <div class="result-card">
+            <div class="number" id="currentIndex">-</div>
+            <div>Current Index</div>
+        </div>
+
+        <div class="result-card">
+            <div class="number" id="prefixValue">1</div>
+            <div>Prefix Product</div>
+        </div>
+
+        <div class="result-card">
+            <div class="number" id="suffixValue">1</div>
+            <div>Suffix Product</div>
+        </div>
+
+    </div>
+
+    <div id="status" class="status">
+        Click <b>Start Algorithm</b> to begin.
+    </div>
+
+</div>
+
+
+<!-- Main Idea -->
+<div class="section">
+
+    <h2>4. Main Idea</h2>
+
+    <p>
+        For every index <b>i</b>, the answer is:
+    </p>
+
+    <div class="formula">
+        answer[i] =
+        product of elements to the LEFT of i
+        ×
+        product of elements to the RIGHT of i
+    </div>
+
+    <p>
+        Therefore, we perform two passes:
+    </p>
+
+    <ol>
+        <li>Calculate the product of all elements to the left.</li>
+        <li>Calculate the product of all elements to the right.</li>
+    </ol>
+
+</div>
+
+
+<!-- Prefix -->
+<div class="section">
+
+    <h2>5. First Pass - Prefix Products</h2>
+
+    <p>
+        During the first pass, store the product of all elements
+        appearing before each index.
+    </p>
+
+    <div class="formula">
+        For [1, 2, 3, 4]:
+        <br><br>
+
+        Index 0 → left product = 1
+        <br>
+        Index 1 → left product = 1
+        <br>
+        Index 2 → left product = 1 × 2 = 2
+        <br>
+        Index 3 → left product = 1 × 2 × 3 = 6
+    </div>
+
+</div>
+
+
+<!-- Suffix -->
+<div class="section">
+
+    <h2>6. Second Pass - Suffix Products</h2>
+
+    <p>
+        Starting from the right, multiply each answer value by
+        the product of all elements appearing after that index.
+    </p>
+
+    <div class="formula">
+        For [1, 2, 3, 4]:
+        <br><br>
+
+        Index 3 → right product = 1
+        <br>
+        Index 2 → right product = 4
+        <br>
+        Index 1 → right product = 4 × 3 = 12
+        <br>
+        Index 0 → right product = 4 × 3 × 2 = 24
+    </div>
+
+</div>
+
+
+<!-- Visualization Table -->
+<div class="section">
+
+    <h2>7. Step-by-Step Table</h2>
+
+    <div class="table-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Element</th>
+                    <th>Left Product</th>
+                    <th>Right Product</th>
+                    <th>Answer</th>
+                </tr>
+            </thead>
+
+            <tbody id="stepTable">
+
+                <tr>
+                    <td colspan="5">
+                        Start the algorithm to see the steps.
+                    </td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+
+<!-- Pseudocode -->
+<div class="section">
+
+    <h2>8. Pseudocode</h2>
+
+    <div class="code">FUNCTION productExceptSelf(nums)
+
+    n = length(nums)
+
+    create answer array of size n
+
+    prefix = 1
+
+    FOR i = 0 TO n - 1
+
+        answer[i] = prefix
+
+        prefix = prefix * nums[i]
+
+    suffix = 1
+
+    FOR i = n - 1 DOWN TO 0
+
+        answer[i] = answer[i] * suffix
+
+        suffix = suffix * nums[i]
+
+    RETURN answer
+
+END FUNCTION</div>
+
+</div>
+
+
+<!-- Python -->
+<div class="section">
+
+    <h2>9. Python Implementation</h2>
+
+    <div class="code">def product_except_self(nums):
+
+    n = len(nums)
+
+    answer = [1] * n
+
+    # Prefix products
+    prefix = 1
+
+    for i in range(n):
+
+        answer[i] = prefix
+
+        prefix *= nums[i]
+
+    # Suffix products
+    suffix = 1
+
+    for i in range(n - 1, -1, -1):
+
+        answer[i] *= suffix
+
+        suffix *= nums[i]
+
+    return answer
+
+
+# Example
+nums = [1, 2, 3, 4]
+
+print(product_except_self(nums))</div>
+
+    <p><b>Output:</b></p>
+
+    <div class="formula">
+        [24, 12, 8, 6]
+    </div>
+
+</div>
+
+
+<!-- C++ -->
+<div class="section">
+
+    <h2>10. C++ Implementation</h2>
+
+    <div class="code">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+vector&lt;int&gt; productExceptSelf(vector&lt;int&gt;& nums)
+{
+    int n = nums.size();
+
+    vector&lt;int&gt; answer(n, 1);
+
+    int prefix = 1;
+
+    // Prefix products
+    for (int i = 0; i &lt; n; i++)
+    {
+        answer[i] = prefix;
+        prefix *= nums[i];
+    }
+
+    int suffix = 1;
+
+    // Suffix products
+    for (int i = n - 1; i &gt;= 0; i--)
+    {
+        answer[i] *= suffix;
+        suffix *= nums[i];
+    }
+
+    return answer;
+}
+
+int main()
+{
+    vector&lt;int&gt; nums = {1, 2, 3, 4};
+
+    vector&lt;int&gt; result =
+        productExceptSelf(nums);
+
+    for (int x : result)
+    {
+        cout &lt;&lt; x &lt;&lt; " ";
+    }
+
+    return 0;
+}</div>
+
+</div>
+
+
+<!-- Example -->
+<div class="section">
+
+    <h2>11. Worked Example</h2>
+
+    <div class="formula">
+        Input:
+        <br>
+        [1, 2, 3, 4]
+        <br><br>
+
+        For index 0:
+        <br>
+        2 × 3 × 4 = <b>24</b>
+        <br><br>
+
+        For index 1:
+        <br>
+        1 × 3 × 4 = <b>12</b>
+        <br><br>
+
+        For index 2:
+        <br>
+        1 × 2 × 4 = <b>8</b>
+        <br><br>
+
+        For index 3:
+        <br>
+        1 × 2 × 3 = <b>6</b>
+        <br><br>
+
+        Output:
+        <br>
+        <b>[24, 12, 8, 6]</b>
+    </div>
+
+</div>
+
+
+<!-- Zero -->
+<div class="section">
+
+    <h2>12. What Happens with Zero?</h2>
+
+    <p>
+        This method naturally handles zeros without any special division
+        logic.
+    </p>
+
+    <div class="formula">
+        Input: [1, 2, 0, 4]
+        <br><br>
+        Output: [0, 0, 8, 0]
+    </div>
+
+    <p>
+        Notice that the answer at index 2 is:
+    </p>
+
+    <div class="formula">
+        1 × 2 × 4 = <b>8</b>
+    </div>
+
+</div>
+
+
+<!-- Complexity -->
+<div class="section">
+
+    <h2>13. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-card">
+            <h3>Time Complexity</h3>
+            <p><b>O(n)</b></p>
+            <p>
+                Two linear passes are performed.
+            </p>
+        </div>
+
+        <div class="complexity-card">
+            <h3>Extra Space</h3>
+            <p><b>O(1)</b></p>
+            <p>
+                Apart from the output array, no additional array is required.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Important Points -->
+<div class="section">
+
+    <h2>14. Important Points</h2>
+
+    <ul>
+        <li>Division is not used.</li>
+        <li>Works with positive numbers.</li>
+        <li>Works with negative numbers.</li>
+        <li>Works with zero.</li>
+        <li>Uses prefix and suffix products.</li>
+        <li>Time complexity is O(n).</li>
+        <li>Extra space is O(1), excluding the output array.</li>
+    </ul>
+
+    <div>
+        <span class="badge">Prefix Product</span>
+        <span class="badge">Suffix Product</span>
+        <span class="badge">No Division</span>
+        <span class="badge">O(n)</span>
+        <span class="badge">Array</span>
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+/* ==================================================
+   Global Variables
+================================================== */
+
+let nums = [];
+
+let currentIndex = -1;
+
+let prefixProduct = 1;
+
+let suffixProduct = 1;
+
+let algorithmStarted = false;
+
+let algorithmFinished = false;
+
+let phase = "prefix";
+
+let prefixProducts = [];
+
+let result = [];
+
+let autoTimer = null;
+
+
+/* ==================================================
+   Escape HTML
+================================================== */
+
+function escapeHTML(value) {
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* ==================================================
+   Read Input
+================================================== */
+
+function readInput() {
+
+    const input = document
+        .getElementById("arrayInput")
+        .value
+        .trim();
+
+    if (input === "") {
+        throw new Error("Please enter an array.");
+    }
+
+    const parts = input.split(",");
+
+    nums = [];
+
+    for (const part of parts) {
+
+        const value = Number(part.trim());
+
+        if (!Number.isFinite(value)) {
+            throw new Error(
+                "Please enter valid integers separated by commas."
+            );
+        }
+
+        nums.push(value);
+    }
+
+    if (nums.length === 0) {
+        throw new Error("Array cannot be empty.");
+    }
+}
+
+
+/* ==================================================
+   Start Algorithm
+================================================== */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    try {
+        readInput();
+    }
+    catch (error) {
+
+        showStatus(
+            escapeHTML(error.message),
+            "failure"
+        );
+
+        return;
+    }
+
+    currentIndex = -1;
+
+    prefixProduct = 1;
+
+    suffixProduct = 1;
+
+    algorithmStarted = true;
+
+    algorithmFinished = false;
+
+    phase = "prefix";
+
+    prefixProducts = new Array(nums.length);
+
+    result = new Array(nums.length).fill(1);
+
+    renderInputArray();
+
+    renderOutputArray();
+
+    renderTable();
+
+    updateValues();
+
+    showStatus(
+        "Prefix-product phase started. Click <b>Next Step</b>.",
+        "info"
+    );
+}
+
+
+/* ==================================================
+   Next Step
+================================================== */
+
+function nextStep() {
+
+    if (!algorithmStarted) {
+
+        showStatus(
+            "Please click <b>Start Algorithm</b> first.",
+            "failure"
+        );
+
+        return;
+    }
+
+    if (algorithmFinished) {
+        return;
+    }
+
+
+    /* ----------------------------------------------
+       Prefix Phase
+    ---------------------------------------------- */
+
+    if (phase === "prefix") {
+
+        currentIndex++;
+
+        if (currentIndex < nums.length) {
+
+            prefixProducts[currentIndex] =
+                prefixProduct;
+
+            result[currentIndex] =
+                prefixProduct;
+
+            prefixProduct *= nums[currentIndex];
+
+            renderInputArray();
+
+            renderOutputArray();
+
+            renderTable();
+
+            updateValues();
+
+            showStatus(
+                "Prefix phase: at index <b>" +
+                currentIndex +
+                "</b>, store the product of all elements to its left: <b>" +
+                prefixProducts[currentIndex] +
+                "</b>.",
+                "info"
+            );
+
+            return;
+        }
+
+        /* Move to suffix phase */
+
+        phase = "suffix";
+
+        currentIndex = nums.length;
+
+        suffixProduct = 1;
+
+        showStatus(
+            "Prefix phase completed. Now process the array from right to left using suffix products.",
+            "success"
+        );
+
+        return;
+    }
+
+
+    /* ----------------------------------------------
+       Suffix Phase
+    ---------------------------------------------- */
+
+    if (phase === "suffix") {
+
+        currentIndex--;
+
+        if (currentIndex >= 0) {
+
+            const oldResult =
+                result[currentIndex];
+
+            result[currentIndex] =
+                result[currentIndex] *
+                suffixProduct;
+
+            suffixProduct =
+                suffixProduct *
+                nums[currentIndex];
+
+            renderInputArray();
+
+            renderOutputArray();
+
+            renderTable();
+
+            updateValues();
+
+            showStatus(
+                "Suffix phase: index <b>" +
+                currentIndex +
+                "</b>.<br><br>" +
+
+                "Left product = <b>" +
+                oldResult +
+                "</b><br>" +
+
+                "Right product = <b>" +
+                (
+                    result[currentIndex] === 0
+                    ? suffixProduct
+                    : (
+                        result[currentIndex] /
+                        oldResult
+                    )
+                ) +
+                "</b><br><br>" +
+
+                "Updated answer = <b>" +
+                result[currentIndex] +
+                "</b>.",
+                "info"
+            );
+
+            return;
+        }
+
+        algorithmFinished = true;
+
+        phase = "done";
+
+        renderInputArray();
+
+        renderOutputArray();
+
+        renderTable();
+
+        updateValues();
+
+        showStatus(
+            "Algorithm completed successfully. Final result: <b>[" +
+            result.join(", ") +
+            "]</b>",
+            "success"
+        );
+    }
+}
+
+
+/* ==================================================
+   Auto Run
+================================================== */
+
+function autoRun() {
+
+    if (!algorithmStarted) {
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(function() {
+
+        if (algorithmFinished) {
+
+            stopAutoRun();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+}
+
+
+/* ==================================================
+   Stop Auto Run
+================================================== */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+
+/* ==================================================
+   Reset
+================================================== */
+
+function resetVisualizer() {
+
+    stopAutoRun();
+
+    nums = [];
+
+    currentIndex = -1;
+
+    prefixProduct = 1;
+
+    suffixProduct = 1;
+
+    algorithmStarted = false;
+
+    algorithmFinished = false;
+
+    phase = "prefix";
+
+    prefixProducts = [];
+
+    result = [];
+
+    document.getElementById("inputArray").innerHTML =
+        "Enter an array and click Start Algorithm.";
+
+    document.getElementById("outputArray").innerHTML =
+        "Output will appear here.";
+
+    document.getElementById("stepTable").innerHTML =
+        "<tr><td colspan='5'>Start the algorithm to see the steps.</td></tr>";
+
+    updateValues();
+
+    showStatus(
+        "Visualizer has been reset.",
+        "info"
+    );
+}
+
+
+/* ==================================================
+   Render Input Array
+================================================== */
+
+function renderInputArray() {
+
+    const container =
+        document.getElementById("inputArray");
+
+    container.innerHTML = "";
+
+    nums.forEach(function(value, index) {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "array-box";
+
+        if (index === currentIndex) {
+
+            box.classList.add("current");
+
+        }
+        else if (
+            phase === "prefix" &&
+            index < currentIndex
+        ) {
+
+            box.classList.add("left-side");
+
+        }
+        else if (
+            phase === "suffix" &&
+            index > currentIndex
+        ) {
+
+            box.classList.add("right-side");
+
+        }
+
+        box.innerHTML =
+            "<span class='index'>Index " +
+            index +
+            "</span>" +
+            "<span>" +
+            escapeHTML(value) +
+            "</span>";
+
+        container.appendChild(box);
+    });
+}
+
+
+/* ==================================================
+   Render Output
+================================================== */
+
+function renderOutputArray() {
+
+    const container =
+        document.getElementById("outputArray");
+
+    container.innerHTML = "";
+
+    if (result.length === 0) {
+
+        container.innerHTML =
+            "Output will appear here.";
+
+        return;
+    }
+
+    result.forEach(function(value, index) {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "array-box result";
+
+        if (
+            index === currentIndex &&
+            phase !== "done"
+        ) {
+
+            box.classList.add("current");
+        }
+
+        box.innerHTML =
+            "<span class='index'>Index " +
+            index +
+            "</span>" +
+            "<span>" +
+            escapeHTML(value) +
+            "</span>";
+
+        container.appendChild(box);
+    });
+}
+
+
+/* ==================================================
+   Render Table
+================================================== */
+
+function renderTable() {
+
+    const body =
+        document.getElementById("stepTable");
+
+    body.innerHTML = "";
+
+    if (nums.length === 0) {
+
+        body.innerHTML =
+            "<tr><td colspan='5'>No data.</td></tr>";
+
+        return;
+    }
+
+    for (let i = 0; i < nums.length; i++) {
+
+        const row =
+            document.createElement("tr");
+
+        const left =
+            prefixProducts[i] !== undefined
+            ? prefixProducts[i]
+            : "-";
+
+        const answer =
+            result[i] !== undefined
+            ? result[i]
+            : "-";
+
+        let right = "-";
+
+        if (phase === "done") {
+
+            if (nums[i] !== 0) {
+
+                right =
+                    answer / left;
+
+            }
+            else {
+
+                right = "Computed";
+
+            }
+
+        }
+
+        if (
+            i === currentIndex &&
+            phase !== "done"
+        ) {
+
+            row.classList.add("highlight");
+        }
+
+        row.innerHTML =
+            "<td>" +
+            i +
+            "</td>" +
+
+            "<td>" +
+            escapeHTML(nums[i]) +
+            "</td>" +
+
+            "<td>" +
+            escapeHTML(left) +
+            "</td>" +
+
+            "<td>" +
+            escapeHTML(right) +
+            "</td>" +
+
+            "<td>" +
+            escapeHTML(answer) +
+            "</td>";
+
+        body.appendChild(row);
+    }
+}
+
+
+/* ==================================================
+   Update Values
+================================================== */
+
+function updateValues() {
+
+    document.getElementById("currentIndex")
+        .textContent =
+            currentIndex >= 0 &&
+            currentIndex < nums.length
+            ? currentIndex
+            : "-";
+
+    document.getElementById("prefixValue")
+        .textContent =
+            prefixProduct;
+
+    document.getElementById("suffixValue")
+        .textContent =
+            suffixProduct;
+}
+
+
+/* ==================================================
+   Status
+================================================== */
+
+function showStatus(message, type) {
+
+    const status =
+        document.getElementById("status");
+
+    status.innerHTML = message;
+
+    status.className = "status";
+
+    if (type) {
+        status.classList.add(type);
+    }
+}
+
+
+/* ==================================================
+   Event Listeners
+================================================== */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetVisualizer
+    );
+
+</script>
+
+</body>
+</html>

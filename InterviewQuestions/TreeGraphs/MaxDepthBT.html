@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maximum Depth of Binary Tree</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #17365d;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 22px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+        color: #17365d;
+        margin-top: 0;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .problem {
+        background: #eef6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .example {
+        background: #fffbeb;
+        border-left: 5px solid #f59e0b;
+    }
+
+    .tree-panel {
+        border: 1px solid #dbe2ea;
+        border-radius: 10px;
+        padding: 15px;
+        background: #f8fafc;
+    }
+
+    .tree {
+        width: 100%;
+        height: 380px;
+        overflow: auto;
+    }
+
+    svg {
+        width: 100%;
+        min-width: 650px;
+        height: 350px;
+    }
+
+    .node {
+        fill: white;
+        stroke: #2563eb;
+        stroke-width: 3;
+    }
+
+    .node.current {
+        fill: #fef3c7;
+        stroke: #f59e0b;
+        stroke-width: 5;
+    }
+
+    .node.path {
+        fill: #dcfce7;
+        stroke: #16a34a;
+        stroke-width: 5;
+    }
+
+    .node.farthest {
+        fill: #dbeafe;
+        stroke: #7c3aed;
+        stroke-width: 5;
+    }
+
+    .node-text {
+        font-size: 16px;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        fill: #1e293b;
+    }
+
+    .edge {
+        stroke: #94a3b8;
+        stroke-width: 2;
+    }
+
+    .edge.path {
+        stroke: #16a34a;
+        stroke-width: 5;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    button {
+        border: none;
+        border-radius: 7px;
+        padding: 11px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        background: #2563eb;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    .success {
+        background: #15803d;
+    }
+
+    .secondary {
+        background: #475569;
+    }
+
+    .status {
+        margin-top: 18px;
+        padding: 14px;
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 7px;
+        font-weight: bold;
+    }
+
+    .result-box {
+        margin-top: 15px;
+        padding: 18px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        border: 2px solid #22c55e;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    .depth-box {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .depth-item {
+        padding: 12px 20px;
+        background: #f1f5f9;
+        border: 2px solid #94a3b8;
+        border-radius: 8px;
+        text-align: center;
+        min-width: 150px;
+    }
+
+    .depth-value {
+        font-size: 26px;
+        font-weight: bold;
+        color: #2563eb;
+    }
+
+    .pseudocode,
+    .code {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    pre {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .complexity-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .formula {
+        background: #f8fafc;
+        border: 2px dashed #64748b;
+        padding: 18px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .legend span {
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .legend-current {
+        background: #fef3c7;
+    }
+
+    .legend-path {
+        background: #dcfce7;
+    }
+
+    .legend-farthest {
+        background: #dbeafe;
+    }
+
+    @media (max-width: 800px) {
+        body {
+            padding: 12px;
+        }
+
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        .controls {
+            flex-direction: column;
+        }
+
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Maximum Depth of a Binary Tree</h1>
+    <p class="subtitle">
+        Find the Number of Nodes Along the Longest Root-to-Leaf Path
+    </p>
+
+    <!-- 1. Problem -->
+    <div class="card problem">
+        <h2>1. Problem Statement</h2>
+
+        <p>
+            Given the root of a binary tree, find the number of nodes along
+            the longest path from the root node down to the farthest leaf node.
+        </p>
+
+        <p>
+            This value is called the <strong>maximum depth</strong> or
+            <strong>maximum height</strong> of the binary tree.
+        </p>
+
+        <div class="formula">
+            Maximum Depth =
+            1 + max(Depth of Left Subtree, Depth of Right Subtree)
+        </div>
+    </div>
+
+    <!-- 2. Example -->
+    <div class="card example">
+        <h2>2. Example</h2>
+
+        <pre>
+              3
+             / \
+            9  20
+               / \
+              15  7
+        </pre>
+
+        <p>
+            The longest root-to-leaf path is:
+        </p>
+
+        <p>
+            <strong>3 → 20 → 15</strong>
+        </p>
+
+        <p>
+            Number of nodes = <strong>3</strong>
+        </p>
+
+        <p>
+            Therefore:
+            <strong>Maximum Depth = 3</strong>
+        </p>
+    </div>
+
+    <!-- 3. Visualization -->
+    <div class="card">
+        <h2>3. Interactive Visualization</h2>
+
+        <div class="tree-panel">
+            <div class="tree">
+                <svg id="treeSvg" viewBox="0 0 700 350"></svg>
+            </div>
+        </div>
+
+        <div class="depth-box">
+
+            <div class="depth-item">
+                <div>Current Depth</div>
+                <div id="currentDepth" class="depth-value">0</div>
+            </div>
+
+            <div class="depth-item">
+                <div>Maximum Depth</div>
+                <div id="maxDepth" class="depth-value">0</div>
+            </div>
+
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="nextBtn">Next Step</button>
+            <button id="autoBtn" class="success">Auto Run</button>
+            <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+
+        <div id="status" class="status">
+            Click "Start" to begin.
+        </div>
+
+        <div id="resultBox" class="result-box">
+            Maximum Depth: Not started
+        </div>
+
+        <div class="legend">
+            <span class="legend-current">Current Node</span>
+            <span class="legend-path">Current Longest Path</span>
+            <span class="legend-farthest">Farthest Leaf</span>
+        </div>
+    </div>
+
+    <!-- 4. Algorithm -->
+    <div class="card">
+        <h2>4. Algorithm</h2>
+
+        <ol>
+            <li>
+                If the current node is <strong>NULL</strong>, its depth is 0.
+            </li>
+
+            <li>
+                Recursively calculate the maximum depth of the left subtree.
+            </li>
+
+            <li>
+                Recursively calculate the maximum depth of the right subtree.
+            </li>
+
+            <li>
+                Select the larger of the two depths.
+            </li>
+
+            <li>
+                Add 1 for the current node.
+            </li>
+
+            <li>
+                Return the resulting depth.
+            </li>
+        </ol>
+    </div>
+
+    <!-- 5. Recurrence -->
+    <div class="card">
+        <h2>5. Recursive Formula</h2>
+
+        <div class="formula">
+            depth(root) =
+            1 + max(depth(root.left), depth(root.right))
+        </div>
+
+        <p>
+            Base case:
+        </p>
+
+        <div class="formula">
+            depth(NULL) = 0
+        </div>
+
+        <p>
+            The <strong>1</strong> represents the current node.
+        </p>
+    </div>
+
+    <!-- 6. Pseudocode -->
+    <div class="card">
+        <h2>6. Pseudocode</h2>
+
+        <div class="pseudocode">
+<pre>
+FUNCTION maxDepth(root)
+
+    IF root is NULL
+        RETURN 0
+
+    leftDepth ← maxDepth(root.left)
+
+    rightDepth ← maxDepth(root.right)
+
+    RETURN 1 + MAX(leftDepth, rightDepth)
+
+END FUNCTION
+</pre>
+        </div>
+    </div>
+
+    <!-- 7. Python -->
+    <div class="card">
+        <h2>7. Python Implementation</h2>
+
+        <div class="code">
+<pre>
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def max_depth(root):
+
+    if root is None:
+        return 0
+
+    left_depth = max_depth(root.left)
+    right_depth = max_depth(root.right)
+
+    return 1 + max(left_depth, right_depth)
+</pre>
+        </div>
+    </div>
+
+    <!-- 8. Iterative -->
+    <div class="card">
+        <h2>8. Iterative Python Implementation — BFS</h2>
+
+        <p>
+            We can also calculate the maximum depth level by level using a
+            queue.
+        </p>
+
+        <div class="code">
+<pre>
+from collections import deque
+
+
+def max_depth(root):
+
+    if root is None:
+        return 0
+
+    queue = deque([root])
+    depth = 0
+
+    while queue:
+
+        level_size = len(queue)
+        depth += 1
+
+        for _ in range(level_size):
+
+            node = queue.popleft()
+
+            if node.left:
+                queue.append(node.left)
+
+            if node.right:
+                queue.append(node.right)
+
+    return depth
+</pre>
+        </div>
+    </div>
+
+    <!-- 9. Explanation -->
+    <div class="card">
+        <h2>9. Explanation</h2>
+
+        <p>
+            Consider the following tree:
+        </p>
+
+        <pre>
+              3
+             / \
+            9  20
+               / \
+              15  7
+        </pre>
+
+        <p>
+            There are two main paths:
+        </p>
+
+        <ul>
+            <li>
+                3 → 9 = 2 nodes
+            </li>
+
+            <li>
+                3 → 20 → 15 = 3 nodes
+            </li>
+
+            <li>
+                3 → 20 → 7 = 3 nodes
+            </li>
+        </ul>
+
+        <p>
+            Therefore, the longest path contains
+            <strong>3 nodes</strong>.
+        </p>
+    </div>
+
+    <!-- 10. DFS -->
+    <div class="card">
+        <h2>10. Depth-First Search Idea</h2>
+
+        <p>
+            The recursive solution uses <strong>Depth-First Search (DFS)</strong>.
+        </p>
+
+        <p>
+            At every node, the algorithm travels down both subtrees and
+            determines which subtree has the greater depth.
+        </p>
+
+        <pre>
+                    3
+                   / \
+                  9  20
+                     / \
+                    15  7
+
+                  ↓
+
+        depth(3)
+          = 1 + max(depth(9), depth(20))
+
+          = 1 + max(1, 2)
+
+          = 3
+        </pre>
+    </div>
+
+    <!-- 11. Complexity -->
+    <div class="card">
+        <h2>11. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <h3>Time Complexity</h3>
+                <p><strong>O(n)</strong></p>
+                <p>
+                    Every node is visited exactly once.
+                </p>
+            </div>
+
+            <div class="complexity-box">
+                <h3>Space Complexity</h3>
+                <p><strong>O(h)</strong></p>
+                <p>
+                    For the recursive DFS solution, where h is the height
+                    of the tree.
+                </p>
+            </div>
+
+        </div>
+
+        <p>
+            In the worst case, a completely skewed tree has
+            <strong>O(n)</strong> recursion depth.
+        </p>
+
+        <p>
+            For a balanced tree, the recursion depth is approximately
+            <strong>O(log n)</strong>.
+        </p>
+    </div>
+
+    <!-- 12. Important -->
+    <div class="card">
+        <h2>12. Important Observation</h2>
+
+        <p>
+            The question asks for the number of <strong>nodes</strong> in the
+            longest path, not the number of edges.
+        </p>
+
+        <pre>
+        1
+       / \
+      2   3
+     /
+    4
+        </pre>
+
+        <p>
+            Longest path:
+            <strong>1 → 2 → 4</strong>
+        </p>
+
+        <p>
+            Number of nodes = <strong>3</strong>
+        </p>
+
+        <p>
+            Number of edges = <strong>2</strong>
+        </p>
+
+        <p>
+            Therefore, the maximum depth is <strong>3</strong>.
+        </p>
+    </div>
+
+</div>
+
+
+<script>
+"use strict";
+
+/* =========================================
+   Tree Node
+========================================= */
+
+class TreeNode {
+    constructor(value, left = null, right = null) {
+        this.value = value;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+
+/* =========================================
+   Create Example Tree
+========================================= */
+
+function createTree() {
+
+    const root = new TreeNode(3);
+
+    root.left = new TreeNode(9);
+    root.right = new TreeNode(20);
+
+    root.right.left = new TreeNode(15);
+    root.right.right = new TreeNode(7);
+
+    return root;
+}
+
+
+/* =========================================
+   State
+========================================= */
+
+let root = null;
+
+let traversal = [];
+
+let currentIndex = -1;
+
+let maxDepthValue = 0;
+
+let phase = 0;
+/*
+    0 = not started
+    1 = running
+    2 = completed
+*/
+
+let timer = null;
+
+
+/* =========================================
+   Collect Nodes with Depth
+========================================= */
+
+function collectNodes(node, depth = 1, parent = null, list = []) {
+
+    if (!node) {
+        return list;
+    }
+
+    list.push({
+        node: node,
+        depth: depth,
+        parent: parent
+    });
+
+    collectNodes(
+        node.left,
+        depth + 1,
+        node,
+        list
+    );
+
+    collectNodes(
+        node.right,
+        depth + 1,
+        node,
+        list
+    );
+
+    return list;
+}
+
+
+/* =========================================
+   Find Longest Path
+========================================= */
+
+function findDeepestNode(node, depth = 1) {
+
+    if (!node) {
+        return {
+            node: null,
+            depth: 0
+        };
+    }
+
+    const left = findDeepestNode(
+        node.left,
+        depth + 1
+    );
+
+    const right = findDeepestNode(
+        node.right,
+        depth + 1
+    );
+
+    if (left.depth >= right.depth) {
+        return left;
+    }
+
+    return right;
+}
+
+
+/* =========================================
+   Find Path to Node
+========================================= */
+
+function findPath(rootNode, target, path = []) {
+
+    if (!rootNode) {
+        return false;
+    }
+
+    path.push(rootNode);
+
+    if (rootNode === target) {
+        return true;
+    }
+
+    if (
+        findPath(rootNode.left, target, path) ||
+        findPath(rootNode.right, target, path)
+    ) {
+        return true;
+    }
+
+    path.pop();
+
+    return false;
+}
+
+
+/* =========================================
+   Draw Tree
+========================================= */
+
+function drawTree(svgId, rootNode, activeNode, longestPath) {
+
+    const svg = document.getElementById(svgId);
+
+    svg.innerHTML = "";
+
+    if (!rootNode) {
+        return;
+    }
+
+    const positions = new Map();
+
+    const width = 700;
+    const levelGap = 75;
+
+
+    function assignPositions(
+        node,
+        depth,
+        left,
+        right
+    ) {
+
+        if (!node) {
+            return;
+        }
+
+        const x = (left + right) / 2;
+        const y = 40 + depth * levelGap;
+
+        positions.set(node, {
+            x: x,
+            y: y
+        });
+
+        assignPositions(
+            node.left,
+            depth + 1,
+            left,
+            x
+        );
+
+        assignPositions(
+            node.right,
+            depth + 1,
+            x,
+            right
+        );
+    }
+
+
+    assignPositions(
+        rootNode,
+        0,
+        25,
+        width - 25
+    );
+
+
+    /* Draw edges */
+
+    positions.forEach((pos, node) => {
+
+        if (node.left && positions.has(node.left)) {
+
+            const child = positions.get(node.left);
+
+            const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+            line.setAttribute("x1", pos.x);
+            line.setAttribute("y1", pos.y + 20);
+
+            line.setAttribute("x2", child.x);
+            line.setAttribute("y2", child.y - 20);
+
+            line.classList.add("edge");
+
+            if (
+                longestPath.includes(node) &&
+                longestPath.includes(node.left)
+            ) {
+                line.classList.add("path");
+            }
+
+            svg.appendChild(line);
+        }
+
+
+        if (node.right && positions.has(node.right)) {
+
+            const child = positions.get(node.right);
+
+            const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+            line.setAttribute("x1", pos.x);
+            line.setAttribute("y1", pos.y + 20);
+
+            line.setAttribute("x2", child.x);
+            line.setAttribute("y2", child.y - 20);
+
+            line.classList.add("edge");
+
+            if (
+                longestPath.includes(node) &&
+                longestPath.includes(node.right)
+            ) {
+                line.classList.add("path");
+            }
+
+            svg.appendChild(line);
+        }
+    });
+
+
+    /* Draw nodes */
+
+    positions.forEach((pos, node) => {
+
+        const circle = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+        );
+
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", 23);
+
+        circle.classList.add("node");
+
+        if (longestPath.includes(node)) {
+            circle.classList.add("path");
+        }
+
+        if (node === activeNode) {
+            circle.classList.add("current");
+        }
+
+        svg.appendChild(circle);
+
+
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", pos.x);
+        text.setAttribute("y", pos.y);
+
+        text.classList.add("node-text");
+
+        text.textContent = node.value;
+
+        svg.appendChild(text);
+    });
+}
+
+
+/* =========================================
+   Render
+========================================= */
+
+function render() {
+
+    let activeNode = null;
+
+    if (
+        currentIndex >= 0 &&
+        currentIndex < traversal.length
+    ) {
+        activeNode = traversal[currentIndex].node;
+    }
+
+    let deepest = findDeepestNode(root).node;
+
+    let longestPath = [];
+
+    if (deepest) {
+        findPath(
+            root,
+            deepest,
+            longestPath
+        );
+    }
+
+    drawTree(
+        "treeSvg",
+        root,
+        activeNode,
+        longestPath
+    );
+}
+
+
+/* =========================================
+   Start Algorithm
+========================================= */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    root = createTree();
+
+    traversal = collectNodes(root);
+
+    currentIndex = -1;
+
+    maxDepthValue = 0;
+
+    phase = 1;
+
+    document.getElementById("currentDepth").textContent = "0";
+    document.getElementById("maxDepth").textContent = "0";
+
+    render();
+
+    document.getElementById("status").textContent =
+        "Tree loaded. Click 'Next Step' to visit each node.";
+
+    document.getElementById("resultBox").textContent =
+        "Maximum Depth: Processing...";
+}
+
+
+/* =========================================
+   Next Step
+========================================= */
+
+function nextStep() {
+
+    if (phase === 0) {
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === 2) {
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= traversal.length) {
+
+        phase = 2;
+
+        render();
+
+        document.getElementById("currentDepth").textContent =
+            maxDepthValue;
+
+        document.getElementById("maxDepth").textContent =
+            maxDepthValue;
+
+        document.getElementById("status").textContent =
+            "Completed! The longest root-to-leaf path contains " +
+            maxDepthValue +
+            " nodes.";
+
+        document.getElementById("resultBox").textContent =
+            "Maximum Depth = " +
+            maxDepthValue;
+
+        stopAutoRun();
+
+        return;
+    }
+
+
+    const item = traversal[currentIndex];
+
+    const node = item.node;
+
+    const depth = item.depth;
+
+    if (depth > maxDepthValue) {
+        maxDepthValue = depth;
+    }
+
+    document.getElementById("currentDepth").textContent =
+        depth;
+
+    document.getElementById("maxDepth").textContent =
+        maxDepthValue;
+
+    render();
+
+    document.getElementById("status").textContent =
+        "Visiting node " +
+        node.value +
+        " at depth " +
+        depth +
+        ". Current maximum depth = " +
+        maxDepthValue +
+        ".";
+
+    document.getElementById("resultBox").textContent =
+        "Current Maximum Depth = " +
+        maxDepthValue;
+}
+
+
+/* =========================================
+   Auto Run
+========================================= */
+
+function autoRun() {
+
+    if (phase === 2) {
+        return;
+    }
+
+    if (phase === 0) {
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    timer = setInterval(() => {
+
+        if (phase === 2) {
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* =========================================
+   Stop Auto Run
+========================================= */
+
+function stopAutoRun() {
+
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+}
+
+
+/* =========================================
+   Reset
+========================================= */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    root = createTree();
+
+    traversal = [];
+
+    currentIndex = -1;
+
+    maxDepthValue = 0;
+
+    phase = 0;
+
+    document.getElementById("currentDepth").textContent = "0";
+    document.getElementById("maxDepth").textContent = "0";
+
+    document.getElementById("status").textContent =
+        "Click 'Start' to begin.";
+
+    document.getElementById("resultBox").textContent =
+        "Maximum Depth: Not started";
+
+    render();
+}
+
+
+/* =========================================
+   Event Listeners
+========================================= */
+
+document.getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document.getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document.getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document.getElementById("resetBtn")
+    .addEventListener("click", resetAlgorithm);
+
+
+/* =========================================
+   Initial State
+========================================= */
+
+resetAlgorithm();
+
+</script>
+
+</body>
+</html>

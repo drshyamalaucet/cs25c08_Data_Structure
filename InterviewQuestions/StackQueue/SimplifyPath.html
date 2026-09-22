@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simplify Unix Path – Interactive Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 25px;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 5px;
+}
+
+.subtitle {
+    text-align: center;
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #1e3a8a;
+    margin-top: 0;
+}
+
+.input-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 350px;
+    padding: 12px;
+    font-size: 18px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+button {
+    padding: 11px 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+#loadBtn {
+    background: #64748b;
+    color: white;
+}
+
+#startBtn {
+    background: #2563eb;
+    color: white;
+}
+
+#nextBtn {
+    background: #059669;
+    color: white;
+}
+
+#autoBtn {
+    background: #d97706;
+    color: white;
+}
+
+#resetBtn {
+    background: #dc2626;
+    color: white;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+.status {
+    margin-top: 15px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #eef2ff;
+    font-weight: bold;
+    min-height: 50px;
+}
+
+.path-display {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+}
+
+.path-token {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #e2e8f0;
+    border: 2px solid #cbd5e1;
+    font-family: Consolas, monospace;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.path-token.current {
+    background: #dbeafe;
+    border-color: #2563eb;
+    transform: translateY(-4px);
+}
+
+.path-token.processed {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.path-token.ignored {
+    background: #fef3c7;
+    border-color: #d97706;
+}
+
+.path-token.removed {
+    background: #fee2e2;
+    border-color: #dc2626;
+}
+
+.separator {
+    font-size: 22px;
+    color: #64748b;
+}
+
+.two-column {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.stack-area {
+    min-height: 260px;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    gap: 7px;
+    background: #f8fafc;
+}
+
+.stack-item {
+    width: 180px;
+    padding: 13px;
+    text-align: center;
+    border-radius: 8px;
+    background: #e0e7ff;
+    border: 2px solid #6366f1;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.stack-top {
+    text-align: center;
+    font-weight: bold;
+    color: #475569;
+    margin-bottom: 8px;
+}
+
+.canonical {
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    border-radius: 10px;
+    background: #f1f5f9;
+    font-family: Consolas, monospace;
+    font-size: 28px;
+    font-weight: bold;
+    word-break: break-all;
+    text-align: center;
+}
+
+.operation {
+    margin-top: 15px;
+    padding: 15px;
+    border-left: 5px solid #2563eb;
+    background: #f8fafc;
+    border-radius: 6px;
+    font-size: 17px;
+}
+
+.result {
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.neutral {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+ul {
+    line-height: 1.8;
+}
+
+.rule-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.rule {
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.rule strong {
+    display: block;
+    font-size: 20px;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 800px) {
+    .two-column {
+        grid-template-columns: 1fr;
+    }
+
+    .rule-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 500px) {
+    .rule-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>Simplify Unix Path</h1>
+
+<p class="subtitle">
+    Stack-Based Interactive Visualizer
+</p>
+
+
+<!-- INPUT -->
+<div class="card">
+
+    <h2>1. Enter Absolute Unix Path</h2>
+
+    <div class="input-row">
+
+        <input
+            id="pathInput"
+            value="/home//foo/../bar/"
+            placeholder="/home//foo/../bar/"
+        >
+
+        <button id="loadBtn">Load</button>
+
+    </div>
+
+    <div class="controls">
+
+        <button id="startBtn">Start</button>
+
+        <button id="nextBtn">Next Step</button>
+
+        <button id="autoBtn">Auto Run</button>
+
+        <button id="resetBtn">Reset</button>
+
+    </div>
+
+    <div id="status" class="status">
+        Enter an absolute Unix path and click Load.
+    </div>
+
+</div>
+
+
+<!-- PATH TOKENS -->
+<div class="card">
+
+    <h2>2. Path Components</h2>
+
+    <div id="pathDisplay" class="path-display">
+    </div>
+
+</div>
+
+
+<!-- STACK AND RESULT -->
+<div class="two-column">
+
+    <div class="card">
+
+        <h2>3. Directory Stack</h2>
+
+        <div class="stack-top">
+            TOP
+        </div>
+
+        <div id="stack" class="stack-area">
+            <span>Stack is empty</span>
+        </div>
+
+    </div>
+
+
+    <div class="card">
+
+        <h2>4. Canonical Path</h2>
+
+        <div id="canonical" class="canonical">
+            /
+        </div>
+
+        <div id="operation" class="operation">
+            Waiting for algorithm...
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- RULES -->
+<div class="card">
+
+    <h2>5. Unix Path Rules</h2>
+
+    <div class="rule-grid">
+
+        <div class="rule">
+            <strong>/</strong>
+            Separates directories
+        </div>
+
+        <div class="rule">
+            <strong>.</strong>
+            Current directory
+        </div>
+
+        <div class="rule">
+            <strong>..</strong>
+            Move to parent directory
+        </div>
+
+        <div class="rule">
+            <strong>//</strong>
+            Treat as one separator
+        </div>
+
+    </div>
+
+    <p>
+        For an absolute path, the canonical result always begins with
+        <strong>/</strong>.
+    </p>
+
+</div>
+
+
+<!-- PSEUDOCODE -->
+<div class="card">
+
+    <h2>6. Pseudocode</h2>
+```
+
+<pre><code>function simplifyPath(path):
+
+    stack = empty stack
+
+    components = split path using "/"
+
+    for each component in components:
+
+        if component == "" or component == ".":
+            continue
+
+        else if component == "..":
+
+            if stack is not empty:
+                pop stack
+
+        else:
+            push component onto stack
+
+    if stack is empty:
+        return "/"
+
+    return "/" + join(stack, "/")</code></pre>
+
+```
+</div>
+
+
+<!-- PYTHON -->
+<div class="card">
+
+    <h2>7. Python Implementation</h2>
+```
+
+<pre><code>def simplify_path(path):
+    stack = []
+
+    for part in path.split("/"):
+
+        if part == "" or part == ".":
+            continue
+
+        if part == "..":
+
+            if stack:
+                stack.pop()
+
+        else:
+            stack.append(part)
+
+    return "/" + "/".join(stack)
+
+
+# Example
+path = "/home//foo/../bar/"
+
+print(simplify_path(path))
+
+# Output:
+# /home/bar</code></pre>
+
+```
+</div>
+
+
+<!-- C++ -->
+<div class="card">
+
+    <h2>8. C++ Implementation</h2>
+```
+
+<pre><code>#include &lt;iostream&gt;
+#include &lt;sstream&gt;
+#include &lt;stack&gt;
+#include &lt;string&gt;
+
+using namespace std;
+
+string simplifyPath(string path) {
+
+    stack&lt;string&gt; st;
+
+    string component;
+
+    stringstream ss(path);
+
+    while (getline(ss, component, '/')) {
+
+        if (component == "" || component == ".") {
+            continue;
+        }
+
+        if (component == "..") {
+
+            if (!st.empty()) {
+                st.pop();
+            }
+        }
+
+        else {
+            st.push(component);
+        }
+    }
+
+    string result = "";
+
+    while (!st.empty()) {
+
+        result = "/" + st.top() + result;
+        st.pop();
+    }
+
+    if (result.empty()) {
+        return "/";
+    }
+
+    return result;
+}
+
+int main() {
+
+    string path = "/home//foo/../bar/";
+
+    cout &lt;&lt; simplifyPath(path);
+
+    return 0;
+}
+
+// Output:
+// /home/bar</code></pre>
+
+```
+</div>
+
+
+<!-- STEP EXAMPLE -->
+<div class="card">
+
+    <h2>9. Example Walkthrough</h2>
+
+    <p>
+        Input:
+        <strong>/home//foo/../bar/</strong>
+    </p>
+```
+
+<pre><code>Component       Stack
+
+home             [home]
+
+foo              [home, foo]
+
+..               [home]
+
+bar              [home, bar]
+
+Final result:
+                   /home/bar</code></pre>
+
+```
+</div>
+
+
+<!-- COMPLEXITY -->
+<div class="card">
+
+    <h2>10. Complexity Analysis</h2>
+
+    <ul>
+        <li><strong>Time Complexity:</strong> O(n)</li>
+        <li><strong>Space Complexity:</strong> O(n)</li>
+    </ul>
+
+    <p>
+        Each path component is processed once. The stack stores directory
+        names that remain in the canonical path.
+    </p>
+
+</div>
+```
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================
+   Global State
+========================================= */
+
+let components = [];
+let stack = [];
+let currentIndex = 0;
+let phase = "idle";
+let autoTimer = null;
+
+
+/* =========================================
+   DOM Elements
+========================================= */
+
+const pathInput =
+    document.getElementById("pathInput");
+
+const loadBtn =
+    document.getElementById("loadBtn");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const autoBtn =
+    document.getElementById("autoBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const pathDisplay =
+    document.getElementById("pathDisplay");
+
+const stackContainer =
+    document.getElementById("stack");
+
+const statusBox =
+    document.getElementById("status");
+
+const canonicalBox =
+    document.getElementById("canonical");
+
+const operationBox =
+    document.getElementById("operation");
+
+
+/* =========================================
+   Load Path
+========================================= */
+
+function loadPath() {
+
+    stopAutoRun();
+
+    const path =
+        pathInput.value.trim();
+
+    if (!path) {
+
+        statusBox.textContent =
+            "Please enter a path.";
+
+        return;
+    }
+
+    if (!path.startsWith("/")) {
+
+        statusBox.textContent =
+            "Invalid path: the path must be absolute and start with /.";
+
+        return;
+    }
+
+    components =
+        path.split("/");
+
+    stack = [];
+    currentIndex = 0;
+    phase = "ready";
+
+    renderComponents();
+    renderStack();
+
+    canonicalBox.textContent = "/";
+
+    operationBox.textContent =
+        "Path loaded. Click Start.";
+
+    statusBox.textContent =
+        `Loaded ${components.length} path components.`;
+
+}
+
+
+/* =========================================
+   Render Components
+========================================= */
+
+function renderComponents() {
+
+    pathDisplay.innerHTML = "";
+
+    components.forEach((component, index) => {
+
+        if (index > 0) {
+
+            const separator =
+                document.createElement("span");
+
+            separator.className =
+                "separator";
+
+            separator.textContent = "/";
+
+            pathDisplay.appendChild(separator);
+        }
+
+        const token =
+            document.createElement("div");
+
+        token.className =
+            "path-token";
+
+        token.id =
+            "component-" + index;
+
+        token.textContent =
+            component === ""
+                ? "∅"
+                : component;
+
+        pathDisplay.appendChild(token);
+    });
+}
+
+
+/* =========================================
+   Highlight Current
+========================================= */
+
+function highlightCurrent() {
+
+    components.forEach((_, index) => {
+
+        const element =
+            document.getElementById(
+                "component-" + index
+            );
+
+        if (element) {
+            element.classList.remove("current");
+        }
+    });
+
+    if (currentIndex < components.length) {
+
+        const current =
+            document.getElementById(
+                "component-" + currentIndex
+            );
+
+        if (current) {
+            current.classList.add("current");
+        }
+    }
+}
+
+
+/* =========================================
+   Mark Component
+========================================= */
+
+function markComponent(index, className) {
+
+    const element =
+        document.getElementById(
+            "component-" + index
+        );
+
+    if (element) {
+
+        element.classList.remove("current");
+
+        element.classList.add(className);
+    }
+}
+
+
+/* =========================================
+   Render Stack
+========================================= */
+
+function renderStack() {
+
+    stackContainer.innerHTML = "";
+
+    if (stack.length === 0) {
+
+        const empty =
+            document.createElement("span");
+
+        empty.textContent =
+            "Stack is empty";
+
+        stackContainer.appendChild(empty);
+
+        updateCanonical();
+
+        return;
+    }
+
+    stack.forEach(directory => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "stack-item";
+
+        item.textContent =
+            directory;
+
+        stackContainer.appendChild(item);
+    });
+
+    updateCanonical();
+}
+
+
+/* =========================================
+   Update Canonical Path
+========================================= */
+
+function updateCanonical() {
+
+    if (stack.length === 0) {
+
+        canonicalBox.textContent = "/";
+
+        return;
+    }
+
+    canonicalBox.textContent =
+        "/" + stack.join("/");
+}
+
+
+/* =========================================
+   Start Algorithm
+========================================= */
+
+function startAlgorithm() {
+
+    if (components.length === 0) {
+
+        loadPath();
+
+        if (components.length === 0) {
+            return;
+        }
+    }
+
+    stopAutoRun();
+
+    stack = [];
+    currentIndex = 0;
+    phase = "running";
+
+    renderComponents();
+    renderStack();
+    highlightCurrent();
+
+    canonicalBox.textContent = "/";
+
+    operationBox.textContent =
+        "Process each component from left to right.";
+
+    statusBox.textContent =
+        "Algorithm started.";
+}
+
+
+/* =========================================
+   Next Step
+========================================= */
+
+function nextStep() {
+
+    if (phase === "idle") {
+
+        statusBox.textContent =
+            "Please load a path first.";
+
+        return;
+    }
+
+    if (phase === "ready") {
+
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === "finished") {
+        return;
+    }
+
+    if (currentIndex >= components.length) {
+
+        finishAlgorithm();
+        return;
+    }
+
+    highlightCurrent();
+
+    const component =
+        components[currentIndex];
+
+
+    /* -------------------------------------
+       Empty component
+    ------------------------------------- */
+
+    if (component === "") {
+
+        markComponent(
+            currentIndex,
+            "ignored"
+        );
+
+        operationBox.textContent =
+            "Empty component: ignore it. Multiple / characters are treated as one separator.";
+
+        statusBox.textContent =
+            `Component ${currentIndex}: empty → ignored.`;
+
+        currentIndex++;
+
+        checkFinished();
+
+        return;
+    }
+
+
+    /* -------------------------------------
+       Current directory .
+    ------------------------------------- */
+
+    if (component === ".") {
+
+        markComponent(
+            currentIndex,
+            "ignored"
+        );
+
+        operationBox.textContent =
+            'Component "." means the current directory → ignore it.';
+
+        statusBox.textContent =
+            `Component ${currentIndex}: "." → ignored.`;
+
+        currentIndex++;
+
+        checkFinished();
+
+        return;
+    }
+
+
+    /* -------------------------------------
+       Parent directory ..
+    ------------------------------------- */
+
+    if (component === "..") {
+
+        if (stack.length > 0) {
+
+            const removed =
+                stack.pop();
+
+            renderStack();
+
+            markComponent(
+                currentIndex,
+                "removed"
+            );
+
+            operationBox.textContent =
+                `Component ".." means parent directory → pop "${removed}" from the stack.`;
+
+            statusBox.textContent =
+                `Component ${currentIndex}: ".." → removed "${removed}".`;
+
+        } else {
+
+            markComponent(
+                currentIndex,
+                "ignored"
+            );
+
+            operationBox.textContent =
+                'Component ".." at root → nothing to pop, so ignore it.';
+
+            statusBox.textContent =
+                `Component ${currentIndex}: ".." at root → ignored.`;
+        }
+
+        currentIndex++;
+
+        checkFinished();
+
+        return;
+    }
+
+
+    /* -------------------------------------
+       Directory Name
+    ------------------------------------- */
+
+    stack.push(component);
+
+    renderStack();
+
+    markComponent(
+        currentIndex,
+        "processed"
+    );
+
+    operationBox.textContent =
+        `Directory "${component}" → push onto the stack.`;
+
+    statusBox.textContent =
+        `Component ${currentIndex}: "${component}" pushed onto stack.`;
+
+    currentIndex++;
+
+    checkFinished();
+}
+
+
+/* =========================================
+   Check Completion
+========================================= */
+
+function checkFinished() {
+
+    if (currentIndex >= components.length) {
+        finishAlgorithm();
+    } else {
+        highlightCurrent();
+    }
+}
+
+
+/* =========================================
+   Finish Algorithm
+========================================= */
+
+function finishAlgorithm() {
+
+    phase = "finished";
+
+    stopAutoRun();
+
+    updateCanonical();
+
+    operationBox.textContent =
+        "All components processed. The stack now represents the canonical path.";
+
+    statusBox.textContent =
+        "Path simplification completed.";
+
+    canonicalBox.textContent =
+        stack.length === 0
+            ? "/"
+            : "/" + stack.join("/");
+}
+
+
+/* =========================================
+   Auto Run
+========================================= */
+
+function autoRun() {
+
+    if (phase === "idle" || phase === "ready") {
+        startAlgorithm();
+    }
+
+    if (phase === "finished") {
+        return;
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(() => {
+
+        if (phase === "finished") {
+
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+}
+
+
+/* =========================================
+   Stop Auto Run
+========================================= */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* =========================================
+   Reset
+========================================= */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    components = [];
+    stack = [];
+    currentIndex = 0;
+    phase = "idle";
+
+    pathDisplay.innerHTML = "";
+
+    stackContainer.innerHTML =
+        "<span>Stack is empty</span>";
+
+    canonicalBox.textContent = "/";
+
+    operationBox.textContent =
+        "Waiting for algorithm...";
+
+    statusBox.textContent =
+        "Reset complete.";
+}
+
+
+/* =========================================
+   Event Listeners
+========================================= */
+
+loadBtn.addEventListener(
+    "click",
+    loadPath
+);
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+
+/* =========================================
+   Initial Example
+========================================= */
+
+loadPath();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valid Parentheses – Interactive Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .input-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    input {
+        flex: 1;
+        min-width: 250px;
+        padding: 12px;
+        font-size: 18px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+    }
+
+    button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    #loadBtn { background: #64748b; color: white; }
+    #startBtn { background: #2563eb; color: white; }
+    #nextBtn { background: #059669; color: white; }
+    #autoBtn { background: #d97706; color: white; }
+    #resetBtn { background: #dc2626; color: white; }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .status {
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 8px;
+        background: #eef2ff;
+        font-weight: bold;
+        min-height: 50px;
+    }
+
+    .section-title {
+        margin-top: 0;
+        color: #1e3a8a;
+    }
+
+    .string-container {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    .char {
+        width: 55px;
+        height: 65px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background: #f8fafc;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .char-index {
+        font-size: 12px;
+        color: #64748b;
+        margin-bottom: 3px;
+    }
+
+    .current {
+        border-color: #2563eb;
+        background: #dbeafe;
+        transform: translateY(-5px);
+    }
+
+    .matched {
+        border-color: #16a34a;
+        background: #dcfce7;
+    }
+
+    .invalid {
+        border-color: #dc2626;
+        background: #fee2e2;
+    }
+
+    .stack-container {
+        min-height: 150px;
+        display: flex;
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 5px;
+        padding: 15px;
+        border: 2px dashed #94a3b8;
+        border-radius: 10px;
+        background: #f8fafc;
+    }
+
+    .stack-item {
+        width: 120px;
+        padding: 12px;
+        text-align: center;
+        border-radius: 7px;
+        background: #e0e7ff;
+        border: 2px solid #6366f1;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .stack-label {
+        text-align: center;
+        font-weight: bold;
+        color: #475569;
+        margin-bottom: 8px;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .result {
+        font-size: 24px;
+        text-align: center;
+        padding: 20px;
+        border-radius: 10px;
+        font-weight: bold;
+    }
+
+    .valid-result {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .invalid-result {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .neutral-result {
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    ul {
+        line-height: 1.8;
+    }
+
+    .mapping {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .mapping div {
+        background: #f1f5f9;
+        padding: 12px;
+        border-radius: 8px;
+        text-align: center;
+        font-weight: bold;
+    }
+
+    @media (max-width: 750px) {
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+
+        .mapping {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+```
+<h1>Valid Parentheses</h1>
+<p class="subtitle">
+    Interactive Stack-Based Visualizer
+</p>
+
+<div class="card">
+    <h2 class="section-title">1. Enter Input String</h2>
+
+    <div class="input-row">
+        <input
+            type="text"
+            id="inputString"
+            value="({[]})"
+            placeholder="Enter brackets, e.g. ({[]})"
+        >
+        <button id="loadBtn">Load</button>
+    </div>
+
+    <div class="controls">
+        <button id="startBtn">Start</button>
+        <button id="nextBtn">Next Step</button>
+        <button id="autoBtn">Auto Run</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+
+    <div id="status" class="status">
+        Enter a string and click Load.
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="section-title">2. String Visualization</h2>
+
+    <div id="stringContainer" class="string-container">
+        <!-- Characters generated by JavaScript -->
+    </div>
+</div>
+
+<div class="two-column">
+
+    <div class="card">
+        <h2 class="section-title">3. Stack</h2>
+
+        <div class="stack-label">
+            TOP
+        </div>
+
+        <div id="stackContainer" class="stack-container">
+            <span id="emptyStack">Stack is empty</span>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 class="section-title">4. Result</h2>
+
+        <div id="result" class="result neutral-result">
+            Result will appear here
+        </div>
+    </div>
+
+</div>
+
+<div class="card">
+    <h2 class="section-title">Bracket Matching</h2>
+
+    <div class="mapping">
+        <div>( → )</div>
+        <div>{ → }</div>
+        <div>[ → ]</div>
+    </div>
+
+    <p>
+        When an opening bracket is encountered, it is pushed onto the stack.
+        When a closing bracket is encountered, the top element of the stack
+        must be its corresponding opening bracket.
+    </p>
+</div>
+
+<div class="card">
+    <h2 class="section-title">Pseudocode</h2>
+```
+
+<pre><code>function isValid(s):
+
+    stack = empty stack
+
+    for each character ch in s:
+
+        if ch is '(' or '{' or '[':
+            push ch onto stack
+
+        else:
+            if stack is empty:
+                return false
+
+            top = pop stack
+
+            if ch == ')' and top != '(':
+                return false
+
+            if ch == '}' and top != '{':
+                return false
+
+            if ch == ']' and top != '[':
+                return false
+
+    return stack is empty</code></pre>
+
+```
+</div>
+
+<div class="card">
+    <h2 class="section-title">Python Implementation</h2>
+```
+
+<pre><code>def is_valid(s):
+    stack = []
+
+    pairs = {
+        ')': '(',
+        '}': '{',
+        ']': '['
+    }
+
+    for ch in s:
+
+        # Opening bracket
+        if ch in "({[":
+            stack.append(ch)
+
+        # Closing bracket
+        else:
+            if not stack:
+                return False
+
+            top = stack.pop()
+
+            if pairs[ch] != top:
+                return False
+
+    return len(stack) == 0
+
+
+# Example
+s = "({[]})"
+
+print(is_valid(s))
+# Output: True</code></pre>
+
+```
+</div>
+
+<div class="card">
+    <h2 class="section-title">Explanation</h2>
+
+    <ul>
+        <li>Use a <strong>stack</strong> to store opening brackets.</li>
+        <li>Opening brackets <strong>(, {, [</strong> are pushed onto the stack.</li>
+        <li>For a closing bracket, compare it with the most recent opening bracket.</li>
+        <li>If they match, remove the opening bracket using <strong>pop()</strong>.</li>
+        <li>If they do not match, the string is invalid.</li>
+        <li>At the end, the stack must be empty for the string to be valid.</li>
+    </ul>
+
+    <h3>Examples</h3>
+
+    <ul>
+        <li><strong>()</strong> → Valid</li>
+        <li><strong>()[]&#123;&#125;</strong> → Valid</li>
+        <li><strong>(&#123;[]&#125;)</strong> → Valid</li>
+        <li><strong>(]</strong> → Invalid</li>
+        <li><strong>([)]</strong> → Invalid</li>
+        <li><strong>((</strong> → Invalid</li>
+    </ul>
+</div>
+
+<div class="card">
+    <h2 class="section-title">Complexity Analysis</h2>
+
+    <ul>
+        <li><strong>Time Complexity:</strong> O(n)</li>
+        <li><strong>Space Complexity:</strong> O(n)</li>
+    </ul>
+
+    <p>
+        Each character is processed once, and every opening bracket is
+        pushed and popped at most once.
+    </p>
+</div>
+```
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------
+   Global State
+--------------------------------------- */
+
+let chars = [];
+let stack = [];
+let currentIndex = 0;
+let phase = "idle";
+let autoTimer = null;
+
+
+/* ---------------------------------------
+   DOM Elements
+--------------------------------------- */
+
+const inputString = document.getElementById("inputString");
+const loadBtn = document.getElementById("loadBtn");
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const stringContainer =
+    document.getElementById("stringContainer");
+
+const stackContainer =
+    document.getElementById("stackContainer");
+
+const emptyStack =
+    document.getElementById("emptyStack");
+
+const statusBox =
+    document.getElementById("status");
+
+const resultBox =
+    document.getElementById("result");
+
+
+/* ---------------------------------------
+   Bracket Matching
+--------------------------------------- */
+
+const pairs = {
+    ")": "(",
+    "}": "{",
+    "]": "["
+};
+
+const openingBrackets = ["(", "{", "["];
+const closingBrackets = [")", "}", "]"];
+
+
+/* ---------------------------------------
+   Load String
+--------------------------------------- */
+
+function loadString() {
+
+    stopAutoRun();
+
+    const value = inputString.value.trim();
+
+    if (value.length === 0) {
+        statusBox.textContent =
+            "Please enter a bracket string.";
+
+        return;
+    }
+
+    for (const ch of value) {
+        if (
+            !openingBrackets.includes(ch) &&
+            !closingBrackets.includes(ch)
+        ) {
+            statusBox.textContent =
+                "Invalid input: only (), {}, and [] are allowed.";
+
+            return;
+        }
+    }
+
+    chars = value.split("");
+    stack = [];
+    currentIndex = 0;
+    phase = "ready";
+
+    renderString();
+    renderStack();
+
+    resultBox.className =
+        "result neutral-result";
+
+    resultBox.textContent =
+        "Waiting to start...";
+
+    statusBox.textContent =
+        "String loaded. Click Start.";
+}
+
+
+/* ---------------------------------------
+   Render String
+--------------------------------------- */
+
+function renderString() {
+
+    stringContainer.innerHTML = "";
+
+    chars.forEach((ch, index) => {
+
+        const box = document.createElement("div");
+
+        box.className = "char";
+        box.id = "char-" + index;
+
+        const indexLabel =
+            document.createElement("div");
+
+        indexLabel.className = "char-index";
+        indexLabel.textContent = index;
+
+        const character =
+            document.createElement("div");
+
+        character.textContent = ch;
+
+        box.appendChild(indexLabel);
+        box.appendChild(character);
+
+        stringContainer.appendChild(box);
+    });
+}
+
+
+/* ---------------------------------------
+   Highlight Current Character
+--------------------------------------- */
+
+function highlightCurrent() {
+
+    chars.forEach((_, index) => {
+
+        const element =
+            document.getElementById("char-" + index);
+
+        if (!element) return;
+
+        element.classList.remove("current");
+    });
+
+    if (currentIndex < chars.length) {
+
+        const current =
+            document.getElementById(
+                "char-" + currentIndex
+            );
+
+        if (current) {
+            current.classList.add("current");
+        }
+    }
+}
+
+
+/* ---------------------------------------
+   Mark Character
+--------------------------------------- */
+
+function markCharacter(index, className) {
+
+    const element =
+        document.getElementById("char-" + index);
+
+    if (element) {
+        element.classList.remove("current");
+        element.classList.add(className);
+    }
+}
+
+
+/* ---------------------------------------
+   Render Stack
+--------------------------------------- */
+
+function renderStack() {
+
+    stackContainer.innerHTML = "";
+
+    if (stack.length === 0) {
+
+        const empty =
+            document.createElement("span");
+
+        empty.textContent = "Stack is empty";
+        empty.id = "emptyStack";
+
+        stackContainer.appendChild(empty);
+
+        return;
+    }
+
+    stack.forEach((item, index) => {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "stack-item";
+
+        box.textContent = item;
+
+        stackContainer.appendChild(box);
+    });
+}
+
+
+/* ---------------------------------------
+   Start Algorithm
+--------------------------------------- */
+
+function startAlgorithm() {
+
+    if (chars.length === 0) {
+        loadString();
+
+        if (chars.length === 0) {
+            return;
+        }
+    }
+
+    stopAutoRun();
+
+    stack = [];
+    currentIndex = 0;
+    phase = "running";
+
+    renderString();
+    renderStack();
+    highlightCurrent();
+
+    resultBox.className =
+        "result neutral-result";
+
+    resultBox.textContent =
+        "Checking...";
+
+    statusBox.textContent =
+        "Starting from the first character.";
+}
+
+
+/* ---------------------------------------
+   Next Step
+--------------------------------------- */
+
+function nextStep() {
+
+    if (phase === "idle") {
+        statusBox.textContent =
+            "Please load the string first.";
+
+        return;
+    }
+
+    if (phase === "ready") {
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === "finished") {
+        return;
+    }
+
+    if (currentIndex >= chars.length) {
+
+        finishValidation();
+        return;
+    }
+
+    const ch = chars[currentIndex];
+
+    highlightCurrent();
+
+    /* Opening bracket */
+    if (openingBrackets.includes(ch)) {
+
+        stack.push(ch);
+
+        renderStack();
+
+        statusBox.textContent =
+            `Character ${currentIndex}: "${ch}" is an opening bracket. ` +
+            `"${ch}" is pushed onto the stack.`;
+
+        markCharacter(currentIndex, "matched");
+
+        currentIndex++;
+
+        return;
+    }
+
+
+    /* Closing bracket */
+    if (closingBrackets.includes(ch)) {
+
+        if (stack.length === 0) {
+
+            markCharacter(
+                currentIndex,
+                "invalid"
+            );
+
+            statusBox.textContent =
+                `Character ${currentIndex}: "${ch}" is a closing bracket, ` +
+                `but the stack is empty. Invalid string.`;
+
+            finishInvalid();
+
+            return;
+        }
+
+        const top = stack[stack.length - 1];
+
+        if (pairs[ch] !== top) {
+
+            markCharacter(
+                currentIndex,
+                "invalid"
+            );
+
+            statusBox.textContent =
+                `Mismatch: "${ch}" expects "${pairs[ch]}", ` +
+                `but stack top is "${top}".`;
+
+            finishInvalid();
+
+            return;
+        }
+
+        stack.pop();
+
+        renderStack();
+
+        markCharacter(
+            currentIndex,
+            "matched"
+        );
+
+        statusBox.textContent =
+            `Character ${currentIndex}: "${ch}" matches ` +
+            `"${top}". Pop "${top}" from the stack.`;
+
+        currentIndex++;
+
+        return;
+    }
+}
+
+
+/* ---------------------------------------
+   Finish Validation
+--------------------------------------- */
+
+function finishValidation() {
+
+    highlightCurrent();
+
+    if (stack.length === 0) {
+
+        finishValid();
+
+    } else {
+
+        statusBox.textContent =
+            "End of string reached, but opening brackets remain in the stack.";
+
+        finishInvalid();
+    }
+}
+
+
+/* ---------------------------------------
+   Valid Result
+--------------------------------------- */
+
+function finishValid() {
+
+    phase = "finished";
+
+    stopAutoRun();
+
+    renderStack();
+
+    resultBox.className =
+        "result valid-result";
+
+    resultBox.textContent =
+        "✓ VALID PARENTHESES";
+
+    statusBox.textContent =
+        "All brackets matched correctly and the stack is empty.";
+}
+
+
+/* ---------------------------------------
+   Invalid Result
+--------------------------------------- */
+
+function finishInvalid() {
+
+    phase = "finished";
+
+    stopAutoRun();
+
+    resultBox.className =
+        "result invalid-result";
+
+    resultBox.textContent =
+        "✗ INVALID PARENTHESES";
+}
+
+
+/* ---------------------------------------
+   Auto Run
+--------------------------------------- */
+
+function autoRun() {
+
+    if (phase === "idle" || phase === "ready") {
+        startAlgorithm();
+    }
+
+    if (phase === "finished") {
+        return;
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(() => {
+
+        if (phase === "finished") {
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* ---------------------------------------
+   Stop Auto Run
+--------------------------------------- */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* ---------------------------------------
+   Reset
+--------------------------------------- */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    chars = [];
+    stack = [];
+    currentIndex = 0;
+    phase = "idle";
+
+    stringContainer.innerHTML = "";
+
+    stackContainer.innerHTML =
+        '<span id="emptyStack">Stack is empty</span>';
+
+    resultBox.className =
+        "result neutral-result";
+
+    resultBox.textContent =
+        "Result will appear here";
+
+    statusBox.textContent =
+        "Reset complete. Enter a string and click Load.";
+}
+
+
+/* ---------------------------------------
+   Event Listeners
+--------------------------------------- */
+
+loadBtn.addEventListener(
+    "click",
+    loadString
+);
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+/* ---------------------------------------
+   Initial Example
+--------------------------------------- */
+
+loadString();
+
+</script>
+
+</body>
+</html>

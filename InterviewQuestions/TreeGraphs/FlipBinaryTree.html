@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flip Binary Tree - Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #17365d;
+        margin-bottom: 5px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        padding: 22px;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .card h2 {
+        color: #17365d;
+        margin-top: 0;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .problem {
+        background: #eef6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .example {
+        background: #fffbeb;
+        border-left: 5px solid #f59e0b;
+    }
+
+    .tree-wrapper {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .tree-panel {
+        border: 1px solid #dbe2ea;
+        border-radius: 10px;
+        padding: 15px;
+        background: #f8fafc;
+        min-height: 390px;
+    }
+
+    .tree-panel h3 {
+        text-align: center;
+        color: #334155;
+    }
+
+    .tree {
+        width: 100%;
+        height: 320px;
+        overflow: auto;
+        position: relative;
+    }
+
+    svg {
+        width: 100%;
+        min-width: 500px;
+        height: 300px;
+    }
+
+    .node {
+        fill: white;
+        stroke: #2563eb;
+        stroke-width: 3;
+    }
+
+    .node.active {
+        fill: #fef3c7;
+        stroke: #f59e0b;
+        stroke-width: 5;
+    }
+
+    .node-text {
+        font-size: 16px;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+        fill: #1e293b;
+    }
+
+    .edge {
+        stroke: #64748b;
+        stroke-width: 2;
+    }
+
+    .edge.active {
+        stroke: #f59e0b;
+        stroke-width: 4;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    button {
+        border: none;
+        border-radius: 7px;
+        padding: 11px 18px;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+        color: white;
+        background: #2563eb;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    .success {
+        background: #15803d;
+    }
+
+    .secondary {
+        background: #475569;
+    }
+
+    .warning {
+        background: #d97706;
+    }
+
+    .danger {
+        background: #dc2626;
+    }
+
+    .status {
+        margin-top: 18px;
+        padding: 14px;
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+        border-radius: 7px;
+        font-weight: bold;
+    }
+
+    .result-box {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #ecfdf5;
+        border: 2px solid #22c55e;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .pseudocode,
+    .code {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    pre {
+        margin: 0;
+        white-space: pre-wrap;
+        line-height: 1.6;
+    }
+
+    .steps li {
+        margin-bottom: 10px;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .complexity-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        padding: 18px;
+        border-radius: 8px;
+    }
+
+    .swap-box {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 25px;
+        margin: 20px 0;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .child-box {
+        padding: 12px 20px;
+        border-radius: 8px;
+        background: #dbeafe;
+        border: 2px solid #60a5fa;
+    }
+
+    .arrow {
+        font-size: 28px;
+        color: #f59e0b;
+    }
+
+    @media (max-width: 800px) {
+        .tree-wrapper,
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        body {
+            padding: 12px;
+        }
+
+        .controls {
+            flex-direction: column;
+        }
+
+        button {
+            width: 100%;
+        }
+
+        .swap-box {
+            flex-wrap: wrap;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Flip / Invert a Binary Tree</h1>
+    <p class="subtitle">
+        Interactive Binary Tree Mirror Image Visualizer
+    </p>
+
+    <!-- 1. Problem -->
+    <div class="card problem">
+        <h2>1. Problem Statement</h2>
+
+        <p>
+            Given the root of a binary tree, <strong>flip the tree</strong>
+            so that the left and right subtrees of every node are swapped.
+        </p>
+
+        <p>
+            In other words, create the <strong>mirror image</strong> of the
+            original binary tree.
+        </p>
+
+        <p>
+            Example:
+        </p>
+
+        <pre>
+        Original                 Flipped
+
+           4                        4
+          / \                      / \
+         2   7        →           7   2
+        / \ / \                  / \ / \
+       1  3 6  9                9  6 3  1
+        </pre>
+    </div>
+
+    <!-- 2. Example -->
+    <div class="card example">
+        <h2>2. Example</h2>
+
+        <p><strong>Input Tree:</strong></p>
+
+        <pre>
+             4
+           /   \
+          2     7
+         / \   / \
+        1   3 6   9
+        </pre>
+
+        <p><strong>Output Tree:</strong></p>
+
+        <pre>
+             4
+           /   \
+          7     2
+         / \   / \
+        9   6 3   1
+        </pre>
+
+        <p>
+            Every node has its left and right children exchanged.
+        </p>
+    </div>
+
+    <!-- 3. Visualization -->
+    <div class="card">
+        <h2>3. Interactive Visualization</h2>
+
+        <div class="tree-wrapper">
+
+            <div class="tree-panel">
+                <h3>Original Tree</h3>
+                <div class="tree">
+                    <svg id="originalTree"
+                         viewBox="0 0 600 320">
+                    </svg>
+                </div>
+            </div>
+
+            <div class="tree-panel">
+                <h3>Flipped Tree</h3>
+                <div class="tree">
+                    <svg id="flippedTree"
+                         viewBox="0 0 600 320">
+                    </svg>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">Start</button>
+            <button id="nextBtn">Next Step</button>
+            <button id="autoBtn" class="success">Auto Run</button>
+            <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+
+        <div id="status" class="status">
+            Click "Start" to begin.
+        </div>
+
+        <div id="resultBox" class="result-box">
+            Flipped Tree: Not started
+        </div>
+    </div>
+
+    <!-- 4. How it works -->
+    <div class="card">
+        <h2>4. How the Algorithm Works</h2>
+
+        <ol class="steps">
+            <li>Start at the root node.</li>
+            <li>Recursively flip the left subtree.</li>
+            <li>Recursively flip the right subtree.</li>
+            <li>Swap the left and right children of the current node.</li>
+            <li>Continue until every node has been processed.</li>
+        </ol>
+
+        <div class="swap-box">
+            <div class="child-box">Left Child</div>
+            <div class="arrow">⇄</div>
+            <div class="child-box">Right Child</div>
+        </div>
+
+        <p>
+            The important operation at every node is:
+        </p>
+
+        <div class="code">
+<pre>
+root.left, root.right = root.right, root.left
+</pre>
+        </div>
+    </div>
+
+    <!-- 5. Pseudocode -->
+    <div class="card">
+        <h2>5. Pseudocode</h2>
+
+        <div class="pseudocode">
+<pre>
+FUNCTION invertTree(root)
+
+    IF root is NULL
+        RETURN NULL
+
+    invertTree(root.left)
+
+    invertTree(root.right)
+
+    TEMP ← root.left
+    root.left ← root.right
+    root.right ← TEMP
+
+    RETURN root
+
+END FUNCTION
+</pre>
+        </div>
+    </div>
+
+    <!-- 6. Python -->
+    <div class="card">
+        <h2>6. Python Implementation</h2>
+
+        <div class="code">
+<pre>
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def invert_tree(root):
+    if root is None:
+        return None
+
+    # Recursively invert left subtree
+    invert_tree(root.left)
+
+    # Recursively invert right subtree
+    invert_tree(root.right)
+
+    # Swap left and right children
+    root.left, root.right = root.right, root.left
+
+    return root
+</pre>
+        </div>
+    </div>
+
+    <!-- 7. Iterative -->
+    <div class="card">
+        <h2>7. Iterative Python Implementation</h2>
+
+        <p>
+            The tree can also be flipped using a queue instead of recursion.
+        </p>
+
+        <div class="code">
+<pre>
+from collections import deque
+
+def invert_tree(root):
+    if root is None:
+        return None
+
+    queue = deque([root])
+
+    while queue:
+        node = queue.popleft()
+
+        # Swap children
+        node.left, node.right = node.right, node.left
+
+        if node.left:
+            queue.append(node.left)
+
+        if node.right:
+            queue.append(node.right)
+
+    return root
+</pre>
+        </div>
+    </div>
+
+    <!-- 8. Explanation -->
+    <div class="card">
+        <h2>8. Explanation</h2>
+
+        <ul>
+            <li>
+                A binary tree is flipped by swapping the two children of
+                every node.
+            </li>
+
+            <li>
+                For a node containing <strong>4</strong>, its children
+                <strong>2</strong> and <strong>7</strong> become
+                <strong>7</strong> and <strong>2</strong>.
+            </li>
+
+            <li>
+                The same operation is performed recursively for all
+                descendants.
+            </li>
+
+            <li>
+                Leaf nodes do not have children, so there is nothing to swap.
+            </li>
+
+            <li>
+                The final tree is the <strong>mirror image</strong> of the
+                original tree.
+            </li>
+        </ul>
+    </div>
+
+    <!-- 9. Complexity -->
+    <div class="card">
+        <h2>9. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <h3>Time Complexity</h3>
+                <p>
+                    <strong>O(n)</strong>
+                </p>
+                <p>
+                    Every node is visited exactly once.
+                </p>
+            </div>
+
+            <div class="complexity-box">
+                <h3>Space Complexity</h3>
+                <p>
+                    <strong>O(h)</strong> for the recursive approach.
+                </p>
+                <p>
+                    Here, <strong>h</strong> is the height of the tree.
+                </p>
+            </div>
+
+        </div>
+
+        <p>
+            For a balanced tree, recursive space is approximately
+            <strong>O(log n)</strong>.
+        </p>
+
+        <p>
+            For a completely skewed tree, it can become
+            <strong>O(n)</strong>.
+        </p>
+    </div>
+
+    <!-- 10. Important Observation -->
+    <div class="card">
+        <h2>10. Important Observation</h2>
+
+        <p>
+            The values of the nodes do <strong>not</strong> change.
+            Only the links between the left and right children are changed.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <pre>
+Before:
+
+       1
+      / \
+     2   3
+
+
+After:
+
+       1
+      / \
+     3   2
+        </pre>
+
+        <p>
+            Therefore, flipping a binary tree is also called
+            <strong>inverting</strong> or creating the
+            <strong>mirror image</strong> of the tree.
+        </p>
+    </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================
+   Tree Node
+========================================= */
+
+class TreeNode {
+    constructor(value, left = null, right = null) {
+        this.value = value;
+        this.left = left;
+        this.right = right;
+    }
+}
+
+
+/* =========================================
+   Create Original Tree
+========================================= */
+
+function createTree() {
+
+    const root = new TreeNode(4);
+
+    root.left = new TreeNode(2);
+    root.right = new TreeNode(7);
+
+    root.left.left = new TreeNode(1);
+    root.left.right = new TreeNode(3);
+
+    root.right.left = new TreeNode(6);
+    root.right.right = new TreeNode(9);
+
+    return root;
+}
+
+
+/* =========================================
+   Clone Tree
+========================================= */
+
+function cloneTree(node) {
+
+    if (!node) {
+        return null;
+    }
+
+    return new TreeNode(
+        node.value,
+        cloneTree(node.left),
+        cloneTree(node.right)
+    );
+}
+
+
+/* =========================================
+   Global State
+========================================= */
+
+let originalRoot = null;
+let workingRoot = null;
+
+let traversalNodes = [];
+let currentIndex = -1;
+
+let phase = 0;
+/*
+    0 = not started
+    1 = running
+    2 = completed
+*/
+
+let timer = null;
+
+
+/* =========================================
+   Collect Nodes
+========================================= */
+
+function collectNodes(node, list = []) {
+
+    if (!node) {
+        return list;
+    }
+
+    list.push(node);
+
+    collectNodes(node.left, list);
+    collectNodes(node.right, list);
+
+    return list;
+}
+
+
+/* =========================================
+   Find Depth
+========================================= */
+
+function getDepth(node) {
+
+    if (!node) {
+        return 0;
+    }
+
+    return 1 + Math.max(
+        getDepth(node.left),
+        getDepth(node.right)
+    );
+}
+
+
+/* =========================================
+   Draw Tree
+========================================= */
+
+function drawTree(svgId, root, activeNode) {
+
+    const svg = document.getElementById(svgId);
+
+    svg.innerHTML = "";
+
+    if (!root) {
+        return;
+    }
+
+    const positions = new Map();
+
+    const width = 600;
+    const levelGap = 70;
+
+    function assignPositions(
+        node,
+        depth,
+        left,
+        right
+    ) {
+
+        if (!node) {
+            return;
+        }
+
+        const x = (left + right) / 2;
+        const y = 35 + depth * levelGap;
+
+        positions.set(node, { x, y });
+
+        assignPositions(
+            node.left,
+            depth + 1,
+            left,
+            x
+        );
+
+        assignPositions(
+            node.right,
+            depth + 1,
+            x,
+            right
+        );
+    }
+
+    assignPositions(
+        root,
+        0,
+        25,
+        width - 25
+    );
+
+
+    /* Draw edges first */
+
+    positions.forEach((pos, node) => {
+
+        if (node.left && positions.has(node.left)) {
+
+            const childPos = positions.get(node.left);
+
+            const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+            line.setAttribute("x1", pos.x);
+            line.setAttribute("y1", pos.y + 20);
+
+            line.setAttribute("x2", childPos.x);
+            line.setAttribute("y2", childPos.y - 20);
+
+            line.classList.add("edge");
+
+            if (
+                node === activeNode ||
+                node.left === activeNode
+            ) {
+                line.classList.add("active");
+            }
+
+            svg.appendChild(line);
+        }
+
+        if (node.right && positions.has(node.right)) {
+
+            const childPos = positions.get(node.right);
+
+            const line = document.createElementNS(
+                "http://www.w3.org/2000/svg",
+                "line"
+            );
+
+            line.setAttribute("x1", pos.x);
+            line.setAttribute("y1", pos.y + 20);
+
+            line.setAttribute("x2", childPos.x);
+            line.setAttribute("y2", childPos.y - 20);
+
+            line.classList.add("edge");
+
+            if (
+                node === activeNode ||
+                node.right === activeNode
+            ) {
+                line.classList.add("active");
+            }
+
+            svg.appendChild(line);
+        }
+    });
+
+
+    /* Draw nodes */
+
+    positions.forEach((pos, node) => {
+
+        const circle = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+        );
+
+        circle.setAttribute("cx", pos.x);
+        circle.setAttribute("cy", pos.y);
+        circle.setAttribute("r", 22);
+
+        circle.classList.add("node");
+
+        if (node === activeNode) {
+            circle.classList.add("active");
+        }
+
+        svg.appendChild(circle);
+
+
+        const text = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+        );
+
+        text.setAttribute("x", pos.x);
+        text.setAttribute("y", pos.y);
+
+        text.classList.add("node-text");
+
+        text.textContent = node.value;
+
+        svg.appendChild(text);
+    });
+}
+
+
+/* =========================================
+   Render
+========================================= */
+
+function render() {
+
+    drawTree(
+        "originalTree",
+        originalRoot,
+        null
+    );
+
+    drawTree(
+        "flippedTree",
+        workingRoot,
+        traversalNodes[currentIndex] || null
+    );
+}
+
+
+/* =========================================
+   Start
+========================================= */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    originalRoot = createTree();
+    workingRoot = cloneTree(originalRoot);
+
+    traversalNodes = collectNodes(workingRoot);
+
+    currentIndex = -1;
+
+    phase = 1;
+
+    render();
+
+    document.getElementById("status").textContent =
+        "Tree loaded. Click 'Next Step' to flip one node at a time.";
+
+    document.getElementById("resultBox").textContent =
+        "Flipped Tree: Processing...";
+}
+
+
+/* =========================================
+   Next Step
+========================================= */
+
+function nextStep() {
+
+    if (phase === 0) {
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === 2) {
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= traversalNodes.length) {
+
+        phase = 2;
+
+        render();
+
+        document.getElementById("status").textContent =
+            "Completed! Every node has been processed.";
+
+        document.getElementById("resultBox").textContent =
+            "Flipped Tree: Complete";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    const node = traversalNodes[currentIndex];
+
+    /*
+       Swap left and right children
+    */
+
+    const oldLeft = node.left;
+
+    node.left = node.right;
+    node.right = oldLeft;
+
+    render();
+
+    document.getElementById("status").textContent =
+        "Processing node " +
+        node.value +
+        ": left and right subtrees have been swapped.";
+
+    document.getElementById("resultBox").textContent =
+        "Current node: " + node.value +
+        " | Children swapped";
+}
+
+
+/* =========================================
+   Auto Run
+========================================= */
+
+function autoRun() {
+
+    if (phase === 2) {
+        return;
+    }
+
+    if (phase === 0) {
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    timer = setInterval(() => {
+
+        if (phase === 2) {
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+}
+
+
+/* =========================================
+   Stop Auto Run
+========================================= */
+
+function stopAutoRun() {
+
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+}
+
+
+/* =========================================
+   Reset
+========================================= */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    originalRoot = createTree();
+    workingRoot = cloneTree(originalRoot);
+
+    traversalNodes = [];
+    currentIndex = -1;
+
+    phase = 0;
+
+    render();
+
+    document.getElementById("status").textContent =
+        "Click 'Start' to begin.";
+
+    document.getElementById("resultBox").textContent =
+        "Flipped Tree: Not started";
+}
+
+
+/* =========================================
+   Event Listeners
+========================================= */
+
+document.getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document.getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document.getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document.getElementById("resetBtn")
+    .addEventListener("click", resetAlgorithm);
+
+
+/* =========================================
+   Initial Display
+========================================= */
+
+resetAlgorithm();
+
+</script>
+
+</body>
+</html>

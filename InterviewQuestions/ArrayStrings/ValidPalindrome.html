@@ -1,0 +1,899 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Palindrome Checker - Two Pointer Algorithm</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1200px;
+        margin: 30px auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #1f3c88;
+        margin-bottom: 10px;
+    }
+
+    h2 {
+        color: #1f3c88;
+        border-bottom: 2px solid #1f3c88;
+        padding-bottom: 8px;
+    }
+
+    .card {
+        background: white;
+        padding: 22px;
+        margin: 20px 0;
+        border-radius: 12px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+    }
+
+    .problem {
+        line-height: 1.7;
+        font-size: 17px;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        min-width: 250px;
+        padding: 13px;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 7px;
+    }
+
+    button {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+    }
+
+    #startBtn {
+        background: #2563eb;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #16a34a;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #9333ea;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    .original {
+        margin-top: 15px;
+        padding: 12px;
+        background: #eef4ff;
+        border-radius: 8px;
+        font-size: 18px;
+        word-break: break-all;
+    }
+
+    .characters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 20px;
+        justify-content: center;
+    }
+
+    .char {
+        width: 48px;
+        height: 48px;
+        border: 2px solid #aaa;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: bold;
+        background: #fff;
+        position: relative;
+    }
+
+    .char.left {
+        border: 3px solid #2563eb;
+        background: #dbeafe;
+    }
+
+    .char.right {
+        border: 3px solid #dc2626;
+        background: #fee2e2;
+    }
+
+    .char.match {
+        background: #dcfce7;
+        border-color: #16a34a;
+    }
+
+    .char.ignore {
+        background: #f3f4f6;
+        color: #999;
+        border-style: dashed;
+    }
+
+    .index {
+        position: absolute;
+        bottom: -17px;
+        font-size: 11px;
+        color: #555;
+        font-weight: normal;
+    }
+
+    .pointer-info {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        margin: 25px 0;
+        font-size: 17px;
+    }
+
+    .pointer {
+        padding: 10px 18px;
+        border-radius: 7px;
+        background: #f1f5f9;
+    }
+
+    .status {
+        text-align: center;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 15px;
+        font-size: 19px;
+        font-weight: bold;
+        background: #f8fafc;
+    }
+
+    .success {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .failure {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .step {
+        background: #f8fafc;
+        border-left: 5px solid #2563eb;
+        padding: 12px;
+        margin-top: 12px;
+        line-height: 1.6;
+    }
+
+    pre {
+        background: #111827;
+        color: #f9fafb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity-box {
+        padding: 18px;
+        background: #eef4ff;
+        border-radius: 8px;
+        text-align: center;
+    }
+
+    .example {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        padding: 15px;
+        margin: 12px 0;
+        line-height: 1.6;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .legend span {
+        padding: 7px 12px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .blue {
+        background: #dbeafe;
+    }
+
+    .red {
+        background: #fee2e2;
+    }
+
+    .green {
+        background: #dcfce7;
+    }
+
+    .gray {
+        background: #f3f4f6;
+    }
+
+    footer {
+        text-align: center;
+        padding: 20px;
+        color: #666;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Palindrome String Checker</h1>
+
+    <div class="card problem">
+        <h2>1. Problem Statement</h2>
+
+        <p>
+            Given a string, determine whether it is a palindrome.
+            Consider only <b>alphanumeric characters</b>
+            (letters and digits) and ignore the difference between
+            uppercase and lowercase letters.
+        </p>
+
+        <div class="example">
+            <b>Example:</b><br>
+            Input: <code>"A man, a plan, a canal: Panama"</code><br>
+            Cleaned string: <code>"amanaplanacanalpanama"</code><br>
+            Output: <b>True</b>
+        </div>
+
+        <div class="example">
+            <b>Example:</b><br>
+            Input: <code>"race a car"</code><br>
+            Cleaned string: <code>"raceacar"</code><br>
+            Output: <b>False</b>
+        </div>
+    </div>
+
+    <div class="card">
+
+        <h2>2. Interactive Visualization</h2>
+
+        <div class="input-area">
+            <input
+                type="text"
+                id="stringInput"
+                value="A man, a plan, a canal: Panama"
+                placeholder="Enter a string..."
+            >
+
+            <button id="startBtn">Start</button>
+            <button id="nextBtn">Next Step</button>
+            <button id="autoBtn">Auto Run</button>
+            <button id="resetBtn">Reset</button>
+        </div>
+
+        <div class="original">
+            <b>Original String:</b>
+            <span id="originalText"></span>
+        </div>
+
+        <div id="characters" class="characters"></div>
+
+        <div class="legend">
+            <span class="blue">Left Pointer</span>
+            <span class="red">Right Pointer</span>
+            <span class="green">Characters Match</span>
+            <span class="gray">Ignored Character</span>
+        </div>
+
+        <div class="pointer-info">
+            <div class="pointer">
+                <b>Left:</b> <span id="leftValue">-</span>
+            </div>
+
+            <div class="pointer">
+                <b>Right:</b> <span id="rightValue">-</span>
+            </div>
+
+            <div class="pointer">
+                <b>Step:</b> <span id="stepValue">0</span>
+            </div>
+        </div>
+
+        <div id="status" class="status">
+            Click <b>Start</b> to begin.
+        </div>
+
+        <div id="stepLog"></div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>3. Algorithm</h2>
+
+        <ol>
+            <li>Convert the string to lowercase.</li>
+            <li>Keep only alphanumeric characters.</li>
+            <li>Initialize two pointers:
+                <b>left = 0</b> and <b>right = length - 1</b>.
+            </li>
+            <li>Compare the characters at the two pointers.</li>
+            <li>If they are different, the string is not a palindrome.</li>
+            <li>If they match, move both pointers toward the center.</li>
+            <li>If all pairs match, the string is a palindrome.</li>
+        </ol>
+
+    </div>
+
+    <div class="card">
+
+        <h2>4. Pseudocode</h2>
+
+<pre><code>PALINDROME(s)
+
+    cleaned = empty string
+
+    for each character c in s
+        if c is alphanumeric
+            add lowercase(c) to cleaned
+
+    left = 0
+    right = length(cleaned) - 1
+
+    while left &lt; right
+
+        if cleaned[left] != cleaned[right]
+            return false
+
+        left = left + 1
+        right = right - 1
+
+    return true</code></pre>
+
+    </div>
+
+    <div class="card">
+
+        <h2>5. Python Implementation</h2>
+
+<pre><code>def is_palindrome(s):
+    cleaned = ""
+
+    # Keep only alphanumeric characters
+    for ch in s:
+        if ch.isalnum():
+            cleaned += ch.lower()
+
+    left = 0
+    right = len(cleaned) - 1
+
+    while left &lt; right:
+        if cleaned[left] != cleaned[right]:
+            return False
+
+        left += 1
+        right -= 1
+
+    return True
+
+
+# Example
+s = "A man, a plan, a canal: Panama"
+
+print(is_palindrome(s))</code></pre>
+
+        <div class="example">
+            <b>Output:</b>
+            <code>True</code>
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>6. Optimized Python Implementation</h2>
+
+<pre><code>def is_palindrome(s):
+    left = 0
+    right = len(s) - 1
+
+    while left &lt; right:
+
+        while left &lt; right and not s[left].isalnum():
+            left += 1
+
+        while left &lt; right and not s[right].isalnum():
+            right -= 1
+
+        if s[left].lower() != s[right].lower():
+            return False
+
+        left += 1
+        right -= 1
+
+    return True</code></pre>
+
+        <p>
+            This version does not create a separate cleaned string.
+            It directly skips non-alphanumeric characters using the
+            two pointers.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>7. Example Walkthrough</h2>
+
+        <div class="example">
+            <b>Input:</b>
+            <code>"A man, a plan, a canal: Panama"</code>
+        </div>
+
+        <p>After removing spaces and punctuation:</p>
+
+        <div class="example">
+            <code>amanaplanacanalpanama</code>
+        </div>
+
+        <ol>
+            <li>Compare <b>a</b> and <b>a</b> → Match</li>
+            <li>Compare <b>m</b> and <b>m</b> → Match</li>
+            <li>Compare <b>a</b> and <b>a</b> → Match</li>
+            <li>Continue moving toward the center.</li>
+            <li>Every pair matches.</li>
+        </ol>
+
+        <p>
+            Therefore, the string is a <b>palindrome</b>.
+        </p>
+
+    </div>
+
+    <div class="card">
+
+        <h2>8. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <h3>Time Complexity</h3>
+                <p><b>O(n)</b></p>
+                <p>Each character is examined at most once.</p>
+            </div>
+
+            <div class="complexity-box">
+                <h3>Space Complexity</h3>
+                <p><b>O(n)</b></p>
+                <p>For the cleaned-string approach.</p>
+            </div>
+
+            <div class="complexity-box">
+                <h3>Optimized Space</h3>
+                <p><b>O(1)</b></p>
+                <p>Using two pointers directly on the input.</p>
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card">
+
+        <h2>9. Important Concepts</h2>
+
+        <ul>
+            <li><b>Palindrome:</b> A string that reads the same forward and backward.</li>
+            <li><b>Alphanumeric:</b> Letters A-Z, a-z and digits 0-9.</li>
+            <li><b>Case Insensitive:</b> 'A' and 'a' are treated as equal.</li>
+            <li><b>Two Pointers:</b> One pointer starts from the beginning and another from the end.</li>
+            <li><b>Early Termination:</b> If any pair differs, we immediately return False.</li>
+        </ul>
+
+    </div>
+
+</div>
+
+<footer>
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+let cleaned = [];
+let left = 0;
+let right = 0;
+let step = 0;
+let running = false;
+let autoTimer = null;
+
+const input = document.getElementById("stringInput");
+const characters = document.getElementById("characters");
+const status = document.getElementById("status");
+const stepLog = document.getElementById("stepLog");
+
+function isAlphaNumeric(ch) {
+    return /[a-zA-Z0-9]/.test(ch);
+}
+
+function prepareString() {
+
+    const original = input.value;
+
+    document.getElementById("originalText").textContent =
+        original || "(empty string)";
+
+    cleaned = [];
+
+    for (let ch of original) {
+
+        if (isAlphaNumeric(ch)) {
+
+            cleaned.push({
+                original: ch,
+                value: ch.toLowerCase(),
+                ignored: false
+            });
+
+        } else {
+
+            cleaned.push({
+                original: ch,
+                value: "",
+                ignored: true
+            });
+
+        }
+    }
+}
+
+function renderCharacters() {
+
+    characters.innerHTML = "";
+
+    cleaned.forEach((item, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "char";
+
+        div.textContent = item.original;
+
+        const indexLabel = document.createElement("span");
+
+        indexLabel.className = "index";
+        indexLabel.textContent = index;
+
+        div.appendChild(indexLabel);
+
+        if (item.ignored) {
+            div.classList.add("ignore");
+        }
+
+        if (!item.ignored && index === left) {
+            div.classList.add("left");
+        }
+
+        if (!item.ignored && index === right) {
+            div.classList.add("right");
+        }
+
+        characters.appendChild(div);
+    });
+}
+
+function getNextValidLeft() {
+
+    while (
+        left <= right &&
+        cleaned[left] &&
+        cleaned[left].ignored
+    ) {
+        left++;
+    }
+
+}
+
+function getNextValidRight() {
+
+    while (
+        left <= right &&
+        cleaned[right] &&
+        cleaned[right].ignored
+    ) {
+        right--;
+    }
+
+}
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    prepareString();
+
+    left = 0;
+    right = cleaned.length - 1;
+    step = 0;
+    running = true;
+
+    stepLog.innerHTML = "";
+
+    renderCharacters();
+
+    document.getElementById("leftValue").textContent = "-";
+    document.getElementById("rightValue").textContent = "-";
+    document.getElementById("stepValue").textContent = "0";
+
+    status.className = "status";
+    status.innerHTML = "Algorithm started. Click <b>Next Step</b>.";
+
+    if (cleaned.length === 0) {
+
+        running = false;
+
+        status.className = "status success";
+        status.textContent =
+            "The string contains no alphanumeric characters, so it is considered a palindrome.";
+
+    }
+
+}
+
+function nextStep() {
+
+    if (!running) {
+
+        status.className = "status";
+        status.innerHTML =
+            "Click <b>Start</b> before running the algorithm.";
+
+        return;
+    }
+
+    getNextValidLeft();
+    getNextValidRight();
+
+    renderCharacters();
+
+    if (left >= right) {
+
+        running = false;
+
+        status.className = "status success";
+        status.textContent = "✓ Palindrome! All character pairs matched.";
+
+        document.getElementById("leftValue").textContent = left;
+        document.getElementById("rightValue").textContent = right;
+
+        return;
+    }
+
+    step++;
+
+    const leftChar = cleaned[left].value;
+    const rightChar = cleaned[right].value;
+
+    document.getElementById("leftValue").textContent =
+        left + " (" + cleaned[left].original + ")";
+
+    document.getElementById("rightValue").textContent =
+        right + " (" + cleaned[right].original + ")";
+
+    document.getElementById("stepValue").textContent = step;
+
+    if (leftChar !== rightChar) {
+
+        running = false;
+
+        status.className = "status failure";
+
+        status.innerHTML =
+            "✗ Not a palindrome: <b>" +
+            cleaned[left].original +
+            "</b> ≠ <b>" +
+            cleaned[right].original +
+            "</b>";
+
+        addStep(
+            "Step " + step +
+            ": " +
+            cleaned[left].original +
+            " and " +
+            cleaned[right].original +
+            " do not match."
+        );
+
+        return;
+    }
+
+    status.className = "status success";
+
+    status.innerHTML =
+        "✓ Match: <b>" +
+        cleaned[left].original +
+        "</b> = <b>" +
+        cleaned[right].original +
+        "</b>";
+
+    addStep(
+        "Step " + step +
+        ": " +
+        cleaned[left].original +
+        " matches " +
+        cleaned[right].original +
+        ". Move both pointers."
+    );
+
+    const leftIndex = left;
+    const rightIndex = right;
+
+    setTimeout(() => {
+
+        if (!running) return;
+
+        const boxes =
+            document.querySelectorAll(".char");
+
+        if (boxes[leftIndex])
+            boxes[leftIndex].classList.add("match");
+
+        if (boxes[rightIndex])
+            boxes[rightIndex].classList.add("match");
+
+        left++;
+        right--;
+
+        renderCharacters();
+
+    }, 300);
+
+}
+
+function addStep(text) {
+
+    const div = document.createElement("div");
+
+    div.className = "step";
+
+    div.textContent = text;
+
+    stepLog.appendChild(div);
+}
+
+function autoRun() {
+
+    if (!running) {
+        startAlgorithm();
+    }
+
+    stopAuto();
+
+    autoTimer = setInterval(() => {
+
+        if (!running) {
+
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+
+    }
+
+}
+
+function resetVisualizer() {
+
+    stopAuto();
+
+    cleaned = [];
+    left = 0;
+    right = 0;
+    step = 0;
+    running = false;
+
+    characters.innerHTML = "";
+
+    document.getElementById("originalText").textContent = "";
+    document.getElementById("leftValue").textContent = "-";
+    document.getElementById("rightValue").textContent = "-";
+    document.getElementById("stepValue").textContent = "0";
+
+    stepLog.innerHTML = "";
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Click <b>Start</b> to begin.";
+}
+
+
+// Use event listeners instead of inline onclick.
+// This avoids "function is not defined" errors.
+
+document
+    .getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document
+    .getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document
+    .getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", resetVisualizer);
+
+</script>
+
+</body>
+</html>

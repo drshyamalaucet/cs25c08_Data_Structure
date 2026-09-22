@@ -1,0 +1,1710 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Binary Tree Level Order Traversal</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+header {
+    background: linear-gradient(135deg, #6a1b9a, #8e24aa);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.container {
+    width: 94%;
+    max-width: 1250px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #6a1b9a;
+    margin-top: 0;
+}
+
+h3 {
+    color: #444;
+}
+
+.input-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+#treeInput {
+    width: 500px;
+    max-width: 100%;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #6a1b9a;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4a148c;
+}
+
+button.secondary {
+    background: #546e7a;
+}
+
+button.secondary:hover {
+    background: #37474f;
+}
+
+button.success {
+    background: #2e7d32;
+}
+
+button.success:hover {
+    background: #1b5e20;
+}
+
+
+/* TREE */
+
+.tree-wrapper {
+    overflow-x: auto;
+    padding: 25px 10px 40px;
+}
+
+.tree {
+    position: relative;
+    min-width: 800px;
+    height: 420px;
+}
+
+.node {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: #e1bee7;
+    border: 3px solid #6a1b9a;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    z-index: 2;
+    transition: all 0.3s ease;
+}
+
+.node.current {
+    background: #ffcc80;
+    border-color: #ef6c00;
+    transform: scale(1.2);
+}
+
+.node.visited {
+    background: #a5d6a7;
+    border-color: #2e7d32;
+}
+
+.node.queued {
+    background: #90caf9;
+    border-color: #1565c0;
+}
+
+.edge {
+    position: absolute;
+    height: 3px;
+    background: #9e9e9e;
+    transform-origin: left center;
+    z-index: 1;
+}
+
+
+/* QUEUE */
+
+.queue {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    min-height: 60px;
+    padding: 12px;
+    background: #eceff1;
+    border-radius: 8px;
+}
+
+.queue-item {
+    min-width: 48px;
+    height: 48px;
+    padding: 0 12px;
+    background: #42a5f5;
+    color: white;
+    border-radius: 7px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    position: relative;
+}
+
+.queue-item::after {
+    content: "Q";
+    position: absolute;
+    bottom: -17px;
+    font-size: 10px;
+    color: #555;
+}
+
+
+/* LEVEL */
+
+.level-box {
+    margin-bottom: 15px;
+    border-left: 5px solid #6a1b9a;
+    background: #f3e5f5;
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.level-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.level-values {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.level-value {
+    padding: 9px 16px;
+    background: #8e24aa;
+    color: white;
+    border-radius: 6px;
+    font-weight: bold;
+}
+
+
+/* RESULT */
+
+.result {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.result-level {
+    background: #2e7d32;
+    color: white;
+    padding: 12px 18px;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.step {
+    background: #f3e5f5;
+    border-left: 5px solid #6a1b9a;
+    padding: 15px;
+    border-radius: 5px;
+    margin-top: 15px;
+}
+
+
+/* CODE */
+
+pre {
+    background: #263238;
+    color: #eceff1;
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+
+/* COMPLEXITY */
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(230px, 1fr)
+    );
+    gap: 15px;
+}
+
+.complexity div {
+    background: #f5f5f5;
+    padding: 18px;
+    border-left: 5px solid #6a1b9a;
+    border-radius: 7px;
+}
+
+
+/* MESSAGE */
+
+.message {
+    margin-top: 12px;
+    font-weight: bold;
+    color: #c62828;
+}
+
+
+/* FOOTER */
+
+footer {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 22px;
+    margin-top: 30px;
+}
+
+
+@media (max-width: 700px) {
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .tree {
+        min-width: 650px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+
+<header>
+
+    <h1>Binary Tree Level Order Traversal</h1>
+
+    <p>
+        Breadth-First Search (BFS) Using a Queue
+    </p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- =====================================================
+     PROBLEM
+====================================================== -->
+
+<section class="card">
+
+    <h2>Problem</h2>
+
+    <p>
+        Given the root of a binary tree, return the
+        <strong>level-order traversal</strong> of its nodes'
+        values.
+    </p>
+
+    <p>
+        The nodes should be visited from
+        <strong>left to right, level by level</strong>.
+    </p>
+
+    <h3>Example</h3>
+
+    <pre><code>Input:
+
+        3
+       / \
+      9  20
+         / \
+        15  7
+
+Output:
+
+[
+    [3],
+    [9, 20],
+    [15, 7]
+]</code></pre>
+
+</section>
+
+
+<!-- =====================================================
+     INPUT
+====================================================== -->
+
+<section class="card">
+
+    <h2>Interactive Input</h2>
+
+    <p>
+        Enter the tree in level-order format.
+        Use <strong>null</strong> for a missing node.
+    </p>
+
+    <div class="input-area">
+
+        <input
+            type="text"
+            id="treeInput"
+            value="3,9,20,null,null,15,7"
+            placeholder="Example: 3,9,20,null,null,15,7"
+        >
+
+        <button id="buildBtn">
+            Build Tree
+        </button>
+
+        <button id="startBtn">
+            Start BFS
+        </button>
+
+        <button id="nextBtn">
+            Next Step
+        </button>
+
+        <button id="resetBtn" class="secondary">
+            Reset
+        </button>
+
+    </div>
+
+    <div id="message" class="message"></div>
+
+</section>
+
+
+<!-- =====================================================
+     TREE
+====================================================== -->
+
+<section class="card">
+
+    <h2>Binary Tree</h2>
+
+    <div class="tree-wrapper">
+
+        <div id="treeView" class="tree"></div>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     QUEUE
+====================================================== -->
+
+<section class="card">
+
+    <h2>BFS Queue</h2>
+
+    <p>
+        The queue stores nodes waiting to be processed.
+    </p>
+
+    <div id="queueView" class="queue"></div>
+
+</section>
+
+
+<!-- =====================================================
+     CURRENT LEVEL
+====================================================== -->
+
+<section class="card">
+
+    <h2>Current Level</h2>
+
+    <div id="levelView">
+
+        <p>
+            Start the algorithm to begin level-order traversal.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     RESULT
+====================================================== -->
+
+<section class="card">
+
+    <h2>Traversal Result</h2>
+
+    <div id="resultView" class="result"></div>
+
+</section>
+
+
+<!-- =====================================================
+     STEP
+====================================================== -->
+
+<section class="card">
+
+    <h2>Step-by-Step Explanation</h2>
+
+    <div id="stepDescription" class="step">
+
+        Click <strong>Build Tree</strong> and then
+        <strong>Start BFS</strong>.
+
+    </div>
+
+</section>
+
+
+<!-- =====================================================
+     ALGORITHM
+====================================================== -->
+
+<section class="card">
+
+    <h2>Algorithm</h2>
+
+    <ol>
+
+        <li>
+            If the root is null, return an empty result.
+        </li>
+
+        <li>
+            Create a queue and insert the root node.
+        </li>
+
+        <li>
+            While the queue is not empty:
+        </li>
+
+        <li>
+            Determine the number of nodes in the current level.
+        </li>
+
+        <li>
+            Remove each node from the current level.
+        </li>
+
+        <li>
+            Add its value to the current level result.
+        </li>
+
+        <li>
+            Add its left child to the queue.
+        </li>
+
+        <li>
+            Add its right child to the queue.
+        </li>
+
+        <li>
+            Add the current level result to the final result.
+        </li>
+
+    </ol>
+
+</section>
+
+
+<!-- =====================================================
+     PSEUDOCODE
+====================================================== -->
+
+<section class="card">
+
+    <h2>Pseudocode</h2>
+
+<pre><code>LEVEL_ORDER(root)
+
+    if root == NULL
+        return []
+
+    queue = empty queue
+    queue.push(root)
+
+    result = []
+
+    while queue is not empty
+
+        level = []
+
+        size = queue.size()
+
+        repeat size times
+
+            node = queue.front()
+            queue.pop()
+
+            level.push(node.value)
+
+            if node.left != NULL
+                queue.push(node.left)
+
+            if node.right != NULL
+                queue.push(node.right)
+
+        result.push(level)
+
+    return result</code></pre>
+
+</section>
+
+
+<!-- =====================================================
+     C++
+====================================================== -->
+
+<section class="card">
+
+    <h2>C++ Implementation</h2>
+
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+struct TreeNode {
+
+    int val;
+
+    TreeNode* left;
+    TreeNode* right;
+
+    TreeNode(int x)
+        : val(x), left(nullptr), right(nullptr) {}
+};
+
+
+vector&lt;vector&lt;int&gt;&gt;
+levelOrder(TreeNode* root) {
+
+    vector&lt;vector&lt;int&gt;&gt; result;
+
+    if (root == nullptr)
+        return result;
+
+    queue&lt;TreeNode*&gt; q;
+
+    q.push(root);
+
+    while (!q.empty()) {
+
+        int size = q.size();
+
+        vector&lt;int&gt; level;
+
+        for (int i = 0; i &lt; size; i++) {
+
+            TreeNode* node = q.front();
+
+            q.pop();
+
+            level.push_back(node-&gt;val);
+
+            if (node-&gt;left != nullptr)
+                q.push(node-&gt;left);
+
+            if (node-&gt;right != nullptr)
+                q.push(node-&gt;right);
+        }
+
+        result.push_back(level);
+    }
+
+    return result;
+}</code></pre>
+
+</section>
+
+
+<!-- =====================================================
+     PYTHON
+====================================================== -->
+
+<section class="card">
+
+    <h2>Python Implementation</h2>
+
+<pre><code>from collections import deque
+
+def levelOrder(root):
+
+    if not root:
+        return []
+
+    result = []
+
+    queue = deque([root])
+
+    while queue:
+
+        level = []
+
+        size = len(queue)
+
+        for _ in range(size):
+
+            node = queue.popleft()
+
+            level.append(node.val)
+
+            if node.left:
+                queue.append(node.left)
+
+            if node.right:
+                queue.append(node.right)
+
+        result.append(level)
+
+    return result</code></pre>
+
+</section>
+
+
+<!-- =====================================================
+     COMPLEXITY
+====================================================== -->
+
+<section class="card">
+
+    <h2>Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div>
+
+            <h3>Time Complexity</h3>
+
+            <p>
+                <strong>O(n)</strong>
+            </p>
+
+            <p>
+                Every node is visited exactly once.
+            </p>
+
+        </div>
+
+        <div>
+
+            <h3>Space Complexity</h3>
+
+            <p>
+                <strong>O(n)</strong>
+            </p>
+
+            <p>
+                The queue can contain nodes from the
+                largest level of the tree.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+<footer>
+
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+
+</footer>
+
+
+<script>
+
+"use strict";
+
+
+/* =====================================================
+   TREE NODE
+====================================================== */
+
+class TreeNode {
+
+    constructor(value) {
+
+        this.value = value;
+
+        this.left = null;
+
+        this.right = null;
+
+        this.id = null;
+
+    }
+
+}
+
+
+/* =====================================================
+   GLOBAL VARIABLES
+====================================================== */
+
+let root = null;
+
+let allNodes = [];
+
+let bfsQueue = [];
+
+let currentLevel = [];
+
+let currentLevelSize = 0;
+
+let processedInLevel = 0;
+
+let result = [];
+
+let state = "idle";
+
+let currentNode = null;
+
+let nodeCounter = 0;
+
+
+/* =====================================================
+   DOM ELEMENTS
+====================================================== */
+
+const treeInput =
+    document.getElementById("treeInput");
+
+const treeView =
+    document.getElementById("treeView");
+
+const queueView =
+    document.getElementById("queueView");
+
+const levelView =
+    document.getElementById("levelView");
+
+const resultView =
+    document.getElementById("resultView");
+
+const stepDescription =
+    document.getElementById("stepDescription");
+
+const message =
+    document.getElementById("message");
+
+const buildBtn =
+    document.getElementById("buildBtn");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+
+/* =====================================================
+   BUILD TREE
+====================================================== */
+
+buildBtn.addEventListener(
+    "click",
+    buildTree
+);
+
+
+function buildTree() {
+
+    resetAlgorithm();
+
+    const input =
+        treeInput.value.trim();
+
+    if (!input) {
+
+        message.textContent =
+            "Please enter tree values.";
+
+        return;
+    }
+
+
+    const values =
+        input.split(",")
+        .map(x => x.trim());
+
+
+    if (
+        values.length === 0 ||
+        values[0].toLowerCase() === "null"
+    ) {
+
+        message.textContent =
+            "The root cannot be null.";
+
+        return;
+    }
+
+
+    nodeCounter = 0;
+
+    allNodes = [];
+
+
+    root =
+        new TreeNode(
+            Number(values[0])
+        );
+
+
+    root.id = nodeCounter++;
+
+    allNodes.push(root);
+
+
+    const queue = [root];
+
+    let index = 1;
+
+
+    while (
+        queue.length > 0 &&
+        index < values.length
+    ) {
+
+        const node =
+            queue.shift();
+
+
+        /* LEFT */
+
+        if (
+            index < values.length &&
+            values[index].toLowerCase() !== "null" &&
+            values[index] !== ""
+        ) {
+
+            const left =
+                new TreeNode(
+                    Number(values[index])
+                );
+
+            left.id = nodeCounter++;
+
+            node.left = left;
+
+            allNodes.push(left);
+
+            queue.push(left);
+
+        }
+
+        index++;
+
+
+        /* RIGHT */
+
+        if (
+            index < values.length &&
+            values[index].toLowerCase() !== "null" &&
+            values[index] !== ""
+        ) {
+
+            const right =
+                new TreeNode(
+                    Number(values[index])
+                );
+
+            right.id = nodeCounter++;
+
+            node.right = right;
+
+            allNodes.push(right);
+
+            queue.push(right);
+
+        }
+
+        index++;
+
+    }
+
+
+    renderTree();
+
+
+    stepDescription.innerHTML =
+        "Tree created successfully. " +
+        "Click <strong>Start BFS</strong> to begin.";
+
+    message.textContent = "";
+
+}
+
+
+/* =====================================================
+   START BFS
+====================================================== */
+
+startBtn.addEventListener(
+    "click",
+    startBFS
+);
+
+
+function startBFS() {
+
+    if (!root) {
+
+        message.textContent =
+            "Build the tree first.";
+
+        return;
+    }
+
+
+    bfsQueue = [root];
+
+    currentLevel = [];
+
+    currentLevelSize = bfsQueue.length;
+
+    processedInLevel = 0;
+
+    result = [];
+
+    currentNode = null;
+
+    state = "running";
+
+
+    renderQueue();
+
+    renderResult();
+
+    clearNodeHighlights();
+
+
+    stepDescription.innerHTML =
+        "BFS started. The root node has been added " +
+        "to the queue.";
+
+}
+
+
+/* =====================================================
+   NEXT STEP
+====================================================== */
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+
+function nextStep() {
+
+    if (state === "idle") {
+
+        stepDescription.innerHTML =
+            "Build the tree and start BFS first.";
+
+        return;
+    }
+
+
+    if (state === "complete") {
+
+        stepDescription.innerHTML =
+            "<strong>Traversal complete.</strong>";
+
+        return;
+    }
+
+
+    /* ================================================
+       START NEW LEVEL
+    ================================================= */
+
+    if (processedInLevel === currentLevelSize) {
+
+        result.push(currentLevel);
+
+        renderResult();
+
+        currentLevel = [];
+
+        processedInLevel = 0;
+
+        currentLevelSize =
+            bfsQueue.length;
+
+
+        if (currentLevelSize === 0) {
+
+            state = "complete";
+
+            renderQueue();
+
+            stepDescription.innerHTML =
+                "<strong>BFS complete!</strong> " +
+                "All tree nodes have been visited.";
+
+            return;
+        }
+
+        renderLevel();
+
+    }
+
+
+    /* ================================================
+       PROCESS NODE
+    ================================================= */
+
+    const node =
+        bfsQueue.shift();
+
+
+    currentNode = node;
+
+    highlightCurrentNode(node);
+
+
+    currentLevel.push(node.value);
+
+    processedInLevel++;
+
+
+    /* Add children */
+
+    if (node.left) {
+
+        bfsQueue.push(node.left);
+
+        markQueuedNode(node.left);
+
+    }
+
+
+    if (node.right) {
+
+        bfsQueue.push(node.right);
+
+        markQueuedNode(node.right);
+
+    }
+
+
+    renderQueue();
+
+    renderLevel();
+
+
+    stepDescription.innerHTML =
+        `Visited node <strong>${node.value}</strong>.
+        Added its children to the queue.
+        Current level contains
+        <strong>[${currentLevel.join(", ")}]</strong>.`;
+
+}
+
+
+/* =====================================================
+   RENDER TREE
+====================================================== */
+
+function renderTree() {
+
+    treeView.innerHTML = "";
+
+    if (!root)
+        return;
+
+
+    const positions = [];
+
+    calculatePositions(
+        root,
+        0,
+        0,
+        800,
+        positions
+    );
+
+
+    treeView.style.height =
+        Math.max(
+            400,
+            positions.maxDepth * 90 + 100
+        ) + "px";
+
+
+    /* Edges first */
+
+    positions.nodes.forEach(item => {
+
+        const node = item.node;
+
+        const x = item.x;
+
+        const y = item.y;
+
+
+        if (node.left) {
+
+            const child =
+                positions.nodes.find(
+                    x => x.node === node.left
+                );
+
+            drawEdge(
+                x + 24,
+                y + 24,
+                child.x + 24,
+                child.y + 24
+            );
+
+        }
+
+
+        if (node.right) {
+
+            const child =
+                positions.nodes.find(
+                    x => x.node === node.right
+                );
+
+            drawEdge(
+                x + 24,
+                y + 24,
+                child.x + 24,
+                child.y + 24
+            );
+
+        }
+
+    });
+
+
+    /* Nodes */
+
+    positions.nodes.forEach(item => {
+
+        const node =
+            item.node;
+
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "node";
+
+
+        div.id =
+            "node-" + node.id;
+
+
+        div.textContent =
+            node.value;
+
+
+        div.style.left =
+            item.x + "px";
+
+
+        div.style.top =
+            item.y + "px";
+
+
+        treeView.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   CALCULATE TREE POSITIONS
+====================================================== */
+
+function calculatePositions(
+    node,
+    depth,
+    left,
+    right,
+    positions
+) {
+
+    if (!node)
+        return;
+
+
+    if (!positions.nodes)
+        positions.nodes = [];
+
+
+    if (
+        positions.maxDepth === undefined ||
+        depth > positions.maxDepth
+    ) {
+
+        positions.maxDepth = depth;
+
+    }
+
+
+    const center =
+        (left + right) / 2;
+
+
+    positions.nodes.push({
+
+        node: node,
+
+        x: center - 24,
+
+        y: depth * 90
+
+    });
+
+
+    calculatePositions(
+        node.left,
+        depth + 1,
+        left,
+        center,
+        positions
+    );
+
+
+    calculatePositions(
+        node.right,
+        depth + 1,
+        center,
+        right,
+        positions
+    );
+
+}
+
+
+/* =====================================================
+   DRAW EDGE
+====================================================== */
+
+function drawEdge(
+    x1,
+    y1,
+    x2,
+    y2
+) {
+
+    const dx =
+        x2 - x1;
+
+    const dy =
+        y2 - y1;
+
+    const length =
+        Math.sqrt(
+            dx * dx + dy * dy
+        );
+
+    const angle =
+        Math.atan2(
+            dy,
+            dx
+        ) * 180 / Math.PI;
+
+
+    const edge =
+        document.createElement("div");
+
+
+    edge.className =
+        "edge";
+
+
+    edge.style.width =
+        length + "px";
+
+
+    edge.style.left =
+        x1 + "px";
+
+
+    edge.style.top =
+        y1 + "px";
+
+
+    edge.style.transform =
+        `rotate(${angle}deg)`;
+
+
+    treeView.appendChild(edge);
+
+}
+
+
+/* =====================================================
+   QUEUE RENDER
+====================================================== */
+
+function renderQueue() {
+
+    queueView.innerHTML = "";
+
+
+    if (bfsQueue.length === 0) {
+
+        queueView.innerHTML =
+            "<span>Queue is empty</span>";
+
+        return;
+    }
+
+
+    bfsQueue.forEach(node => {
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "queue-item";
+
+
+        div.textContent =
+            node.value;
+
+
+        queueView.appendChild(div);
+
+    });
+
+}
+
+
+/* =====================================================
+   LEVEL RENDER
+====================================================== */
+
+function renderLevel() {
+
+    levelView.innerHTML = "";
+
+
+    const box =
+        document.createElement("div");
+
+
+    box.className =
+        "level-box";
+
+
+    const title =
+        document.createElement("div");
+
+
+    title.className =
+        "level-title";
+
+
+    title.textContent =
+        `Current Level (${result.length + 1})`;
+
+
+    box.appendChild(title);
+
+
+    const values =
+        document.createElement("div");
+
+
+    values.className =
+        "level-values";
+
+
+    currentLevel.forEach(value => {
+
+        const item =
+            document.createElement("span");
+
+
+        item.className =
+            "level-value";
+
+
+        item.textContent =
+            value;
+
+
+        values.appendChild(item);
+
+    });
+
+
+    box.appendChild(values);
+
+    levelView.appendChild(box);
+
+}
+
+
+/* =====================================================
+   RESULT RENDER
+====================================================== */
+
+function renderResult() {
+
+    resultView.innerHTML = "";
+
+
+    if (result.length === 0) {
+
+        resultView.innerHTML =
+            "<span>Traversal result will appear here.</span>";
+
+        return;
+    }
+
+
+    result.forEach(level => {
+
+        const item =
+            document.createElement("div");
+
+
+        item.className =
+            "result-level";
+
+
+        item.textContent =
+            "[" + level.join(", ") + "]";
+
+
+        resultView.appendChild(item);
+
+    });
+
+}
+
+
+/* =====================================================
+   NODE HIGHLIGHT
+====================================================== */
+
+function clearNodeHighlights() {
+
+    document
+        .querySelectorAll(".node")
+        .forEach(node => {
+
+            node.classList.remove(
+                "current",
+                "visited",
+                "queued"
+            );
+
+        });
+
+}
+
+
+function highlightCurrentNode(node) {
+
+    clearNodeHighlights();
+
+
+    const element =
+        document.getElementById(
+            "node-" + node.id
+        );
+
+
+    if (element) {
+
+        element.classList.add(
+            "current"
+        );
+
+    }
+
+
+    /* Previously visited nodes */
+
+    const visitedValues = [];
+
+
+    result.forEach(level => {
+
+        level.forEach(value => {
+
+            visitedValues.push(value);
+
+        });
+
+    });
+
+
+    document
+        .querySelectorAll(".node")
+        .forEach(element => {
+
+            const value =
+                Number(element.textContent);
+
+            if (
+                visitedValues.includes(value)
+            ) {
+
+                element.classList.add(
+                    "visited"
+                );
+
+            }
+
+        });
+
+}
+
+
+function markQueuedNode(node) {
+
+    const element =
+        document.getElementById(
+            "node-" + node.id
+        );
+
+
+    if (element) {
+
+        element.classList.add(
+            "queued"
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   RESET
+====================================================== */
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+
+function resetAlgorithm() {
+
+    root = null;
+
+    allNodes = [];
+
+    bfsQueue = [];
+
+    currentLevel = [];
+
+    currentLevelSize = 0;
+
+    processedInLevel = 0;
+
+    result = [];
+
+    currentNode = null;
+
+    state = "idle";
+
+    nodeCounter = 0;
+
+
+    treeView.innerHTML = "";
+
+    queueView.innerHTML = "";
+
+    levelView.innerHTML =
+        "<p>Build a tree to begin.</p>";
+
+    resultView.innerHTML = "";
+
+    stepDescription.innerHTML =
+        "Click <strong>Build Tree</strong> to begin.";
+
+    message.textContent = "";
+
+}
+
+
+/* =====================================================
+   INITIALIZATION
+====================================================== */
+
+queueView.innerHTML =
+    "<span>Queue is empty</span>";
+
+</script>
+
+</body>
+</html>

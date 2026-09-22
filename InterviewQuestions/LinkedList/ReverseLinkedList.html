@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Reverse Singly Linked List</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f6f9;
+        color: #222;
+    }
+
+    header {
+        background: #263238;
+        color: white;
+        padding: 28px 20px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0;
+        font-size: 32px;
+    }
+
+    header p {
+        margin-top: 10px;
+        font-size: 17px;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1200px;
+        margin: 25px auto;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+    }
+
+    h2 {
+        color: #263238;
+        border-left: 5px solid #607d8b;
+        padding-left: 12px;
+    }
+
+    h3 {
+        color: #37474f;
+    }
+
+    .definition {
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    .list-area {
+        overflow-x: auto;
+        padding: 30px 10px;
+        min-height: 260px;
+    }
+
+    .linked-list {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 700px;
+    }
+
+    .node-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .node {
+        width: 105px;
+        min-width: 105px;
+        border: 3px solid #455a64;
+        border-radius: 10px;
+        overflow: hidden;
+        background: white;
+        text-align: center;
+        transition: 0.3s;
+    }
+
+    .node-data {
+        padding: 14px 5px;
+        font-size: 22px;
+        font-weight: bold;
+        background: #eceff1;
+    }
+
+    .node-next {
+        padding: 9px 5px;
+        border-top: 2px solid #455a64;
+        font-size: 13px;
+    }
+
+    .arrow {
+        font-size: 30px;
+        margin: 0 10px;
+        color: #455a64;
+    }
+
+    .null {
+        font-size: 18px;
+        font-weight: bold;
+        color: #555;
+    }
+
+    .pointer-labels {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .pointer {
+        padding: 9px 15px;
+        border-radius: 20px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .prev {
+        background: #eeeeee;
+        color: #333;
+    }
+
+    .current {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .next {
+        background: #d1ecf1;
+        color: #0c5460;
+    }
+
+    .head {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .node.active-current {
+        border: 4px solid #f0ad4e;
+        transform: translateY(-8px);
+    }
+
+    .node.active-prev {
+        border: 4px solid #555;
+    }
+
+    .node.active-next {
+        border: 4px solid #17a2b8;
+    }
+
+    .controls {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    button {
+        border: none;
+        padding: 12px 22px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        background: #455a64;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.85;
+    }
+
+    button:disabled {
+        background: #aaa;
+        cursor: not-allowed;
+    }
+
+    .status {
+        text-align: center;
+        background: #eceff1;
+        border-radius: 8px;
+        padding: 15px;
+        margin-top: 15px;
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .step-box {
+        background: #f8f9fa;
+        border: 1px solid #ddd;
+        padding: 18px;
+        border-radius: 8px;
+        margin-top: 15px;
+        line-height: 1.7;
+    }
+
+    pre {
+        background: #263238;
+        color: #f5f5f5;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.55;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .complexity {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .complexity-box {
+        flex: 1;
+        min-width: 220px;
+        padding: 20px;
+        border-radius: 8px;
+        background: #eceff1;
+        text-align: center;
+    }
+
+    .complexity-box strong {
+        display: block;
+        font-size: 22px;
+        margin-top: 8px;
+    }
+
+    .steps {
+        counter-reset: step;
+    }
+
+    .steps li {
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }
+
+    .highlight {
+        font-weight: bold;
+        color: #37474f;
+    }
+
+    footer {
+        background: #263238;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    @media(max-width: 700px) {
+        header h1 {
+            font-size: 24px;
+        }
+
+        .card {
+            padding: 16px;
+        }
+
+        .linked-list {
+            justify-content: flex-start;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Reverse a Singly Linked List</h1>
+    <p>In-Place Reversal with Step-by-Step Visualization</p>
+</header>
+
+<div class="container">
+
+    <!-- INTRODUCTION -->
+    <div class="card">
+        <h2>1. Problem Statement</h2>
+
+        <p class="definition">
+            Given the head of a singly linked list, reverse the list
+            <strong>in place</strong> and return the new head node.
+        </p>
+
+        <p class="definition">
+            Example:
+        </p>
+
+        <pre><code>
+Original:
+10 → 20 → 30 → 40 → NULL
+
+Reversed:
+40 → 30 → 20 → 10 → NULL
+        </code></pre>
+
+        <p class="definition">
+            The important idea is to change each node's
+            <strong>next pointer</strong> so that it points to the
+            previous node.
+        </p>
+    </div>
+
+    <!-- VISUALIZATION -->
+    <div class="card">
+        <h2>2. Interactive Visualization</h2>
+
+        <div class="list-area">
+            <div id="list" class="linked-list"></div>
+        </div>
+
+        <div class="pointer-labels">
+            <span class="pointer prev">PREV</span>
+            <span class="pointer current">CURRENT</span>
+            <span class="pointer next">NEXT NODE</span>
+            <span class="pointer head">NEW HEAD</span>
+        </div>
+
+        <div class="controls">
+            <button onclick="resetList()">Reset</button>
+            <button onclick="stepReverse()" id="stepButton">
+                Step
+            </button>
+            <button onclick="reverseAll()" id="reverseButton">
+                Reverse All
+            </button>
+        </div>
+
+        <div id="status" class="status">
+            Ready to reverse the list.
+        </div>
+
+        <div id="stepExplanation" class="step-box">
+            Click <strong>Step</strong> to perform the reversal one operation
+            at a time.
+        </div>
+    </div>
+
+    <!-- ALGORITHM -->
+    <div class="card">
+        <h2>3. Algorithm</h2>
+
+        <ol class="steps">
+            <li>
+                Initialize <span class="highlight">prev = None</span>.
+            </li>
+
+            <li>
+                Set <span class="highlight">current = head</span>.
+            </li>
+
+            <li>
+                Save the next node:
+                <span class="highlight">next_node = current.next</span>.
+            </li>
+
+            <li>
+                Reverse the pointer:
+                <span class="highlight">current.next = prev</span>.
+            </li>
+
+            <li>
+                Move <span class="highlight">prev</span> to
+                <span class="highlight">current</span>.
+            </li>
+
+            <li>
+                Move <span class="highlight">current</span> to
+                <span class="highlight">next_node</span>.
+            </li>
+
+            <li>
+                Repeat until <span class="highlight">current is None</span>.
+            </li>
+
+            <li>
+                Return <span class="highlight">prev</span> as the new head.
+            </li>
+        </ol>
+    </div>
+
+    <!-- PSEUDOCODE -->
+    <div class="card">
+        <h2>4. Pseudocode</h2>
+
+<pre><code>
+REVERSE(head)
+
+    prev ← NULL
+    current ← head
+
+    WHILE current ≠ NULL
+
+        next_node ← current.next
+
+        current.next ← prev
+
+        prev ← current
+
+        current ← next_node
+
+    RETURN prev
+</code></pre>
+
+    </div>
+
+    <!-- POINTER EXPLANATION -->
+    <div class="card">
+        <h2>5. How the Pointers Change</h2>
+
+        <h3>Initial State</h3>
+
+<pre><code>
+prev = NULL
+current = 10
+
+10 → 20 → 30 → 40 → NULL
+</code></pre>
+
+        <h3>Step 1</h3>
+
+<pre><code>
+Save:
+next_node = 20
+
+Reverse:
+10.next = NULL
+
+Move:
+prev = 10
+current = 20
+
+NULL ← 10    20 → 30 → 40 → NULL
+</code></pre>
+
+        <h3>Step 2</h3>
+
+<pre><code>
+Save:
+next_node = 30
+
+Reverse:
+20.next = 10
+
+Move:
+prev = 20
+current = 30
+
+NULL ← 10 ← 20    30 → 40 → NULL
+</code></pre>
+
+        <h3>Step 3</h3>
+
+<pre><code>
+Save:
+next_node = 40
+
+Reverse:
+30.next = 20
+
+Move:
+prev = 30
+current = 40
+
+NULL ← 10 ← 20 ← 30    40 → NULL
+</code></pre>
+
+        <h3>Step 4</h3>
+
+<pre><code>
+Save:
+next_node = NULL
+
+Reverse:
+40.next = 30
+
+Move:
+prev = 40
+current = NULL
+
+NULL ← 10 ← 20 ← 30 ← 40
+</code></pre>
+
+        <h3>Final Result</h3>
+
+<pre><code>
+head = prev
+
+40 → 30 → 20 → 10 → NULL
+</code></pre>
+    </div>
+
+    <!-- PYTHON IMPLEMENTATION -->
+    <div class="card">
+        <h2>6. Python Implementation</h2>
+
+<pre><code>
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def reverse_list(head):
+    prev = None
+    current = head
+
+    while current is not None:
+
+        # Save the next node
+        next_node = current.next
+
+        # Reverse the current node's pointer
+        current.next = prev
+
+        # Move prev forward
+        prev = current
+
+        # Move current forward
+        current = next_node
+
+    # prev is the new head
+    return prev
+
+
+def display(head):
+    current = head
+
+    while current is not None:
+        print(current.data, end=" -> ")
+        current = current.next
+
+    print("None")
+
+
+# Create linked list
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+head.next.next.next = Node(40)
+
+print("Original List:")
+display(head)
+
+# Reverse the list
+head = reverse_list(head)
+
+print("Reversed List:")
+display(head)
+</code></pre>
+
+        <h3>Output</h3>
+
+<pre><code>
+Original List:
+10 -> 20 -> 30 -> 40 -> None
+
+Reversed List:
+40 -> 30 -> 20 -> 10 -> None
+</code></pre>
+
+    </div>
+
+    <!-- EXPLANATION -->
+    <div class="card">
+        <h2>7. Explanation of the Python Code</h2>
+
+        <p>
+            <strong>prev</strong> stores the previous node. Initially there
+            is no previous node, so it is set to <code>None</code>.
+        </p>
+
+        <p>
+            <strong>current</strong> points to the node currently being
+            processed.
+        </p>
+
+        <p>
+            <strong>next_node</strong> temporarily stores the next node.
+            This is essential because changing <code>current.next</code>
+            without saving the next node could cause the remaining list
+            to be lost.
+        </p>
+
+        <p>
+            The statement:
+        </p>
+
+<pre><code>
+current.next = prev
+</code></pre>
+
+        <p>
+            reverses the direction of the link.
+        </p>
+
+        <p>
+            Finally, when <code>current</code> becomes
+            <code>None</code>, <code>prev</code> points to the first node
+            of the reversed list. Therefore, <code>prev</code> is returned
+            as the new head.
+        </p>
+    </div>
+
+    <!-- COMPLEXITY -->
+    <div class="card">
+        <h2>8. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <div>Time Complexity</div>
+                <strong>O(n)</strong>
+                <p>Each node is visited once.</p>
+            </div>
+
+            <div class="complexity-box">
+                <div>Space Complexity</div>
+                <strong>O(1)</strong>
+                <p>Only three pointers are used.</p>
+            </div>
+
+            <div class="complexity-box">
+                <div>Technique</div>
+                <strong>In-Place</strong>
+                <p>No new nodes are created.</p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- KEY POINTS -->
+    <div class="card">
+        <h2>9. Key Points to Remember</h2>
+
+        <ul class="steps">
+            <li>
+                A singly linked list can only move forward using
+                the <code>next</code> pointer.
+            </li>
+
+            <li>
+                Always save <code>current.next</code> before changing it.
+            </li>
+
+            <li>
+                <code>current.next = prev</code> performs the actual
+                reversal.
+            </li>
+
+            <li>
+                <code>prev</code> becomes the new head after the loop.
+            </li>
+
+            <li>
+                The algorithm uses constant extra space.
+            </li>
+        </ul>
+    </div>
+
+</div>
+
+<footer>
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+    /*
+       Linked list used by the visualization.
+    */
+
+    let nodes = [
+        { data: 10, next: 20 },
+        { data: 20, next: 30 },
+        { data: 30, next: 40 },
+        { data: 40, next: null }
+    ];
+
+    let originalNodes = JSON.parse(JSON.stringify(nodes));
+
+    let prevIndex = -1;
+    let currentIndex = 0;
+    let nextIndex = 1;
+
+    let finished = false;
+
+
+    /*
+       Draw the linked list.
+    */
+
+    function drawList() {
+
+        const list = document.getElementById("list");
+
+        list.innerHTML = "";
+
+        for (let i = 0; i < nodes.length; i++) {
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "node-wrapper";
+
+            const node = document.createElement("div");
+            node.className = "node";
+
+            if (i === currentIndex && !finished) {
+                node.classList.add("active-current");
+            }
+
+            if (i === prevIndex) {
+                node.classList.add("active-prev");
+            }
+
+            if (i === nextIndex && !finished) {
+                node.classList.add("active-next");
+            }
+
+            const data = document.createElement("div");
+            data.className = "node-data";
+            data.textContent = nodes[i].data;
+
+            const next = document.createElement("div");
+            next.className = "node-next";
+
+            if (nodes[i].next === null) {
+                next.textContent = "next = NULL";
+            } else {
+                next.textContent = "next → " + nodes[i].next;
+            }
+
+            node.appendChild(data);
+            node.appendChild(next);
+
+            wrapper.appendChild(node);
+
+            if (i < nodes.length - 1) {
+
+                const arrow = document.createElement("span");
+                arrow.className = "arrow";
+
+                if (nodes[i].next === null) {
+                    arrow.textContent = "×";
+                } else {
+                    arrow.textContent = "→";
+                }
+
+                wrapper.appendChild(arrow);
+            }
+
+            list.appendChild(wrapper);
+        }
+
+        if (finished) {
+
+            const nullText = document.createElement("span");
+            nullText.className = "null";
+            nullText.textContent = " → NULL";
+
+            list.appendChild(nullText);
+        }
+    }
+
+
+    /*
+       Perform one reversal step.
+    */
+
+    function stepReverse() {
+
+        if (finished) {
+            return;
+        }
+
+        if (currentIndex >= nodes.length) {
+
+            finished = true;
+
+            document.getElementById("status").textContent =
+                "Reversal complete! The new head is 40.";
+
+            document.getElementById("stepExplanation").innerHTML =
+                "<strong>Finished:</strong> prev is now the new head of the reversed list.";
+
+            document.getElementById("stepButton").disabled = true;
+
+            drawList();
+
+            return;
+        }
+
+
+        /*
+           Save the next node.
+        */
+
+        const savedNext = nextIndex;
+
+
+        /*
+           Reverse current node's pointer.
+        */
+
+        if (prevIndex === -1) {
+            nodes[currentIndex].next = null;
+        } else {
+            nodes[currentIndex].next =
+                nodes[prevIndex].data;
+        }
+
+
+        /*
+           Move prev.
+        */
+
+        prevIndex = currentIndex;
+
+
+        /*
+           Move current.
+        */
+
+        if (savedNext === -1 || savedNext >= nodes.length) {
+
+            currentIndex = nodes.length;
+
+            nextIndex = -1;
+
+        } else {
+
+            currentIndex = savedNext;
+
+            if (currentIndex + 1 < nodes.length) {
+                nextIndex = currentIndex + 1;
+            } else {
+                nextIndex = -1;
+            }
+        }
+
+
+        document.getElementById("status").textContent =
+            "Reversed node: " + nodes[prevIndex].data;
+
+
+        document.getElementById("stepExplanation").innerHTML =
+            "<strong>Operation:</strong> " +
+            "Changed the next pointer of node " +
+            nodes[prevIndex].data +
+            " to point to the previous node.";
+
+
+        if (currentIndex >= nodes.length) {
+
+            finished = true;
+
+            document.getElementById("status").textContent =
+                "Reversal complete! New head = " +
+                nodes[prevIndex].data;
+
+            document.getElementById("stepExplanation").innerHTML =
+                "<strong>Complete:</strong> prev is the new head. " +
+                "The linked list has been reversed in place.";
+
+            document.getElementById("stepButton").disabled = true;
+        }
+
+        drawList();
+    }
+
+
+    /*
+       Reverse all nodes automatically.
+    */
+
+    function reverseAll() {
+
+        while (!finished) {
+            stepReverse();
+        }
+    }
+
+
+    /*
+       Reset visualization.
+    */
+
+    function resetList() {
+
+        nodes = JSON.parse(JSON.stringify(originalNodes));
+
+        prevIndex = -1;
+        currentIndex = 0;
+        nextIndex = 1;
+
+        finished = false;
+
+        document.getElementById("stepButton").disabled = false;
+
+        document.getElementById("status").textContent =
+            "Ready to reverse the list.";
+
+        document.getElementById("stepExplanation").innerHTML =
+            "Click <strong>Step</strong> to perform the reversal one operation at a time.";
+
+        drawList();
+    }
+
+
+    /*
+       Initial drawing.
+    */
+
+    drawList();
+
+</script>
+
+</body>
+</html>

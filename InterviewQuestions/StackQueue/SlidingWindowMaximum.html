@@ -1,0 +1,1550 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Sliding Window Maximum Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+header {
+    background: linear-gradient(135deg, #312e81, #6366f1);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #3730a3;
+    border-bottom: 2px solid #e0e7ff;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #4f46e5;
+}
+
+.problem {
+    background: #eef2ff;
+    border-left: 5px solid #6366f1;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input {
+    padding: 12px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+#arrayInput {
+    width: 350px;
+}
+
+#kInput {
+    width: 90px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #4f46e5;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4338ca;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+/* Array */
+
+.array-wrapper {
+    overflow-x: auto;
+    padding: 20px 10px;
+}
+
+.array-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    min-width: max-content;
+}
+
+.array-item {
+    width: 70px;
+    text-align: center;
+    transition: 0.3s;
+}
+
+.box {
+    width: 65px;
+    height: 65px;
+    border: 3px solid #64748b;
+    border-radius: 10px;
+    background: #f8fafc;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 21px;
+    font-weight: bold;
+
+    transition: 0.3s;
+}
+
+.index {
+    margin-top: 5px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.in-window .box {
+    background: #e0e7ff;
+    border-color: #6366f1;
+}
+
+.current .box {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    transform: translateY(-8px);
+}
+
+.maximum .box {
+    background: #dcfce7;
+    border-color: #16a34a;
+    transform: translateY(-8px);
+}
+
+.removed .box {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+/* Window */
+
+.window-label {
+    text-align: center;
+    margin: 10px 0;
+    font-weight: bold;
+    color: #4f46e5;
+}
+
+/* Deque */
+
+.deque-container {
+    min-height: 150px;
+    border: 3px dashed #94a3b8;
+    border-radius: 12px;
+    background: #f8fafc;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px;
+    overflow-x: auto;
+}
+
+.deque-item {
+    min-width: 120px;
+    padding: 12px;
+    border-radius: 8px;
+    background: #7c3aed;
+    color: white;
+    text-align: center;
+    font-weight: bold;
+}
+
+.deque-front {
+    border: 4px solid #16a34a;
+}
+
+.status {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+/* Result */
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.result-table th,
+.result-table td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+.result-table th {
+    background: #3730a3;
+    color: white;
+}
+
+.result-table tr:nth-child(even) {
+    background: #eef2ff;
+}
+
+/* Code */
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* Complexity */
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    background: #eef2ff;
+    border-left: 5px solid #6366f1;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.legend span {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-window {
+    background: #e0e7ff;
+}
+
+.legend-current {
+    background: #fef3c7;
+}
+
+.legend-max {
+    background: #dcfce7;
+}
+
+.legend-removed {
+    background: #fee2e2;
+}
+
+@media(max-width: 600px) {
+
+    #arrayInput {
+        width: 100%;
+    }
+
+    .array-item {
+        width: 55px;
+    }
+
+    .box {
+        width: 52px;
+        height: 52px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Sliding Window Maximum</h1>
+    <p>Interactive Deque-Based Visualizer</p>
+</header>
+
+
+<!-- Problem -->
+
+<div class="card">
+
+<h2>1. Problem Statement</h2>
+
+<div class="problem">
+
+Given an array and a sliding window size <strong>k</strong>, find
+the maximum value inside the window at each position as the window
+slides from left to right.
+
+<br><br>
+
+<strong>Example:</strong>
+
+<br><br>
+
+Array:
+<strong>[1, 3, -1, -3, 5, 3, 6, 7]</strong>
+
+<br>
+
+k = <strong>3</strong>
+
+<br><br>
+
+Output:
+<strong>[3, 3, 5, 5, 6, 7]</strong>
+
+</div>
+
+</div>
+
+
+<!-- Visualization -->
+
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<div class="input-area">
+
+<label for="arrayInput">
+<strong>Array:</strong>
+</label>
+
+<input
+    id="arrayInput"
+    value="1,3,-1,-3,5,3,6,7"
+    placeholder="Example: 1,3,-1,-3,5,3,6,7"
+>
+
+<label for="kInput">
+<strong>k:</strong>
+</label>
+
+<input
+    id="kInput"
+    type="number"
+    min="1"
+    value="3"
+>
+
+<button id="loadBtn">
+Load
+</button>
+
+</div>
+
+
+<div class="controls">
+
+<button id="startBtn">
+Start
+</button>
+
+<button id="nextBtn">
+Next Step
+</button>
+
+<button id="autoBtn">
+Auto Run
+</button>
+
+<button id="resetBtn">
+Reset
+</button>
+
+</div>
+
+
+<div class="legend">
+
+<span class="legend-window">
+Current Window
+</span>
+
+<span class="legend-current">
+Current Element
+</span>
+
+<span class="legend-max">
+Window Maximum
+</span>
+
+<span class="legend-removed">
+Removed
+</span>
+
+</div>
+
+
+<div class="window-label" id="windowLabel">
+Window not started
+</div>
+
+
+<div class="array-wrapper">
+
+<div
+    class="array-container"
+    id="arrayView">
+</div>
+
+</div>
+
+
+<h3>Deque</h3>
+
+<p>
+The deque stores indices. The front always contains the index of
+the maximum value in the current window.
+</p>
+
+<div
+    class="deque-container"
+    id="dequeView">
+</div>
+
+
+<div
+    class="status"
+    id="status">
+
+Click <strong>Start</strong> to begin.
+
+</div>
+
+
+<div id="resultArea"></div>
+
+</div>
+
+
+<!-- Algorithm -->
+
+<div class="card">
+
+<h2>3. Algorithm</h2>
+
+<ol>
+
+<li>
+Maintain a deque containing indices of useful elements.
+</li>
+
+<li>
+For every new element, remove indices from the back while their
+values are smaller than the current value.
+</li>
+
+<li>
+Remove the front index if it is outside the current window.
+</li>
+
+<li>
+Add the current index to the back of the deque.
+</li>
+
+<li>
+When the first complete window is formed, the front of the deque
+contains the maximum element.
+</li>
+
+<li>
+Move the window one position to the right and repeat.
+</li>
+
+</ol>
+
+<p>
+The deque is maintained in <strong>decreasing order of values</strong>.
+</p>
+
+</div>
+
+
+<!-- Pseudocode -->
+
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>FUNCTION maxSlidingWindow(nums, k):
+
+    deque = empty deque
+    result = empty array
+
+    FOR i = 0 TO n - 1:
+
+        # Remove indices outside the window
+        WHILE deque is not empty
+              AND deque.front <= i - k:
+
+            remove front
+
+        # Remove smaller values
+        WHILE deque is not empty
+              AND nums[deque.back] <= nums[i]:
+
+            remove back
+
+        # Add current index
+        add i to back
+
+        # Window is complete
+        IF i >= k - 1:
+
+            result.append(nums[deque.front])
+
+    RETURN result</code></pre>
+
+</div>
+
+
+<!-- Python -->
+
+<div class="card">
+
+<h2>5. Python Implementation</h2>
+
+<pre><code>from collections import deque
+
+
+def max_sliding_window(nums, k):
+
+    dq = deque()
+    result = []
+
+    for i in range(len(nums)):
+
+        # Remove elements outside the window
+        while dq and dq[0] <= i - k:
+            dq.popleft()
+
+        # Remove smaller elements
+        while dq and nums[dq[-1]] <= nums[i]:
+            dq.pop()
+
+        # Add current index
+        dq.append(i)
+
+        # Add maximum when window is complete
+        if i >= k - 1:
+            result.append(nums[dq[0]])
+
+    return result
+
+
+# Example
+nums = [1, 3, -1, -3, 5, 3, 6, 7]
+k = 3
+
+answer = max_sliding_window(nums, k)
+
+print("Array:", nums)
+print("Window size:", k)
+print("Maximums:", answer)</code></pre>
+
+
+<h3>Output</h3>
+
+<pre><code>Array: [1, 3, -1, -3, 5, 3, 6, 7]
+Window size: 3
+Maximums: [3, 3, 5, 5, 6, 7]</code></pre>
+
+</div>
+
+
+<!-- Example -->
+
+<div class="card">
+
+<h2>6. Step-by-Step Example</h2>
+
+<table class="result-table">
+
+<thead>
+
+<tr>
+<th>Window</th>
+<th>Elements</th>
+<th>Maximum</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>1</td>
+<td>[1, 3, -1]</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>[3, -1, -3]</td>
+<td>3</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>[-1, -3, 5]</td>
+<td>5</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>[-3, 5, 3]</td>
+<td>5</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>[5, 3, 6]</td>
+<td>6</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>[3, 6, 7]</td>
+<td>7</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- Why deque -->
+
+<div class="card">
+
+<h2>7. Why Use a Deque?</h2>
+
+<p>
+A brute-force approach finds the maximum separately for every
+window. That can take <strong>O(n × k)</strong> time.
+</p>
+
+<p>
+The deque approach removes elements that can never become the
+maximum of the current or any future window.
+</p>
+
+<p>
+For example:
+</p>
+
+<pre><code>Current window:
+
+[1, 3, -1]
+
+Deque:
+
+[3, -1]
+
+3 is at the front,
+so maximum = 3
+
+
+Next window:
+
+[3, -1, -3]
+
+Deque front is still 3.
+
+Maximum = 3</code></pre>
+
+<p>
+When <strong>5</strong> enters the window, smaller values such as
+-1 and -3 are removed from the deque because they cannot be the
+maximum while 5 remains in the window.
+</p>
+
+</div>
+
+
+<!-- Complexity -->
+
+<div class="card">
+
+<h2>8. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<h3>Time Complexity</h3>
+
+<p>
+<strong>O(n)</strong>
+</p>
+
+<p>
+Every index is inserted into and removed from the deque at most
+once.
+</p>
+
+</div>
+
+
+<div class="complexity-box">
+
+<h3>Space Complexity</h3>
+
+<p>
+<strong>O(k)</strong>
+</p>
+
+<p>
+The deque contains at most k useful indices.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Applications -->
+
+<div class="card">
+
+<h2>9. Applications</h2>
+
+<ul>
+
+<li>Real-time data analysis</li>
+
+<li>Stock price monitoring</li>
+
+<li>Temperature monitoring</li>
+
+<li>Network traffic analysis</li>
+
+<li>Maximum value in time windows</li>
+
+<li>Signal processing</li>
+
+<li>Streaming data algorithms</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<script>
+
+let nums = [];
+let k = 3;
+
+let deque = [];
+let result = [];
+
+let currentIndex = 0;
+
+let phase = "idle";
+
+let autoTimer = null;
+
+
+/* DOM elements */
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const kInput =
+    document.getElementById("kInput");
+
+const arrayView =
+    document.getElementById("arrayView");
+
+const dequeView =
+    document.getElementById("dequeView");
+
+const status =
+    document.getElementById("status");
+
+const resultArea =
+    document.getElementById("resultArea");
+
+const windowLabel =
+    document.getElementById("windowLabel");
+
+const loadBtn =
+    document.getElementById("loadBtn");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const autoBtn =
+    document.getElementById("autoBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+
+/* Load data */
+
+function loadArray() {
+
+    const values =
+        arrayInput.value
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => Number.isFinite(x));
+
+    const windowSize =
+        Number(kInput.value);
+
+
+    if (values.length === 0) {
+
+        alert("Please enter a valid array.");
+
+        return;
+    }
+
+
+    if (
+        !Number.isInteger(windowSize) ||
+        windowSize < 1 ||
+        windowSize > values.length
+    ) {
+
+        alert(
+            "k must be between 1 and the array length."
+        );
+
+        return;
+    }
+
+
+    nums = values;
+
+    k = windowSize;
+
+    resetAlgorithm();
+
+    renderArray();
+
+    status.innerHTML =
+        "Array loaded. Click <strong>Start</strong>.";
+
+    windowLabel.textContent =
+        "Window size k = " + k;
+}
+
+
+/* Render array */
+
+function renderArray() {
+
+    arrayView.innerHTML = "";
+
+    nums.forEach((value, index) => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "array-item";
+
+        item.id =
+            "item-" + index;
+
+
+        const box =
+            document.createElement("div");
+
+        box.className = "box";
+
+        box.textContent = value;
+
+
+        const indexLabel =
+            document.createElement("div");
+
+        indexLabel.className = "index";
+
+        indexLabel.textContent =
+            "index " + index;
+
+
+        item.appendChild(box);
+
+        item.appendChild(indexLabel);
+
+        arrayView.appendChild(item);
+    });
+}
+
+
+/* Clear highlights */
+
+function clearHighlights() {
+
+    document
+        .querySelectorAll(".array-item")
+        .forEach(item => {
+
+            item.classList.remove(
+                "in-window",
+                "current",
+                "maximum",
+                "removed"
+            );
+        });
+}
+
+
+/* Highlight current window */
+
+function highlightWindow() {
+
+    clearHighlights();
+
+    if (currentIndex >= nums.length) {
+        return;
+    }
+
+
+    const left =
+        Math.max(
+            0,
+            currentIndex - k + 1
+        );
+
+    const right =
+        currentIndex;
+
+
+    for (
+        let i = left;
+        i <= right;
+        i++
+    ) {
+
+        const item =
+            document.getElementById(
+                "item-" + i
+            );
+
+        if (item) {
+
+            item.classList.add(
+                "in-window"
+            );
+        }
+    }
+
+
+    const current =
+        document.getElementById(
+            "item-" + currentIndex
+        );
+
+    if (current) {
+
+        current.classList.add(
+            "current"
+        );
+    }
+
+
+    if (deque.length > 0) {
+
+        const maxIndex =
+            deque[0];
+
+        const maxItem =
+            document.getElementById(
+                "item-" + maxIndex
+            );
+
+        if (maxItem) {
+
+            maxItem.classList.add(
+                "maximum"
+            );
+        }
+    }
+}
+
+
+/* Render deque */
+
+function renderDeque() {
+
+    dequeView.innerHTML = "";
+
+    deque.forEach((index, position) => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "deque-item";
+
+        if (position === 0) {
+
+            item.classList.add(
+                "deque-front"
+            );
+        }
+
+
+        item.innerHTML =
+            "Index " + index +
+            "<br>" +
+            "Value = " + nums[index];
+
+
+        dequeView.appendChild(item);
+    });
+}
+
+
+/* Start algorithm */
+
+function startAlgorithm() {
+
+    if (nums.length === 0) {
+
+        loadArray();
+    }
+
+
+    deque = [];
+
+    result = [];
+
+    currentIndex = 0;
+
+    phase = "process";
+
+    renderDeque();
+
+    updateResult();
+
+    status.innerHTML =
+        "<strong>Algorithm started.</strong> " +
+        "The window is moving from left to right.";
+
+    highlightWindow();
+}
+
+
+/* Next step */
+
+function nextStep() {
+
+    if (phase === "idle") {
+
+        startAlgorithm();
+
+        return;
+    }
+
+
+    if (phase === "finished") {
+
+        return;
+    }
+
+
+    if (currentIndex >= nums.length) {
+
+        phase = "finished";
+
+        clearHighlights();
+
+        renderDeque();
+
+        windowLabel.textContent =
+            "All windows processed";
+
+        status.innerHTML =
+            "<strong>Algorithm completed!</strong>";
+
+        updateResult();
+
+        stopAuto();
+
+        return;
+    }
+
+
+    /*
+        Remove indices outside current window.
+    */
+
+    while (
+        deque.length > 0 &&
+        deque[0] <= currentIndex - k
+    ) {
+
+        const removed =
+            deque.shift();
+
+        const removedItem =
+            document.getElementById(
+                "item-" + removed
+            );
+
+        if (removedItem) {
+
+            removedItem.classList.add(
+                "removed"
+            );
+        }
+
+
+        status.innerHTML = `
+
+            Index <strong>${removed}</strong>
+            is outside the current window.
+
+            <br><br>
+
+            Therefore it is removed from
+            the front of the deque.
+
+        `;
+
+
+        renderDeque();
+
+        highlightWindow();
+
+        return;
+    }
+
+
+    /*
+        Remove smaller elements from the back.
+    */
+
+    if (
+        deque.length > 0 &&
+        nums[deque[deque.length - 1]]
+        <= nums[currentIndex]
+    ) {
+
+        const removed =
+            deque.pop();
+
+
+        const removedItem =
+            document.getElementById(
+                "item-" + removed
+            );
+
+        if (removedItem) {
+
+            removedItem.classList.add(
+                "removed"
+            );
+        }
+
+
+        status.innerHTML = `
+
+            Current value
+            <strong>${nums[currentIndex]}</strong>
+            is greater than or equal to
+            <strong>${nums[removed]}</strong>.
+
+            <br><br>
+
+            Index ${removed} can never be the
+            maximum while the current value
+            remains in the window.
+
+            <br><br>
+
+            Remove index ${removed}
+            from the back of the deque.
+
+        `;
+
+
+        renderDeque();
+
+        highlightWindow();
+
+        return;
+    }
+
+
+    /*
+        Add current index.
+    */
+
+    deque.push(currentIndex);
+
+
+    status.innerHTML = `
+
+        Index <strong>${currentIndex}</strong>
+        with value
+        <strong>${nums[currentIndex]}</strong>
+        is added to the back of the deque.
+
+    `;
+
+
+    renderDeque();
+
+    highlightWindow();
+
+
+    /*
+        If a complete window exists,
+        front is the maximum.
+    */
+
+    if (currentIndex >= k - 1) {
+
+        const maximum =
+            nums[deque[0]];
+
+        result.push(maximum);
+
+
+        status.innerHTML += `
+
+            <br><br>
+
+            Current window:
+
+            <strong>
+            [${nums.slice(
+                currentIndex - k + 1,
+                currentIndex + 1
+            ).join(", ")}]
+            </strong>
+
+            <br><br>
+
+            Maximum =
+            <strong>${maximum}</strong>
+
+        `;
+
+        updateResult();
+    }
+
+
+    windowLabel.textContent =
+        "Current Window: indices " +
+        Math.max(
+            0,
+            currentIndex - k + 1
+        ) +
+        " to " +
+        currentIndex;
+
+
+    currentIndex++;
+
+
+    if (currentIndex >= nums.length) {
+
+        /*
+            Give the user a final step
+            to see completion.
+        */
+
+        setTimeout(() => {
+
+            phase = "finished";
+
+            clearHighlights();
+
+            windowLabel.textContent =
+                "All windows processed";
+
+            status.innerHTML =
+                "<strong>Algorithm completed!</strong>";
+
+            updateResult();
+
+            stopAuto();
+
+        }, 500);
+    }
+}
+
+
+/* Result */
+
+function updateResult() {
+
+    let html = `
+
+        <h3>Sliding Window Maximums</h3>
+
+        <table class="result-table">
+
+        <thead>
+
+        <tr>
+            <th>Window</th>
+            <th>Maximum</th>
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+    `;
+
+
+    result.forEach((value, index) => {
+
+        const start = index;
+
+        const end =
+            index + k - 1;
+
+        html += `
+
+            <tr>
+
+                <td>
+                    Indices ${start} to ${end}
+                </td>
+
+                <td>
+                    <strong>${value}</strong>
+                </td>
+
+            </tr>
+
+        `;
+    });
+
+
+    html += `
+
+        </tbody>
+
+        </table>
+
+        <p>
+            <strong>Output:</strong>
+            [${result.join(", ")}]
+        </p>
+
+    `;
+
+
+    resultArea.innerHTML = html;
+}
+
+
+/* Reset */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    deque = [];
+
+    result = [];
+
+    currentIndex = 0;
+
+    phase = "idle";
+
+    clearHighlights();
+
+    renderDeque();
+
+    resultArea.innerHTML = "";
+
+    windowLabel.textContent =
+        "Window not started";
+
+    status.innerHTML =
+        "Click <strong>Start</strong> to begin.";
+}
+
+
+/* Stop auto run */
+
+function stopAuto() {
+
+    if (autoTimer) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+        autoBtn.textContent =
+            "Auto Run";
+    }
+}
+
+
+/* Auto run */
+
+function autoRun() {
+
+    if (autoTimer) {
+
+        stopAuto();
+
+        return;
+    }
+
+
+    if (phase === "idle") {
+
+        startAlgorithm();
+    }
+
+
+    autoBtn.textContent =
+        "Pause";
+
+
+    autoTimer =
+        setInterval(() => {
+
+            if (phase === "finished") {
+
+                stopAuto();
+
+                return;
+            }
+
+            nextStep();
+
+        }, 850);
+}
+
+
+/* Event listeners */
+
+loadBtn.addEventListener(
+    "click",
+    loadArray
+);
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+
+/* Initial data */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1261 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lowest Common Ancestor in BST</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+    }
+
+    .problem {
+        line-height: 1.7;
+    }
+
+    .example {
+        background: #f8fafc;
+        border-left: 5px solid #4f46e5;
+        padding: 15px;
+        border-radius: 7px;
+        line-height: 1.7;
+        margin-top: 15px;
+    }
+
+    .input-area {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        align-items: end;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        padding: 10px;
+        width: 100px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #4f46e5;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .auto {
+        background: #059669;
+    }
+
+    .reset {
+        background: #64748b;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .stat {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 23px;
+        margin-top: 5px;
+    }
+
+    .tree-container {
+        overflow-x: auto;
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 20px;
+        min-height: 390px;
+    }
+
+    svg {
+        display: block;
+        margin: auto;
+        min-width: 800px;
+    }
+
+    .edge {
+        stroke: #94a3b8;
+        stroke-width: 3;
+    }
+
+    .node {
+        fill: white;
+        stroke: #334155;
+        stroke-width: 3;
+    }
+
+    .node.current {
+        fill: #fde68a;
+        stroke: #d97706;
+        stroke-width: 5;
+    }
+
+    .node.target {
+        fill: #bfdbfe;
+        stroke: #2563eb;
+        stroke-width: 4;
+    }
+
+    .node.lca {
+        fill: #86efac;
+        stroke: #15803d;
+        stroke-width: 6;
+    }
+
+    .node-text {
+        font-size: 17px;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+    }
+
+    .marker-text {
+        font-size: 13px;
+        font-weight: bold;
+        text-anchor: middle;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #eef2ff;
+        border-left: 5px solid #4f46e5;
+        min-height: 50px;
+        line-height: 1.5;
+    }
+
+    .success {
+        background: #dcfce7;
+        border-left-color: #16a34a;
+    }
+
+    .warning {
+        background: #fef3c7;
+        border-left-color: #d97706;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        padding: 14px;
+        border-radius: 7px;
+        font-family: Consolas, monospace;
+        margin: 10px 0;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .observation {
+        padding: 15px;
+        background: #f8fafc;
+        border-left: 4px solid #0ea5e9;
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        margin-top: 15px;
+        justify-content: center;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+    }
+
+    .legend-box {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        border: 2px solid;
+    }
+
+    .yellow {
+        background: #fde68a;
+        border-color: #d97706;
+    }
+
+    .blue {
+        background: #bfdbfe;
+        border-color: #2563eb;
+    }
+
+    .green {
+        background: #86efac;
+        border-color: #15803d;
+    }
+
+    @media (max-width: 800px) {
+        body {
+            padding: 12px;
+        }
+
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌳 Lowest Common Ancestor in a BST</h1>
+
+    <div class="subtitle">
+        Interactive Visualization + Pseudocode + Python Implementation
+    </div>
+
+    <!-- 1. Problem -->
+    <div class="card">
+
+        <h2>1. Problem Statement</h2>
+
+        <div class="problem">
+            Given the root of a Binary Search Tree (BST) and two nodes
+            <strong>p</strong> and <strong>q</strong>, find their
+            <strong>Lowest Common Ancestor (LCA)</strong>.
+        </div>
+
+        <div class="example">
+
+            <strong>Example BST:</strong>
+
+            <br><br>
+
+            <div class="formula">
+                    6
+                  /   \
+                 2     8
+                / \   / \
+               0   4 7   9
+                  / \
+                 3   5
+            </div>
+
+            <strong>p = 2</strong>,
+            <strong>q = 8</strong>
+
+            <br><br>
+
+            Since 2 is smaller than 6 and 8 is greater than 6,
+            they lie on different sides of 6.
+
+            <br><br>
+
+            Therefore:
+
+            <strong>LCA(2, 8) = 6</strong>
+        </div>
+
+    </div>
+
+    <!-- 2. BST property -->
+    <div class="card">
+
+        <h2>2. Key BST Property</h2>
+
+        <div class="observation">
+            For every node in a Binary Search Tree:
+            <br><br>
+
+            <strong>Left subtree:</strong> values smaller than the node.
+            <br>
+            <strong>Right subtree:</strong> values greater than the node.
+        </div>
+
+        <div class="formula">
+            if p &lt; root AND q &lt; root
+            → move LEFT
+        </div>
+
+        <div class="formula">
+            if p &gt; root AND q &gt; root
+            → move RIGHT
+        </div>
+
+        <div class="formula">
+            otherwise
+            → current root is the LCA
+        </div>
+
+    </div>
+
+    <!-- 3. Interactive -->
+    <div class="card">
+
+        <h2>3. Interactive Visualization</h2>
+
+        <div class="input-area">
+
+            <div class="input-group">
+                <label for="pInput">Node p</label>
+                <input id="pInput" type="number" value="2">
+            </div>
+
+            <div class="input-group">
+                <label for="qInput">Node q</label>
+                <input id="qInput" type="number" value="8">
+            </div>
+
+            <button id="startBtn">▶ Start</button>
+            <button id="nextBtn">➡ Next Step</button>
+            <button id="autoBtn" class="auto">⏩ Auto Run</button>
+            <button id="resetBtn" class="reset">↺ Reset</button>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+                p
+                <strong id="pDisplay">2</strong>
+            </div>
+
+            <div class="stat">
+                q
+                <strong id="qDisplay">8</strong>
+            </div>
+
+            <div class="stat">
+                Current Node
+                <strong id="currentDisplay">—</strong>
+            </div>
+
+            <div class="stat">
+                LCA
+                <strong id="lcaDisplay">—</strong>
+            </div>
+
+        </div>
+
+        <div class="tree-container">
+            <svg id="treeSvg"
+                 width="900"
+                 height="380"
+                 viewBox="0 0 900 380">
+            </svg>
+        </div>
+
+        <div class="legend">
+
+            <div class="legend-item">
+                <span class="legend-box yellow"></span>
+                Current node
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box blue"></span>
+                p / q
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-box green"></span>
+                LCA
+            </div>
+
+        </div>
+
+        <div id="status" class="status">
+            Enter two nodes and click <strong>Start</strong>.
+        </div>
+
+    </div>
+
+    <!-- 4. Algorithm -->
+    <div class="card">
+
+        <h2>4. Algorithm</h2>
+
+        <ol>
+            <li>Start at the root.</li>
+            <li>Compare p and q with the current node.</li>
+            <li>
+                If both p and q are smaller, move to the left subtree.
+            </li>
+            <li>
+                If both p and q are larger, move to the right subtree.
+            </li>
+            <li>
+                Otherwise, the current node is the Lowest Common Ancestor.
+            </li>
+        </ol>
+
+    </div>
+
+    <!-- 5. Pseudocode -->
+    <div class="card">
+
+        <h2>5. Pseudocode</h2>
+
+<pre><code>FUNCTION lowestCommonAncestor(root, p, q):
+
+    current = root
+
+    WHILE current is not NULL:
+
+        IF p &lt; current.value AND q &lt; current.value:
+
+            current = current.left
+
+        ELSE IF p &gt; current.value AND q &gt; current.value:
+
+            current = current.right
+
+        ELSE:
+
+            RETURN current
+
+    RETURN NULL</code></pre>
+
+    </div>
+
+    <!-- 6. Python -->
+    <div class="card">
+
+        <h2>6. Python Implementation</h2>
+
+<pre><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def lowestCommonAncestor(root, p, q):
+
+    current = root
+
+    while current:
+
+        if p.val &lt; current.val and q.val &lt; current.val:
+            current = current.left
+
+        elif p.val &gt; current.val and q.val &gt; current.val:
+            current = current.right
+
+        else:
+            return current
+
+    return None</code></pre>
+
+    </div>
+
+    <!-- 7. Recursive -->
+    <div class="card">
+
+        <h2>7. Recursive Python Implementation</h2>
+
+<pre><code>def lowestCommonAncestor(root, p, q):
+
+    if p.val &lt; root.val and q.val &lt; root.val:
+        return lowestCommonAncestor(root.left, p, q)
+
+    if p.val &gt; root.val and q.val &gt; root.val:
+        return lowestCommonAncestor(root.right, p, q)
+
+    return root</code></pre>
+
+    </div>
+
+    <!-- 8. Example walkthrough -->
+    <div class="card">
+
+        <h2>8. Step-by-Step Example</h2>
+
+        <h3>Find LCA of p = 2 and q = 8</h3>
+
+        <div class="formula">
+            Current = 6
+        </div>
+
+        <p>
+            p = 2 &lt; 6 and q = 8 &gt; 6.
+        </p>
+
+        <p>
+            They are on opposite sides of 6.
+        </p>
+
+        <div class="formula">
+            Therefore LCA = 6
+        </div>
+
+        <hr>
+
+        <h3>Another Example: p = 3, q = 5</h3>
+
+        <div class="formula">
+            Current = 6
+        </div>
+
+        <p>
+            Both 3 and 5 are smaller than 6.
+            Move left.
+        </p>
+
+        <div class="formula">
+            Current = 2
+        </div>
+
+        <p>
+            Both 3 and 5 are greater than 2.
+            Move right.
+        </p>
+
+        <div class="formula">
+            Current = 4
+        </div>
+
+        <p>
+            3 &lt; 4 and 5 &gt; 4.
+            Therefore:
+        </p>
+
+        <div class="formula">
+            LCA(3, 5) = 4
+        </div>
+
+    </div>
+
+    <!-- 9. Complexity -->
+    <div class="card">
+
+        <h2>9. Complexity Analysis</h2>
+
+        <div class="two-column">
+
+            <div>
+
+                <h3>Time Complexity</h3>
+
+                <div class="formula">
+                    O(h)
+                </div>
+
+                <p>
+                    where h is the height of the BST.
+                </p>
+
+                <p>
+                    For a balanced BST, this is approximately
+                    <strong>O(log N)</strong>.
+                </p>
+
+            </div>
+
+            <div>
+
+                <h3>Space Complexity</h3>
+
+                <div class="formula">
+                    O(1)
+                </div>
+
+                <p>
+                    for the iterative implementation.
+                </p>
+
+                <p>
+                    The recursive implementation uses
+                    <strong>O(h)</strong> call-stack space.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- 10. Important -->
+    <div class="card">
+
+        <h2>10. Important Observations</h2>
+
+        <div class="observation">
+            <strong>Observation 1:</strong>
+            The algorithm takes advantage of the BST ordering property.
+        </div>
+
+        <div class="observation">
+            <strong>Observation 2:</strong>
+            If both nodes are smaller than the current node,
+            the LCA must be in the left subtree.
+        </div>
+
+        <div class="observation">
+            <strong>Observation 3:</strong>
+            If both nodes are larger than the current node,
+            the LCA must be in the right subtree.
+        </div>
+
+        <div class="observation">
+            <strong>Observation 4:</strong>
+            If one node is on each side, or the current node equals
+            p or q, the current node is the LCA.
+        </div>
+
+        <div class="observation">
+            <strong>Observation 5:</strong>
+            This efficient approach specifically relies on the tree
+            being a Binary Search Tree. A general binary tree requires
+            a different approach.
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------
+   BST Definition
+--------------------------------------- */
+
+const bst = {
+    id: "n6",
+    value: 6,
+
+    left: {
+        id: "n2",
+        value: 2,
+
+        left: {
+            id: "n0",
+            value: 0,
+            left: null,
+            right: null
+        },
+
+        right: {
+            id: "n4",
+            value: 4,
+
+            left: {
+                id: "n3",
+                value: 3,
+                left: null,
+                right: null
+            },
+
+            right: {
+                id: "n5",
+                value: 5,
+                left: null,
+                right: null
+            }
+        }
+    },
+
+    right: {
+        id: "n8",
+        value: 8,
+
+        left: {
+            id: "n7",
+            value: 7,
+            left: null,
+            right: null
+        },
+
+        right: {
+            id: "n9",
+            value: 9,
+            left: null,
+            right: null
+        }
+    }
+};
+
+let p = 2;
+let q = 8;
+
+let steps = [];
+let currentStep = -1;
+let autoTimer = null;
+
+
+/* ---------------------------------------
+   Node positions
+--------------------------------------- */
+
+function getPositions() {
+
+    return {
+        n6: { x: 450, y: 55 },
+
+        n2: { x: 250, y: 145 },
+        n8: { x: 650, y: 145 },
+
+        n0: { x: 150, y: 235 },
+        n4: { x: 350, y: 235 },
+
+        n7: { x: 550, y: 235 },
+        n9: { x: 750, y: 235 },
+
+        n3: { x: 300, y: 325 },
+        n5: { x: 400, y: 325 }
+    };
+}
+
+
+/* ---------------------------------------
+   Node map
+--------------------------------------- */
+
+function getNodeMap() {
+
+    return {
+        n6: bst,
+        n2: bst.left,
+        n8: bst.right,
+        n0: bst.left.left,
+        n4: bst.left.right,
+        n7: bst.right.left,
+        n9: bst.right.right,
+        n3: bst.left.right.left,
+        n5: bst.left.right.right
+    };
+}
+
+
+/* ---------------------------------------
+   SVG helper
+--------------------------------------- */
+
+const svg = document.getElementById("treeSvg");
+
+function createSVGElement(type, attributes) {
+
+    const element =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            type
+        );
+
+    Object.entries(attributes).forEach(([key, value]) => {
+        element.setAttribute(key, value);
+    });
+
+    return element;
+}
+
+
+/* ---------------------------------------
+   Draw edges
+--------------------------------------- */
+
+function drawEdges() {
+
+    const positions = getPositions();
+
+    const edges = [
+        ["n6", "n2"],
+        ["n6", "n8"],
+        ["n2", "n0"],
+        ["n2", "n4"],
+        ["n8", "n7"],
+        ["n8", "n9"],
+        ["n4", "n3"],
+        ["n4", "n5"]
+    ];
+
+    edges.forEach(([from, to]) => {
+
+        const p1 = positions[from];
+        const p2 = positions[to];
+
+        const line = createSVGElement("line", {
+            x1: p1.x,
+            y1: p1.y,
+            x2: p2.x,
+            y2: p2.y,
+            class: "edge"
+        });
+
+        svg.appendChild(line);
+    });
+}
+
+
+/* ---------------------------------------
+   Clear SVG
+--------------------------------------- */
+
+function clearSVG() {
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+}
+
+
+/* ---------------------------------------
+   Draw tree
+--------------------------------------- */
+
+function drawTree(currentId = null, lcaId = null) {
+
+    clearSVG();
+
+    drawEdges();
+
+    const positions = getPositions();
+    const nodes = getNodeMap();
+
+    Object.keys(nodes).forEach(id => {
+
+        const node = nodes[id];
+        const pos = positions[id];
+
+        let className = "node";
+
+        if (id === lcaId) {
+            className = "node lca";
+        }
+        else if (id === currentId) {
+            className = "node current";
+        }
+        else if (node.value === p || node.value === q) {
+            className = "node target";
+        }
+
+        const circle = createSVGElement("circle", {
+            cx: pos.x,
+            cy: pos.y,
+            r: 27,
+            class: className
+        });
+
+        const text = createSVGElement("text", {
+            x: pos.x,
+            y: pos.y,
+            class: "node-text"
+        });
+
+        text.textContent = node.value;
+
+        svg.appendChild(circle);
+        svg.appendChild(text);
+
+        /* p / q labels */
+
+        if (node.value === p || node.value === q) {
+
+            let label = "";
+
+            if (node.value === p && node.value === q) {
+                label = "p = q";
+            }
+            else if (node.value === p) {
+                label = "p";
+            }
+            else {
+                label = "q";
+            }
+
+            const marker = createSVGElement("text", {
+                x: pos.x,
+                y: pos.y - 39,
+                class: "marker-text"
+            });
+
+            marker.textContent = label;
+
+            svg.appendChild(marker);
+        }
+
+    });
+}
+
+
+/* ---------------------------------------
+   Build algorithm steps
+--------------------------------------- */
+
+function buildSteps() {
+
+    steps = [];
+
+    let current = bst;
+
+    while (current !== null) {
+
+        if (p < current.value && q < current.value) {
+
+            steps.push({
+                type: "left",
+                nodeId: current.id,
+                value: current.value
+            });
+
+            current = current.left;
+
+        }
+        else if (p > current.value && q > current.value) {
+
+            steps.push({
+                type: "right",
+                nodeId: current.id,
+                value: current.value
+            });
+
+            current = current.right;
+
+        }
+        else {
+
+            steps.push({
+                type: "lca",
+                nodeId: current.id,
+                value: current.value
+            });
+
+            break;
+        }
+    }
+}
+
+
+/* ---------------------------------------
+   Start
+--------------------------------------- */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    p = Number(document.getElementById("pInput").value);
+    q = Number(document.getElementById("qInput").value);
+
+    if (Number.isNaN(p) || Number.isNaN(q)) {
+
+        document.getElementById("status").className =
+            "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Please enter valid values for p and q.";
+
+        return;
+    }
+
+    const nodeValues =
+        Object.values(getNodeMap()).map(node => node.value);
+
+    if (!nodeValues.includes(p) || !nodeValues.includes(q)) {
+
+        document.getElementById("status").className =
+            "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Both p and q must exist in the displayed BST.";
+
+        return;
+    }
+
+    document.getElementById("pDisplay").textContent = p;
+    document.getElementById("qDisplay").textContent = q;
+
+    document.getElementById("currentDisplay").textContent = "—";
+    document.getElementById("lcaDisplay").textContent = "—";
+
+    buildSteps();
+
+    currentStep = -1;
+
+    drawTree();
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        `Ready to find LCA of
+         <strong>${p}</strong> and <strong>${q}</strong>.
+         Click <strong>Next Step</strong>.`;
+}
+
+
+/* ---------------------------------------
+   Next step
+--------------------------------------- */
+
+function nextStep() {
+
+    if (steps.length === 0) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+    }
+
+    if (currentStep >= steps.length - 1) {
+        return;
+    }
+
+    currentStep++;
+
+    const step = steps[currentStep];
+
+    document.getElementById("currentDisplay").textContent =
+        step.value;
+
+    if (step.type === "left") {
+
+        drawTree(step.nodeId);
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `At node <strong>${step.value}</strong>:
+             both ${p} and ${q} are smaller.
+             <strong>Move LEFT.</strong>`;
+    }
+
+    else if (step.type === "right") {
+
+        drawTree(step.nodeId);
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `At node <strong>${step.value}</strong>:
+             both ${p} and ${q} are larger.
+             <strong>Move RIGHT.</strong>`;
+    }
+
+    else if (step.type === "lca") {
+
+        drawTree(null, step.nodeId);
+
+        document.getElementById("lcaDisplay").textContent =
+            step.value;
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerHTML =
+            `🎉 <strong>LCA Found!</strong>
+             Node <strong>${step.value}</strong> is the
+             Lowest Common Ancestor of
+             <strong>${p}</strong> and <strong>${q}</strong>.`;
+    }
+}
+
+
+/* ---------------------------------------
+   Auto run
+--------------------------------------- */
+
+function autoRun() {
+
+    if (autoTimer !== null) {
+
+        stopAuto();
+        return;
+    }
+
+    if (steps.length === 0 ||
+        currentStep >= steps.length - 1) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+    }
+
+    autoTimer = setInterval(() => {
+
+        if (currentStep >= steps.length - 1) {
+
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+}
+
+
+/* ---------------------------------------
+   Stop auto
+--------------------------------------- */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* ---------------------------------------
+   Reset
+--------------------------------------- */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    currentStep = -1;
+    steps = [];
+
+    document.getElementById("pInput").value = 2;
+    document.getElementById("qInput").value = 8;
+
+    p = 2;
+    q = 8;
+
+    document.getElementById("pDisplay").textContent = "2";
+    document.getElementById("qDisplay").textContent = "8";
+    document.getElementById("currentDisplay").textContent = "—";
+    document.getElementById("lcaDisplay").textContent = "—";
+
+    drawTree();
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        "Click <strong>Start</strong> to begin.";
+}
+
+
+/* ---------------------------------------
+   Event Listeners
+--------------------------------------- */
+
+document
+    .getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document
+    .getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document
+    .getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", resetAlgorithm);
+
+
+/* ---------------------------------------
+   Initial render
+--------------------------------------- */
+
+drawTree();
+
+</script>
+
+</body>
+</html>

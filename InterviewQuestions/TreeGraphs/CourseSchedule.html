@@ -1,0 +1,1278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Schedule II - Topological Sort</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1250px;
+        margin: 25px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 28px;
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    section {
+        background: white;
+        margin-top: 22px;
+        padding: 24px;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #1e3a8a;
+        margin-top: 0;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        color: #2563eb;
+    }
+
+    .problem {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 15px;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="number"],
+    input[type="text"] {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 15px;
+    }
+
+    .example-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        margin: 6px 4px 6px 0;
+        border-radius: 7px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    #startBtn {
+        background: #2563eb;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #059669;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #7c3aed;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    button:disabled {
+        background: #94a3b8 !important;
+        cursor: not-allowed;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        font-weight: bold;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .card strong {
+        display: block;
+        font-size: 25px;
+        color: #1e3a8a;
+    }
+
+    .graph-container {
+        overflow-x: auto;
+        padding: 15px 5px;
+    }
+
+    .graph {
+        min-width: 850px;
+        min-height: 330px;
+        position: relative;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        background: #fafafa;
+        padding: 20px;
+    }
+
+    .node {
+        position: absolute;
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        background: #dbeafe;
+        border: 3px solid #2563eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        z-index: 3;
+    }
+
+    .node.current {
+        background: #fef3c7;
+        border-color: #d97706;
+        transform: scale(1.12);
+    }
+
+    .node.processed {
+        background: #dcfce7;
+        border-color: #16a34a;
+    }
+
+    .node.queued {
+        background: #ede9fe;
+        border-color: #7c3aed;
+    }
+
+    .node.cycle {
+        background: #fee2e2;
+        border-color: #dc2626;
+    }
+
+    svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .edge {
+        stroke: #64748b;
+        stroke-width: 2;
+        marker-end: url(#arrow);
+    }
+
+    .edge.active {
+        stroke: #f59e0b;
+        stroke-width: 4;
+    }
+
+    .edge.removed {
+        stroke: #16a34a;
+        stroke-width: 3;
+    }
+
+    .queue-box {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+    }
+
+    .queue-item {
+        display: inline-block;
+        background: #7c3aed;
+        color: white;
+        padding: 7px 12px;
+        margin: 4px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .order-box {
+        margin-top: 15px;
+        padding: 16px;
+        border-radius: 10px;
+        background: #ecfdf5;
+        border: 2px solid #10b981;
+        min-height: 55px;
+    }
+
+    .order-item {
+        display: inline-block;
+        background: #059669;
+        color: white;
+        padding: 8px 13px;
+        margin: 4px;
+        border-radius: 7px;
+        font-weight: bold;
+    }
+
+    .failure {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #991b1b;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, "Courier New", monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .complexity div {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    ul {
+        padding-left: 25px;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .legend span {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .legend-current {
+        background: #fef3c7;
+    }
+
+    .legend-processed {
+        background: #dcfce7;
+    }
+
+    .legend-queued {
+        background: #ede9fe;
+    }
+
+    .legend-cycle {
+        background: #fee2e2;
+    }
+
+    @media (max-width: 800px) {
+        .input-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        header h1 {
+            font-size: 23px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Course Schedule II</h1>
+    <p>Find a valid ordering of courses using Topological Sort</p>
+</header>
+
+<section>
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+        There are <b>numCourses</b> courses labeled from
+        <b>0</b> to <b>numCourses - 1</b>.
+
+        <br><br>
+
+        <code>prerequisites[i] = [a, b]</code> means that
+        <b>course b must be completed before course a</b>.
+
+        <br><br>
+
+        Return an ordering of courses that allows you to finish all courses.
+        If it is impossible because of a cycle, return an empty array.
+    </div>
+
+    <div class="example-box">
+        <b>Example:</b><br><br>
+        numCourses = 4<br>
+        prerequisites = [[1,0], [2,0], [3,1], [3,2]]
+        <br><br>
+        One valid answer is:
+        <b>[0, 1, 2, 3]</b>
+    </div>
+</section>
+
+<section>
+    <h2>2. Input</h2>
+
+    <div class="input-grid">
+        <label for="numCourses">Number of Courses:</label>
+        <input type="number" id="numCourses" value="4" min="1">
+
+        <label for="prerequisites">Prerequisites:</label>
+        <input
+            type="text"
+            id="prerequisites"
+            value="[[1,0],[2,0],[3,1],[3,2]]"
+        >
+    </div>
+
+    <p>
+        Format:
+        <code>[[course, prerequisite], ...]</code>
+    </p>
+
+    <button id="startBtn">Start Algorithm</button>
+    <button id="nextBtn" disabled>Next Step</button>
+    <button id="autoBtn" disabled>Auto Run</button>
+    <button id="resetBtn">Reset</button>
+
+    <div class="status" id="status">
+        Enter the input and click <b>Start Algorithm</b>.
+    </div>
+</section>
+
+<section>
+    <h2>3. Algorithm Dashboard</h2>
+
+    <div class="dashboard">
+        <div class="card">
+            <span>Courses</span>
+            <strong id="courseCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Processed</span>
+            <strong id="processedCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Queue Size</span>
+            <strong id="queueCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Current Course</span>
+            <strong id="currentCourse">-</strong>
+        </div>
+    </div>
+
+    <div class="queue-box">
+        <b>Ready Queue (indegree = 0):</b>
+        <div id="queueDisplay">Empty</div>
+    </div>
+
+    <div class="order-box" id="orderBox">
+        <b>Course Ordering:</b>
+        <div id="orderDisplay">No courses processed yet.</div>
+    </div>
+</section>
+
+<section>
+    <h2>4. Graph Visualization</h2>
+
+    <div class="graph-container">
+        <div class="graph" id="graph">
+            <svg id="svg"></svg>
+        </div>
+    </div>
+
+    <div class="legend">
+        <span class="legend-current">Current Course</span>
+        <span class="legend-processed">Processed</span>
+        <span class="legend-queued">In Queue</span>
+        <span class="legend-cycle">Cycle / Remaining</span>
+    </div>
+</section>
+
+<section>
+    <h2>5. How the Algorithm Works</h2>
+
+    <ol>
+        <li>Create a directed graph from the prerequisite pairs.</li>
+        <li>Calculate the <b>indegree</b> of every course.</li>
+        <li>Courses with indegree 0 have no remaining prerequisites.</li>
+        <li>Put all indegree-0 courses into a queue.</li>
+        <li>Remove one course from the queue.</li>
+        <li>Add it to the final course ordering.</li>
+        <li>Remove its outgoing edges by decreasing the indegree of its dependent courses.</li>
+        <li>If a dependent course reaches indegree 0, add it to the queue.</li>
+        <li>Repeat until the queue becomes empty.</li>
+        <li>If all courses were processed, the ordering is valid.</li>
+        <li>If some courses remain, a cycle exists and no valid ordering is possible.</li>
+    </ol>
+</section>
+
+<section>
+    <h2>6. Pseudocode</h2>
+
+<pre><code>CourseSchedule(numCourses, prerequisites):
+
+    graph = adjacency list
+    indegree = array of size numCourses initialized to 0
+
+    for [course, prerequisite] in prerequisites:
+        graph[prerequisite].append(course)
+        indegree[course]++
+
+    queue = all courses whose indegree is 0
+    order = []
+
+    while queue is not empty:
+
+        current = queue.pop()
+
+        order.append(current)
+
+        for nextCourse in graph[current]:
+
+            indegree[nextCourse]--
+
+            if indegree[nextCourse] == 0:
+                queue.push(nextCourse)
+
+    if length(order) == numCourses:
+        return order
+
+    return []</code></pre>
+</section>
+
+<section>
+    <h2>7. Python Implementation</h2>
+
+<h3>Using Kahn's Algorithm (BFS)</h3>
+
+<pre><code>from collections import deque
+
+def find_order(numCourses, prerequisites):
+
+    graph = [[] for _ in range(numCourses)]
+    indegree = [0] * numCourses
+
+    # Build graph
+    for course, prerequisite in prerequisites:
+        graph[prerequisite].append(course)
+        indegree[course] += 1
+
+    # Courses having no prerequisites
+    queue = deque()
+
+    for course in range(numCourses):
+        if indegree[course] == 0:
+            queue.append(course)
+
+    order = []
+
+    # Topological sorting
+    while queue:
+
+        current = queue.popleft()
+        order.append(current)
+
+        for next_course in graph[current]:
+
+            indegree[next_course] -= 1
+
+            if indegree[next_course] == 0:
+                queue.append(next_course)
+
+    # Cycle detected
+    if len(order) != numCourses:
+        return []
+
+    return order
+
+
+# Example
+numCourses = 4
+prerequisites = [
+    [1, 0],
+    [2, 0],
+    [3, 1],
+    [3, 2]
+]
+
+print(find_order(numCourses, prerequisites))</code></pre>
+
+<h3>Possible Output</h3>
+
+<pre><code>[0, 1, 2, 3]</code></pre>
+
+<p>
+There can be more than one correct ordering. For example,
+<code>[0, 2, 1, 3]</code> is also valid for the same prerequisites.
+</p>
+</section>
+
+<section>
+    <h2>8. Cycle Example</h2>
+
+    <div class="example-box">
+        Consider:
+        <br><br>
+
+        <code>
+        numCourses = 3<br>
+        prerequisites = [[1,0],[2,1],[0,2]]
+        </code>
+
+        <br><br>
+
+        Dependencies are:
+
+        <br><br>
+
+        <b>0 → 1 → 2 → 0</b>
+
+        <br><br>
+
+        This creates a cycle. No course can be selected as the first
+        course because every course has a prerequisite.
+
+        Therefore:
+
+        <br><br>
+
+        <code>[]</code>
+    </div>
+</section>
+
+<section>
+    <h2>9. Complexity Analysis</h2>
+
+    <div class="complexity">
+        <div>
+            <h3>Time Complexity</h3>
+            <p>
+                <b>O(V + E)</b>
+            </p>
+            <p>
+                V = number of courses<br>
+                E = number of prerequisite relationships
+            </p>
+        </div>
+
+        <div>
+            <h3>Space Complexity</h3>
+            <p>
+                <b>O(V + E)</b>
+            </p>
+            <p>
+                Graph, indegree array, queue and result array require
+                additional memory.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>10. Important Observations</h2>
+
+    <ul>
+        <li>A prerequisite relationship forms a <b>directed edge</b>.</li>
+        <li><code>[a,b]</code> means <b>b → a</b>.</li>
+        <li>Indegree represents the number of prerequisites still remaining.</li>
+        <li>An indegree of 0 means the course is currently available.</li>
+        <li>A valid course schedule is a <b>topological ordering</b>.</li>
+        <li>A directed cycle makes it impossible to finish all courses.</li>
+        <li>There may be multiple valid course orderings.</li>
+    </ul>
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* ==============================
+   Global State
+   ============================== */
+
+let numCourses = 0;
+let prerequisites = [];
+let graph = [];
+let indegree = [];
+let queue = [];
+let order = [];
+
+let initialized = false;
+let finished = false;
+let autoTimer = null;
+let currentCourse = -1;
+
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const statusBox = document.getElementById("status");
+const courseCount = document.getElementById("courseCount");
+const processedCount = document.getElementById("processedCount");
+const queueCount = document.getElementById("queueCount");
+const currentCourseBox = document.getElementById("currentCourse");
+
+const queueDisplay = document.getElementById("queueDisplay");
+const orderDisplay = document.getElementById("orderDisplay");
+const orderBox = document.getElementById("orderBox");
+
+const graphElement = document.getElementById("graph");
+const svg = document.getElementById("svg");
+
+
+/* ==============================
+   Parse Input
+   ============================== */
+
+function parseInput() {
+
+    numCourses = parseInt(
+        document.getElementById("numCourses").value,
+        10
+    );
+
+    const textInput =
+        document.getElementById("prerequisites").value.trim();
+
+    if (!Number.isInteger(numCourses) || numCourses <= 0) {
+        throw new Error("Number of courses must be a positive integer.");
+    }
+
+    prerequisites = textInput ? JSON.parse(textInput) : [];
+
+    if (!Array.isArray(prerequisites)) {
+        throw new Error("Prerequisites must be a 2D array.");
+    }
+
+    for (const pair of prerequisites) {
+
+        if (!Array.isArray(pair) || pair.length !== 2) {
+            throw new Error(
+                "Each prerequisite must contain exactly two course numbers."
+            );
+        }
+
+        const a = pair[0];
+        const b = pair[1];
+
+        if (
+            !Number.isInteger(a) ||
+            !Number.isInteger(b) ||
+            a < 0 ||
+            a >= numCourses ||
+            b < 0 ||
+            b >= numCourses
+        ) {
+            throw new Error(
+                "Course numbers must be between 0 and numCourses - 1."
+            );
+        }
+    }
+}
+
+
+/* ==============================
+   Build Graph
+   ============================== */
+
+function buildGraph() {
+
+    graph = Array.from(
+        { length: numCourses },
+        () => []
+    );
+
+    indegree = Array(numCourses).fill(0);
+
+    for (const [course, prerequisite] of prerequisites) {
+
+        graph[prerequisite].push(course);
+        indegree[course]++;
+    }
+
+    queue = [];
+
+    for (let i = 0; i < numCourses; i++) {
+
+        if (indegree[i] === 0) {
+            queue.push(i);
+        }
+    }
+
+    order = [];
+    currentCourse = -1;
+}
+
+
+/* ==============================
+   Draw Graph
+   ============================== */
+
+function drawGraph() {
+
+    graphElement.querySelectorAll(".node").forEach(
+        node => node.remove()
+    );
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+
+    const defs = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "defs"
+    );
+
+    const marker = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "marker"
+    );
+
+    marker.setAttribute("id", "arrow");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "10");
+    marker.setAttribute("refX", "9");
+    marker.setAttribute("refY", "3");
+    marker.setAttribute("orient", "auto");
+
+    const polygon = document.createElementNS(
+        "http://www.w3.org/2000/svg",
+        "polygon"
+    );
+
+    polygon.setAttribute(
+        "points",
+        "0 0, 10 3, 0 6"
+    );
+
+    polygon.setAttribute(
+        "fill",
+        "#64748b"
+    );
+
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    const positions = calculatePositions();
+
+    /* Draw edges first */
+    prerequisites.forEach(([course, prerequisite]) => {
+
+        const p1 = positions[prerequisite];
+        const p2 = positions[course];
+
+        if (!p1 || !p2) return;
+
+        const line = document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "line"
+        );
+
+        line.setAttribute("x1", p1.x + 27);
+        line.setAttribute("y1", p1.y + 27);
+        line.setAttribute("x2", p2.x + 27);
+        line.setAttribute("y2", p2.y + 27);
+        line.setAttribute("class", "edge");
+
+        svg.appendChild(line);
+    });
+
+    /* Draw nodes */
+    for (let i = 0; i < numCourses; i++) {
+
+        const node = document.createElement("div");
+
+        node.className = "node";
+        node.textContent = i;
+
+        node.style.left = positions[i].x + "px";
+        node.style.top = positions[i].y + "px";
+
+        graphElement.appendChild(node);
+    }
+
+    updateNodeStyles();
+}
+
+
+/* ==============================
+   Calculate Node Positions
+   ============================== */
+
+function calculatePositions() {
+
+    const positions = {};
+
+    const width = Math.max(
+        800,
+        numCourses * 120
+    );
+
+    graphElement.style.minWidth = width + "px";
+
+    const rows = Math.ceil(numCourses / 5);
+
+    graphElement.style.minHeight =
+        Math.max(330, rows * 100 + 100) + "px";
+
+    for (let i = 0; i < numCourses; i++) {
+
+        const row = Math.floor(i / 5);
+        const col = i % 5;
+
+        positions[i] = {
+            x: 80 + col * 145,
+            y: 60 + row * 100
+        };
+    }
+
+    return positions;
+}
+
+
+/* ==============================
+   Update Node Styles
+   ============================== */
+
+function updateNodeStyles() {
+
+    const nodes =
+        graphElement.querySelectorAll(".node");
+
+    nodes.forEach((node, index) => {
+
+        node.classList.remove(
+            "current",
+            "processed",
+            "queued",
+            "cycle"
+        );
+
+        if (index === currentCourse) {
+            node.classList.add("current");
+        }
+        else if (order.includes(index)) {
+            node.classList.add("processed");
+        }
+        else if (queue.includes(index)) {
+            node.classList.add("queued");
+        }
+        else if (finished && !order.includes(index)) {
+            node.classList.add("cycle");
+        }
+    });
+}
+
+
+/* ==============================
+   Update Dashboard
+   ============================== */
+
+function updateDashboard() {
+
+    courseCount.textContent = numCourses;
+    processedCount.textContent = order.length;
+    queueCount.textContent = queue.length;
+
+    currentCourseBox.textContent =
+        currentCourse === -1
+            ? "-"
+            : currentCourse;
+
+    if (queue.length === 0) {
+
+        queueDisplay.textContent = "Empty";
+
+    } else {
+
+        queueDisplay.innerHTML = "";
+
+        queue.forEach(course => {
+
+            const item = document.createElement("span");
+
+            item.className = "queue-item";
+            item.textContent = course;
+
+            queueDisplay.appendChild(item);
+        });
+    }
+
+    if (order.length === 0) {
+
+        orderDisplay.textContent =
+            "No courses processed yet.";
+
+    } else {
+
+        orderDisplay.innerHTML = "";
+
+        order.forEach(course => {
+
+            const item = document.createElement("span");
+
+            item.className = "order-item";
+            item.textContent = course;
+
+            orderDisplay.appendChild(item);
+        });
+    }
+
+    updateNodeStyles();
+}
+
+
+/* ==============================
+   Start Algorithm
+   ============================== */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    try {
+
+        parseInput();
+        buildGraph();
+
+        initialized = true;
+        finished = false;
+
+        nextBtn.disabled = false;
+        autoBtn.disabled = false;
+
+        orderBox.classList.remove("failure");
+
+        drawGraph();
+        updateDashboard();
+
+        if (queue.length === 0) {
+
+            statusBox.textContent =
+                "No course has indegree 0. The prerequisite graph contains a cycle.";
+
+        } else {
+
+            statusBox.textContent =
+                "Algorithm started. Courses in the queue have no remaining prerequisites.";
+        }
+
+    } catch (error) {
+
+        initialized = false;
+
+        nextBtn.disabled = true;
+        autoBtn.disabled = true;
+
+        statusBox.textContent =
+            "Input Error: " + error.message;
+    }
+}
+
+
+/* ==============================
+   Next Step
+   ============================== */
+
+function nextStep() {
+
+    if (!initialized || finished) {
+        return;
+    }
+
+    if (queue.length === 0) {
+
+        finishAlgorithm();
+        return;
+    }
+
+    currentCourse = queue.shift();
+
+    order.push(currentCourse);
+
+    statusBox.textContent =
+        "Processing Course " +
+        currentCourse +
+        ". Its dependent courses will have their indegree reduced.";
+
+    for (const nextCourse of graph[currentCourse]) {
+
+        indegree[nextCourse]--;
+
+        if (indegree[nextCourse] === 0) {
+
+            queue.push(nextCourse);
+
+            statusBox.textContent =
+                "Course " +
+                currentCourse +
+                " completed. Course " +
+                nextCourse +
+                " now has no remaining prerequisites.";
+        }
+    }
+
+    updateDashboard();
+
+    if (order.length === numCourses) {
+
+        finishAlgorithm();
+    }
+}
+
+
+/* ==============================
+   Finish
+   ============================== */
+
+function finishAlgorithm() {
+
+    finished = true;
+    currentCourse = -1;
+
+    stopAuto();
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    updateDashboard();
+
+    if (order.length === numCourses) {
+
+        orderBox.classList.remove("failure");
+
+        statusBox.textContent =
+            "Success! All courses can be completed. Valid ordering found: [" +
+            order.join(", ") +
+            "]";
+
+    } else {
+
+        orderBox.classList.add("failure");
+
+        statusBox.textContent =
+            "Impossible! A cycle exists. Only " +
+            order.length +
+            " of " +
+            numCourses +
+            " courses could be processed. Return [].";
+    }
+}
+
+
+/* ==============================
+   Auto Run
+   ============================== */
+
+function autoRun() {
+
+    if (!initialized || finished) {
+        return;
+    }
+
+    stopAuto();
+
+    autoTimer = setInterval(() => {
+
+        if (finished) {
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+}
+
+
+/* ==============================
+   Stop Auto Run
+   ============================== */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* ==============================
+   Reset
+   ============================== */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    initialized = false;
+    finished = false;
+
+    numCourses = 0;
+    prerequisites = [];
+    graph = [];
+    indegree = [];
+    queue = [];
+    order = [];
+
+    currentCourse = -1;
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    courseCount.textContent = "0";
+    processedCount.textContent = "0";
+    queueCount.textContent = "0";
+    currentCourseBox.textContent = "-";
+
+    queueDisplay.textContent = "Empty";
+    orderDisplay.textContent =
+        "No courses processed yet.";
+
+    statusBox.textContent =
+        "Enter the input and click Start Algorithm.";
+
+    orderBox.classList.remove("failure");
+
+    graphElement
+        .querySelectorAll(".node")
+        .forEach(node => node.remove());
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+}
+
+
+/* ==============================
+   Event Listeners
+   ============================== */
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+</script>
+
+</body>
+</html>

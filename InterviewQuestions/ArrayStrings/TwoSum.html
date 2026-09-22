@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Two Sum II - Two Pointer Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        text-align: center;
+        padding: 30px 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 34px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1200px;
+        margin: 25px auto;
+    }
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        color: #1e3a8a;
+        margin-top: 0;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        padding: 11px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+        width: 250px;
+    }
+
+    button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    button.secondary {
+        background: #64748b;
+    }
+
+    button.secondary:hover {
+        background: #475569;
+    }
+
+    .array-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 30px 0;
+    }
+
+    .array-item {
+        width: 75px;
+        height: 85px;
+        border: 3px solid #94a3b8;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        background: #f8fafc;
+        position: relative;
+        transition: all 0.4s ease;
+    }
+
+    .array-item .index {
+        font-size: 13px;
+        color: #64748b;
+        margin-bottom: 4px;
+    }
+
+    .array-item .value {
+        font-size: 22px;
+        font-weight: bold;
+    }
+
+    .array-item.left {
+        background: #dbeafe;
+        border-color: #2563eb;
+        transform: translateY(-8px);
+    }
+
+    .array-item.right {
+        background: #fef3c7;
+        border-color: #d97706;
+        transform: translateY(-8px);
+    }
+
+    .array-item.found {
+        background: #dcfce7;
+        border-color: #16a34a;
+        transform: translateY(-12px) scale(1.05);
+    }
+
+    .pointer-labels {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 10px 0 20px;
+        font-weight: bold;
+    }
+
+    .left-label {
+        color: #2563eb;
+    }
+
+    .right-label {
+        color: #d97706;
+    }
+
+    .status {
+        padding: 15px;
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        border-radius: 6px;
+        font-size: 17px;
+        margin-top: 20px;
+    }
+
+    .success {
+        background: #dcfce7;
+        border-left-color: #16a34a;
+        color: #166534;
+    }
+
+    .warning {
+        background: #fef3c7;
+        border-left-color: #d97706;
+        color: #92400e;
+    }
+
+    .error {
+        background: #fee2e2;
+        border-left-color: #dc2626;
+        color: #991b1b;
+    }
+
+    .step-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 10px;
+        padding: 15px;
+        margin-top: 15px;
+    }
+
+    .step-number {
+        display: inline-block;
+        background: #2563eb;
+        color: white;
+        padding: 3px 9px;
+        border-radius: 15px;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+
+    pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, "Courier New", monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity-box {
+        padding: 20px;
+        border-radius: 10px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+    }
+
+    .complexity-box h3 {
+        color: #1e3a8a;
+        margin-top: 0;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        padding: 15px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 20px;
+        font-weight: bold;
+        margin: 15px 0;
+    }
+
+    .legend {
+        display: flex;
+        justify-content: center;
+        gap: 25px;
+        flex-wrap: wrap;
+        margin: 20px 0;
+    }
+
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .legend-box {
+        width: 22px;
+        height: 22px;
+        border-radius: 5px;
+        border: 2px solid;
+    }
+
+    .legend-left {
+        background: #dbeafe;
+        border-color: #2563eb;
+    }
+
+    .legend-right {
+        background: #fef3c7;
+        border-color: #d97706;
+    }
+
+    .legend-found {
+        background: #dcfce7;
+        border-color: #16a34a;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 12px;
+        text-align: center;
+    }
+
+    th {
+        background: #1e3a8a;
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    footer {
+        background: #1e293b;
+        color: white;
+        text-align: center;
+        padding: 20px;
+        margin-top: 30px;
+    }
+
+    @media(max-width: 600px) {
+        header h1 {
+            font-size: 25px;
+        }
+
+        .array-item {
+            width: 60px;
+            height: 70px;
+        }
+
+        input {
+            width: 100%;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>Two Sum II – Two Pointer Algorithm</h1>
+    <p>Find two numbers in a 1-indexed, sorted array that add up to a target</p>
+</header>
+
+<div class="container">
+
+```
+<!-- Problem -->
+<div class="card">
+    <h2>1. Problem Statement</h2>
+
+    <p>
+        Given a <strong>1-indexed, sorted array</strong> of integers
+        <strong>numbers</strong>, find two numbers such that they add up
+        to a specific <strong>target</strong>.
+    </p>
+
+    <p>
+        Return the indices of the two numbers as:
+    </p>
+
+    <div class="formula">
+        [index1, index2]
+    </div>
+
+    <p>
+        The array is sorted in non-decreasing order and the indices are
+        <strong>1-indexed</strong>, meaning the first element has index 1.
+    </p>
+</div>
+
+<!-- Example -->
+<div class="card">
+    <h2>2. Example</h2>
+
+    <p><strong>Input:</strong></p>
+
+    <pre><code>numbers = [2, 7, 11, 15]
+```
+
+target = 9</code></pre>
+
+```
+    <p><strong>Output:</strong></p>
+
+    <pre><code>[1, 2]</code></pre>
+
+    <p>
+        Because:
+    </p>
+
+    <div class="formula">
+        numbers[1] + numbers[2] = 2 + 7 = 9
+    </div>
+</div>
+
+<!-- Visualizer -->
+<div class="card">
+    <h2>3. Interactive Visual Representation</h2>
+
+    <div class="controls">
+        <label for="arrayInput">Sorted Array:</label>
+        <input
+            id="arrayInput"
+            type="text"
+            value="2,7,11,15"
+            placeholder="Example: 2,7,11,15"
+        >
+
+        <label for="targetInput">Target:</label>
+        <input
+            id="targetInput"
+            type="number"
+            value="9"
+        >
+
+        <button onclick="startAlgorithm()">Start</button>
+        <button onclick="nextStep()">Next Step</button>
+        <button class="secondary" onclick="resetVisualizer()">Reset</button>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item">
+            <div class="legend-box legend-left"></div>
+            Left Pointer
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-right"></div>
+            Right Pointer
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-found"></div>
+            Found Pair
+        </div>
+    </div>
+
+    <div id="arrayContainer" class="array-container"></div>
+
+    <div id="pointerLabels" class="pointer-labels"></div>
+
+    <div id="status" class="status">
+        Enter a sorted array and target, then click <strong>Start</strong>.
+    </div>
+
+    <div id="stepBox" class="step-box">
+        <strong>Algorithm Steps:</strong>
+        <div id="steps">
+            Waiting to start...
+        </div>
+    </div>
+</div>
+
+<!-- Algorithm -->
+<div class="card">
+    <h2>4. Two Pointer Approach</h2>
+
+    <p>
+        Since the array is already sorted, we can use two pointers:
+    </p>
+
+    <ul>
+        <li><strong>Left</strong> starts at the first element.</li>
+        <li><strong>Right</strong> starts at the last element.</li>
+        <li>Calculate <strong>sum = numbers[left] + numbers[right]</strong>.</li>
+    </ul>
+
+    <p>If the sum is:</p>
+
+    <table>
+        <tr>
+            <th>Condition</th>
+            <th>Action</th>
+            <th>Reason</th>
+        </tr>
+
+        <tr>
+            <td>sum == target</td>
+            <td>Return the two indices</td>
+            <td>Required pair is found</td>
+        </tr>
+
+        <tr>
+            <td>sum &lt; target</td>
+            <td>Move left forward</td>
+            <td>Need a larger value</td>
+        </tr>
+
+        <tr>
+            <td>sum &gt; target</td>
+            <td>Move right backward</td>
+            <td>Need a smaller value</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Pseudocode -->
+<div class="card">
+    <h2>5. Pseudocode</h2>
+
+    <pre><code>TwoSum(numbers, target)
+
+left  ← 0
+right ← length(numbers) - 1
+
+while left &lt; right
+
+    sum ← numbers[left] + numbers[right]
+
+    if sum = target
+        return [left + 1, right + 1]
+
+    else if sum &lt; target
+        left ← left + 1
+
+    else
+        right ← right - 1
+
+return [-1, -1]</code></pre>
+
+    <p>
+        <strong>Note:</strong> We add 1 to the indices because the problem
+        uses <strong>1-based indexing</strong>.
+    </p>
+</div>
+
+<!-- Python -->
+<div class="card">
+    <h2>6. Python Implementation</h2>
+
+    <pre><code>def two_sum(numbers, target):
+left = 0
+right = len(numbers) - 1
+
+while left &lt; right:
+    current_sum = numbers[left] + numbers[right]
+
+    if current_sum == target:
+        return [left + 1, right + 1]
+
+    elif current_sum &lt; target:
+        left += 1
+
+    else:
+        right -= 1
+
+return [-1, -1]
+```
+
+# Example
+
+numbers = [2, 7, 11, 15]
+target = 9
+
+result = two_sum(numbers, target)
+
+print("Result:", result)</code></pre>
+
+```
+    <p><strong>Output:</strong></p>
+
+    <pre><code>Result: [1, 2]</code></pre>
+</div>
+
+<!-- Detailed Walkthrough -->
+<div class="card">
+    <h2>7. Step-by-Step Example</h2>
+
+    <table>
+        <tr>
+            <th>Step</th>
+            <th>Left</th>
+            <th>Right</th>
+            <th>Values</th>
+            <th>Sum</th>
+            <th>Action</th>
+        </tr>
+
+        <tr>
+            <td>1</td>
+            <td>1</td>
+            <td>4</td>
+            <td>2 + 15</td>
+            <td>17</td>
+            <td>17 &gt; 9 → Move Right</td>
+        </tr>
+
+        <tr>
+            <td>2</td>
+            <td>1</td>
+            <td>3</td>
+            <td>2 + 11</td>
+            <td>13</td>
+            <td>13 &gt; 9 → Move Right</td>
+        </tr>
+
+        <tr>
+            <td>3</td>
+            <td>1</td>
+            <td>2</td>
+            <td>2 + 7</td>
+            <td>9</td>
+            <td>9 = 9 → Pair Found</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Explanation -->
+<div class="card">
+    <h2>8. Why Does the Two-Pointer Method Work?</h2>
+
+    <p>
+        The array is sorted. Therefore, when the current sum is too large,
+        moving the <strong>right pointer to the left</strong> decreases
+        the sum.
+    </p>
+
+    <p>
+        Similarly, when the current sum is too small, moving the
+        <strong>left pointer to the right</strong> increases the sum.
+    </p>
+
+    <p>
+        This allows us to eliminate many possible pairs without checking
+        every combination.
+    </p>
+
+    <div class="formula">
+        O(n²) brute force → O(n) two pointers
+    </div>
+</div>
+
+<!-- Complexity -->
+<div class="card">
+    <h2>9. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-box">
+            <h3>Time Complexity</h3>
+            <p>
+                <strong>O(n)</strong>
+            </p>
+            <p>
+                Each pointer moves at most n positions.
+            </p>
+        </div>
+
+        <div class="complexity-box">
+            <h3>Space Complexity</h3>
+            <p>
+                <strong>O(1)</strong>
+            </p>
+            <p>
+                Only two pointer variables are required.
+            </p>
+        </div>
+
+        <div class="complexity-box">
+            <h3>Array Requirement</h3>
+            <p>
+                The array must be sorted.
+            </p>
+        </div>
+
+    </div>
+</div>
+
+<!-- Comparison -->
+<div class="card">
+    <h2>10. Brute Force vs Two Pointer</h2>
+
+    <table>
+        <tr>
+            <th>Method</th>
+            <th>Time</th>
+            <th>Space</th>
+            <th>Requirement</th>
+        </tr>
+
+        <tr>
+            <td>Brute Force</td>
+            <td>O(n²)</td>
+            <td>O(1)</td>
+            <td>Works on unsorted arrays</td>
+        </tr>
+
+        <tr>
+            <td>Hash Table</td>
+            <td>O(n)</td>
+            <td>O(n)</td>
+            <td>Does not require sorting</td>
+        </tr>
+
+        <tr>
+            <td>Two Pointers</td>
+            <td><strong>O(n)</strong></td>
+            <td><strong>O(1)</strong></td>
+            <td>Array must be sorted</td>
+        </tr>
+    </table>
+</div>
+
+<!-- Applications -->
+<div class="card">
+    <h2>11. Applications</h2>
+
+    <ul>
+        <li>Finding pairs with a specific sum</li>
+        <li>Searching in sorted arrays</li>
+        <li>Two Sum and related coding problems</li>
+        <li>Pair matching problems</li>
+        <li>Efficient searching algorithms</li>
+        <li>Foundation for three-sum and four-sum algorithms</li>
+    </ul>
+</div>
+```
+
+</div>
+
+<footer>
+    <p><strong>Data Structures & Algorithms</strong></p>
+    <p>Two Sum II – Two Pointer Visualization</p>
+</footer>
+
+<script>
+
+let numbers = [];
+let target = 0;
+let left = 0;
+let right = 0;
+let running = false;
+let finished = false;
+let stepCount = 0;
+
+function parseInput() {
+
+    const input = document.getElementById("arrayInput").value;
+
+    numbers = input
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => !Number.isNaN(x));
+
+    target = Number(document.getElementById("targetInput").value);
+
+    return numbers.length >= 2;
+}
+
+
+function renderArray() {
+
+    const container = document.getElementById("arrayContainer");
+
+    container.innerHTML = "";
+
+    numbers.forEach((value, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "array-item";
+
+        if (running && index === left) {
+            item.classList.add("left");
+        }
+
+        if (running && index === right) {
+            item.classList.add("right");
+        }
+
+        item.innerHTML = `
+            <div class="index">Index ${index + 1}</div>
+            <div class="value">${value}</div>
+        `;
+
+        container.appendChild(item);
+    });
+
+    const labels = document.getElementById("pointerLabels");
+
+    if (running && !finished) {
+
+        labels.innerHTML = `
+            <span class="left-label">
+                ← Left = ${left + 1}
+            </span>
+
+            <span class="right-label">
+                Right = ${right + 1} →
+            </span>
+        `;
+
+    } else {
+
+        labels.innerHTML = "";
+    }
+}
+
+
+function startAlgorithm() {
+
+    if (!parseInput()) {
+
+        document.getElementById("status").className = "status error";
+
+        document.getElementById("status").innerHTML =
+            "Please enter at least two valid numbers.";
+
+        return;
+    }
+
+    // Check sorted order
+    for (let i = 1; i < numbers.length; i++) {
+
+        if (numbers[i] < numbers[i - 1]) {
+
+            document.getElementById("status").className =
+                "status error";
+
+            document.getElementById("status").innerHTML =
+                "The array must be sorted in non-decreasing order.";
+
+            return;
+        }
+    }
+
+    left = 0;
+    right = numbers.length - 1;
+
+    running = true;
+    finished = false;
+    stepCount = 0;
+
+    document.getElementById("status").className = "status";
+
+    document.getElementById("status").innerHTML =
+        `Algorithm started. Target = <strong>${target}</strong>.`;
+
+    document.getElementById("steps").innerHTML =
+        "Click <strong>Next Step</strong> to execute the next comparison.";
+
+    renderArray();
+}
+
+
+function nextStep() {
+
+    if (!running) {
+
+        document.getElementById("status").className = "status warning";
+
+        document.getElementById("status").innerHTML =
+            "Click <strong>Start</strong> first.";
+
+        return;
+    }
+
+    if (finished) {
+        return;
+    }
+
+    if (left >= right) {
+
+        finished = true;
+        running = false;
+
+        document.getElementById("status").className =
+            "status error";
+
+        document.getElementById("status").innerHTML =
+            "No pair was found for the given target.";
+
+        document.getElementById("steps").innerHTML += `
+            <br>
+            <strong>Algorithm completed.</strong>
+        `;
+
+        renderArray();
+
+        return;
+    }
+
+    stepCount++;
+
+    const sum = numbers[left] + numbers[right];
+
+    let action = "";
+
+    if (sum === target) {
+
+        finished = true;
+        running = false;
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerHTML =
+            `Pair found! <strong>${numbers[left]}</strong> +
+             <strong>${numbers[right]}</strong> =
+             <strong>${target}</strong>.
+             Answer = [${left + 1}, ${right + 1}]`;
+
+        const items =
+            document.querySelectorAll(".array-item");
+
+        if (items[left]) {
+            items[left].classList.remove("left");
+            items[left].classList.add("found");
+        }
+
+        if (items[right]) {
+            items[right].classList.remove("right");
+            items[right].classList.add("found");
+        }
+
+        action =
+            `Sum equals target. Pair found at 1-indexed positions
+             [${left + 1}, ${right + 1}].`;
+
+    }
+
+    else if (sum < target) {
+
+        action =
+            `${numbers[left]} + ${numbers[right]} = ${sum}.
+             Since ${sum} &lt; ${target}, move Left one position right.`;
+
+        left++;
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `Current Sum = <strong>${sum}</strong>.
+             Sum is smaller than target, so Left moves right.`;
+    }
+
+    else {
+
+        action =
+            `${numbers[left]} + ${numbers[right]} = ${sum}.
+             Since ${sum} &gt; ${target}, move Right one position left.`;
+
+        right--;
+
+        document.getElementById("status").className =
+            "status";
+
+        document.getElementById("status").innerHTML =
+            `Current Sum = <strong>${sum}</strong>.
+             Sum is larger than target, so Right moves left.`;
+    }
+
+    document.getElementById("steps").innerHTML += `
+        <div style="margin-top:10px;">
+            <span class="step-number">${stepCount}</span>
+            ${action}
+        </div>
+    `;
+
+    renderArray();
+}
+
+
+function resetVisualizer() {
+
+    numbers = [];
+    target = 0;
+    left = 0;
+    right = 0;
+    running = false;
+    finished = false;
+    stepCount = 0;
+
+    document.getElementById("arrayContainer").innerHTML = "";
+
+    document.getElementById("pointerLabels").innerHTML = "";
+
+    document.getElementById("status").className =
+        "status";
+
+    document.getElementById("status").innerHTML =
+        "Enter a sorted array and target, then click <strong>Start</strong>.";
+
+    document.getElementById("steps").innerHTML =
+        "Waiting to start...";
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Subarray Sum Equals K - Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 1250px;
+        margin: 25px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 14px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    .section {
+        background: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        color: #1d4ed8;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    .input-row {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+        padding: 10px 12px;
+        border: 2px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 16px;
+        min-width: 250px;
+    }
+
+    input[type="number"] {
+        min-width: 100px;
+        width: 120px;
+    }
+
+    button {
+        padding: 11px 18px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        margin: 5px;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        transform: translateY(-1px);
+        opacity: 0.9;
+    }
+
+    #startBtn {
+        background: #2563eb;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #16a34a;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #9333ea;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    .array-container {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 25px 0;
+        padding: 20px;
+        background: #f8fafc;
+        border-radius: 10px;
+        min-height: 100px;
+        align-items: center;
+    }
+
+    .array-item {
+        width: 65px;
+        height: 65px;
+        border: 2px solid #64748b;
+        border-radius: 9px;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+    .array-item .index {
+        position: absolute;
+        top: -22px;
+        font-size: 12px;
+        color: #475569;
+    }
+
+    .array-item.current {
+        background: #bfdbfe;
+        border-color: #2563eb;
+        transform: translateY(-6px);
+    }
+
+    .array-item.match {
+        background: #bbf7d0;
+        border-color: #16a34a;
+        transform: translateY(-6px);
+    }
+
+    .array-item.prefix {
+        background: #fef3c7;
+        border-color: #d97706;
+    }
+
+    .pointer {
+        font-size: 12px;
+        color: #dc2626;
+        margin-top: 4px;
+    }
+
+    .status {
+        padding: 16px;
+        border-radius: 8px;
+        margin-top: 15px;
+        line-height: 1.6;
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .status.success {
+        background: #f0fdf4;
+        border-left-color: #16a34a;
+    }
+
+    .status.warning {
+        background: #fffbeb;
+        border-left-color: #d97706;
+    }
+
+    .status.failure {
+        background: #fef2f2;
+        border-left-color: #dc2626;
+    }
+
+    .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .result-card {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+        border: 1px solid #e2e8f0;
+    }
+
+    .result-card .number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2563eb;
+    }
+
+    .result-card .label {
+        margin-top: 5px;
+        color: #64748b;
+    }
+
+    .map-container {
+        overflow-x: auto;
+        margin-top: 20px;
+    }
+
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 500px;
+    }
+
+    th, td {
+        border: 1px solid #cbd5e1;
+        padding: 10px;
+        text-align: center;
+    }
+
+    th {
+        background: #dbeafe;
+        color: #1e3a8a;
+    }
+
+    td.highlight {
+        background: #dcfce7;
+        font-weight: bold;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        border-left: 5px solid #2563eb;
+        padding: 18px;
+        margin: 15px 0;
+        font-size: 17px;
+        line-height: 1.7;
+    }
+
+    .code {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.6;
+        font-family: Consolas, monospace;
+        white-space: pre;
+    }
+
+    .step-box {
+        background: #f8fafc;
+        padding: 18px;
+        border-radius: 9px;
+        margin-top: 15px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .step-box strong {
+        color: #1d4ed8;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity div {
+        padding: 18px;
+        border-radius: 9px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+    }
+
+    ul, ol {
+        line-height: 1.8;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        background: #dbeafe;
+        color: #1e40af;
+        font-size: 13px;
+        margin: 3px;
+    }
+
+    @media(max-width: 700px) {
+        header h1 {
+            font-size: 25px;
+        }
+
+        .array-item {
+            width: 55px;
+            height: 55px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Subarray Sum Equals K</h1>
+    <p>
+        Find the total number of continuous subarrays whose sum is equal
+        to a given target <b>k</b>.
+    </p>
+</header>
+
+<!-- Problem -->
+<div class="section">
+
+    <h2>1. Problem Statement</h2>
+
+    <p>
+        Given an array of integers and an integer <b>k</b>, find the total
+        number of continuous subarrays whose sum is exactly equal to
+        <b>k</b>.
+    </p>
+
+    <p><b>Example:</b></p>
+
+    <div class="formula">
+        Array = [1, 2, 3]<br>
+        k = 3<br><br>
+
+        Valid subarrays:<br>
+        [1, 2] → 3<br>
+        [3] → 3<br><br>
+
+        Answer = <b>2</b>
+    </div>
+
+</div>
+
+<!-- Input -->
+<div class="section">
+
+    <h2>2. Enter Input</h2>
+
+    <div class="input-row">
+
+        <label for="arrayInput">Array:</label>
+
+        <input
+            type="text"
+            id="arrayInput"
+            value="1,2,3"
+            placeholder="Example: 1,2,3"
+        >
+
+        <label for="targetInput">Target k:</label>
+
+        <input
+            type="number"
+            id="targetInput"
+            value="3"
+        >
+
+    </div>
+
+    <button id="startBtn">Start Algorithm</button>
+    <button id="nextBtn">Next Step</button>
+    <button id="autoBtn">Auto Run</button>
+    <button id="resetBtn">Reset</button>
+
+</div>
+
+<!-- Visualization -->
+<div class="section">
+
+    <h2>3. Visual Representation</h2>
+
+    <div id="arrayContainer" class="array-container">
+        Enter an array and click <b>Start Algorithm</b>.
+    </div>
+
+    <div class="result-grid">
+
+        <div class="result-card">
+            <div class="number" id="prefixSumValue">0</div>
+            <div class="label">Current Prefix Sum</div>
+        </div>
+
+        <div class="result-card">
+            <div class="number" id="neededValue">0</div>
+            <div class="label">prefixSum - k</div>
+        </div>
+
+        <div class="result-card">
+            <div class="number" id="countValue">0</div>
+            <div class="label">Subarray Count</div>
+        </div>
+
+        <div class="result-card">
+            <div class="number" id="indexValue">-</div>
+            <div class="label">Current Index</div>
+        </div>
+
+    </div>
+
+    <div id="status" class="status">
+        Click <b>Start Algorithm</b> to begin.
+    </div>
+
+</div>
+
+<!-- Prefix Map -->
+<div class="section">
+
+    <h2>4. Prefix Sum Frequency Map</h2>
+
+    <p>
+        The algorithm stores the frequency of every prefix sum encountered.
+    </p>
+
+    <div class="map-container">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>Prefix Sum</th>
+                    <th>Frequency</th>
+                </tr>
+            </thead>
+
+            <tbody id="mapBody">
+                <tr>
+                    <td colspan="2">Map is empty</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- Pseudocode -->
+<div class="section">
+
+    <h2>5. Pseudocode</h2>
+
+    <div class="code">FUNCTION subarraySum(nums, k)
+
+    prefixSum = 0
+    count = 0
+
+    create hashmap
+    hashmap[0] = 1
+
+    FOR each number x in nums
+
+        prefixSum = prefixSum + x
+
+        required = prefixSum - k
+
+        IF required exists in hashmap
+            count = count + hashmap[required]
+
+        hashmap[prefixSum] =
+            hashmap[prefixSum] + 1
+
+    RETURN count
+
+END FUNCTION</div>
+
+</div>
+
+<!-- Explanation -->
+<div class="section">
+
+    <h2>6. Algorithm Explanation</h2>
+
+    <p>
+        The efficient solution uses the concept of a
+        <b>Prefix Sum</b>.
+    </p>
+
+    <div class="formula">
+
+        <b>Prefix Sum</b> = Sum of all elements from the beginning
+        of the array up to the current position.
+
+        <br><br>
+
+        Suppose the current prefix sum is <b>P</b>.
+        We want a subarray whose sum is <b>k</b>.
+        
+        <br><br>
+
+        Therefore:
+        
+        <br>
+
+        Previous Prefix Sum + k = Current Prefix Sum
+
+        <br><br>
+
+        Previous Prefix Sum = Current Prefix Sum - k
+
+        <br><br>
+
+        Therefore, we search the hash map for:
+
+        <br>
+
+        <b>P - k</b>
+
+    </div>
+
+    <p>
+        If <b>P - k</b> has occurred before, every occurrence gives us
+        one continuous subarray whose sum is exactly <b>k</b>.
+    </p>
+
+</div>
+
+<!-- Step Example -->
+<div class="section">
+
+    <h2>7. Step-by-Step Example</h2>
+
+    <p>
+        Consider:
+    </p>
+
+    <div class="formula">
+        nums = [1, 2, 3]<br>
+        k = 3
+    </div>
+
+    <div class="step-box">
+        <strong>Initial:</strong><br>
+        prefixSum = 0<br>
+        count = 0<br>
+        Hash Map = {0: 1}
+    </div>
+
+    <div class="step-box">
+        <strong>Step 1: x = 1</strong><br><br>
+        prefixSum = 1<br>
+        required = 1 - 3 = -2<br>
+        -2 is not in the map.<br>
+        Store prefixSum 1.
+    </div>
+
+    <div class="step-box">
+        <strong>Step 2: x = 2</strong><br><br>
+        prefixSum = 3<br>
+        required = 3 - 3 = 0<br>
+        0 exists in the map with frequency 1.<br>
+        Therefore count becomes 1.<br><br>
+        Subarray found: <b>[1, 2]</b>
+    </div>
+
+    <div class="step-box">
+        <strong>Step 3: x = 3</strong><br><br>
+        prefixSum = 6<br>
+        required = 6 - 3 = 3<br>
+        3 exists in the map with frequency 1.<br>
+        Therefore count becomes 2.<br><br>
+        Subarray found: <b>[3]</b>
+    </div>
+
+    <div class="formula">
+        Final Answer = <b>2</b>
+    </div>
+
+</div>
+
+<!-- Python -->
+<div class="section">
+
+    <h2>8. Python Implementation</h2>
+
+    <div class="code">def subarray_sum(nums, k):
+    prefix_sum = 0
+    count = 0
+
+    # prefix_sum : frequency
+    prefix_count = {0: 1}
+
+    for num in nums:
+
+        prefix_sum += num
+
+        required = prefix_sum - k
+
+        if required in prefix_count:
+            count += prefix_count[required]
+
+        prefix_count[prefix_sum] = \
+            prefix_count.get(prefix_sum, 0) + 1
+
+    return count
+
+
+# Example
+nums = [1, 2, 3]
+k = 3
+
+print(subarray_sum(nums, k))</div>
+
+    <p><b>Output:</b></p>
+
+    <div class="formula">
+        2
+    </div>
+
+</div>
+
+<!-- Brute Force -->
+<div class="section">
+
+    <h2>9. Brute Force Approach</h2>
+
+    <p>
+        A simple solution is to consider every possible starting position
+        and calculate the sum of every subarray.
+    </p>
+
+    <div class="code">def subarray_sum_brute_force(nums, k):
+
+    count = 0
+
+    for i in range(len(nums)):
+
+        current_sum = 0
+
+        for j in range(i, len(nums)):
+
+            current_sum += nums[j]
+
+            if current_sum == k:
+                count += 1
+
+    return count</div>
+
+    <p>
+        Although this approach is easy to understand, it takes
+        <b>O(n²)</b> time.
+    </p>
+
+</div>
+
+<!-- Complexity -->
+<div class="section">
+
+    <h2>10. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div>
+            <h3>Time Complexity</h3>
+            <p><b>O(n)</b></p>
+            <p>
+                Each array element is processed once.
+            </p>
+        </div>
+
+        <div>
+            <h3>Space Complexity</h3>
+            <p><b>O(n)</b></p>
+            <p>
+                The hash map can contain up to n different prefix sums.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Important Points -->
+<div class="section">
+
+    <h2>11. Important Points</h2>
+
+    <ul>
+        <li>The array does not need to be sorted.</li>
+        <li>Negative numbers are allowed.</li>
+        <li>Zero values are allowed.</li>
+        <li>The subarray must be continuous.</li>
+        <li>The target can be positive, negative, or zero.</li>
+        <li>Prefix Sum + Hash Map gives an O(n) solution.</li>
+    </ul>
+
+    <div>
+        <span class="badge">Prefix Sum</span>
+        <span class="badge">Hash Map</span>
+        <span class="badge">Array</span>
+        <span class="badge">Continuous Subarray</span>
+        <span class="badge">O(n)</span>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+"use strict";
+
+/* --------------------------------------------------
+   Global Variables
+-------------------------------------------------- */
+
+let nums = [];
+let target = 0;
+
+let currentIndex = -1;
+let prefixSum = 0;
+let count = 0;
+
+let prefixCount = {};
+
+let algorithmStarted = false;
+let algorithmFinished = false;
+
+let autoTimer = null;
+
+
+/* --------------------------------------------------
+   Utility Functions
+-------------------------------------------------- */
+
+function escapeHTML(value) {
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+
+/* --------------------------------------------------
+   Read Input
+-------------------------------------------------- */
+
+function readInput() {
+
+    const text = document
+        .getElementById("arrayInput")
+        .value
+        .trim();
+
+    const parts = text.split(",");
+
+    nums = [];
+
+    for (let part of parts) {
+
+        const value = Number(part.trim());
+
+        if (!Number.isFinite(value)) {
+            throw new Error(
+                "Please enter only valid integers separated by commas."
+            );
+        }
+
+        nums.push(value);
+    }
+
+    if (nums.length === 0) {
+        throw new Error("Please enter at least one number.");
+    }
+
+    target = Number(
+        document.getElementById("targetInput").value
+    );
+
+    if (!Number.isFinite(target)) {
+        throw new Error("Please enter a valid target k.");
+    }
+}
+
+
+/* --------------------------------------------------
+   Start Algorithm
+-------------------------------------------------- */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    try {
+        readInput();
+    }
+    catch (error) {
+        showStatus(
+            escapeHTML(error.message),
+            "failure"
+        );
+        return;
+    }
+
+    currentIndex = -1;
+    prefixSum = 0;
+    count = 0;
+
+    prefixCount = {
+        0: 1
+    };
+
+    algorithmStarted = true;
+    algorithmFinished = false;
+
+    renderArray();
+    renderMap();
+    updateValues();
+
+    showStatus(
+        "Algorithm started. Click <b>Next Step</b> to process the first element.",
+        "info"
+    );
+}
+
+
+/* --------------------------------------------------
+   Next Step
+-------------------------------------------------- */
+
+function nextStep() {
+
+    if (!algorithmStarted) {
+
+        showStatus(
+            "Please click <b>Start Algorithm</b> first.",
+            "failure"
+        );
+
+        return;
+    }
+
+    if (algorithmFinished) {
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= nums.length) {
+
+        algorithmFinished = true;
+
+        renderArray();
+        renderMap();
+        updateValues();
+
+        showStatus(
+            "Algorithm completed. Total number of subarrays with sum <b>" +
+            escapeHTML(target) +
+            "</b> is <b>" +
+            count +
+            "</b>.",
+            "success"
+        );
+
+        return;
+    }
+
+    const value = nums[currentIndex];
+
+    prefixSum += value;
+
+    const required = prefixSum - target;
+
+    let found = 0;
+
+    if (
+        Object.prototype.hasOwnProperty.call(
+            prefixCount,
+            required
+        )
+    ) {
+        found = prefixCount[required];
+
+        count += found;
+    }
+
+    prefixCount[prefixSum] =
+        (prefixCount[prefixSum] || 0) + 1;
+
+    renderArray();
+    renderMap();
+    updateValues();
+
+    if (found > 0) {
+
+        showStatus(
+            "Index <b>" +
+            currentIndex +
+            "</b>: value = <b>" +
+            escapeHTML(value) +
+            "</b>, prefix sum = <b>" +
+            prefixSum +
+            "</b>.<br><br>" +
+
+            "Required prefix sum = " +
+            "<b>" +
+            prefixSum +
+            " - " +
+            target +
+            " = " +
+            required +
+            "</b>.<br><br>" +
+
+            "The required prefix sum occurred " +
+            "<b>" +
+            found +
+            "</b> time(s). " +
+
+            "<b>" +
+            found +
+            "</b> valid subarray(s) found.",
+            
+            "success"
+        );
+
+    } else {
+
+        showStatus(
+            "Index <b>" +
+            currentIndex +
+            "</b>: value = <b>" +
+            escapeHTML(value) +
+            "</b>.<br><br>" +
+
+            "Prefix sum = <b>" +
+            prefixSum +
+            "</b>.<br>" +
+
+            "Required prefix sum = <b>" +
+            required +
+            "</b>.<br><br>" +
+
+            "Required prefix sum was not found. No new subarray at this step.",
+            
+            "warning"
+        );
+    }
+}
+
+
+/* --------------------------------------------------
+   Auto Run
+-------------------------------------------------- */
+
+function autoRun() {
+
+    if (!algorithmStarted) {
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(function() {
+
+        if (algorithmFinished) {
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+}
+
+
+/* --------------------------------------------------
+   Stop Auto Run
+-------------------------------------------------- */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* --------------------------------------------------
+   Reset
+-------------------------------------------------- */
+
+function resetVisualizer() {
+
+    stopAutoRun();
+
+    nums = [];
+    target = 0;
+
+    currentIndex = -1;
+    prefixSum = 0;
+    count = 0;
+
+    prefixCount = {};
+
+    algorithmStarted = false;
+    algorithmFinished = false;
+
+    document.getElementById("arrayContainer").innerHTML =
+        "Enter an array and click <b>Start Algorithm</b>.";
+
+    document.getElementById("mapBody").innerHTML =
+        "<tr><td colspan='2'>Map is empty</td></tr>";
+
+    updateValues();
+
+    showStatus(
+        "Visualizer has been reset.",
+        "info"
+    );
+}
+
+
+/* --------------------------------------------------
+   Render Array
+-------------------------------------------------- */
+
+function renderArray() {
+
+    const container =
+        document.getElementById("arrayContainer");
+
+    container.innerHTML = "";
+
+    nums.forEach(function(value, index) {
+
+        const item = document.createElement("div");
+
+        item.className = "array-item";
+
+        if (index === currentIndex) {
+            item.classList.add("current");
+        }
+
+        item.innerHTML =
+            "<span class='index'>Index " +
+            index +
+            "</span>" +
+
+            "<strong>" +
+            escapeHTML(value) +
+            "</strong>" +
+
+            (
+                index === currentIndex
+                ? "<span class='pointer'>CURRENT</span>"
+                : ""
+            );
+
+        container.appendChild(item);
+    });
+}
+
+
+/* --------------------------------------------------
+   Render Hash Map
+-------------------------------------------------- */
+
+function renderMap() {
+
+    const body =
+        document.getElementById("mapBody");
+
+    body.innerHTML = "";
+
+    const keys = Object.keys(prefixCount);
+
+    if (keys.length === 0) {
+
+        body.innerHTML =
+            "<tr><td colspan='2'>Map is empty</td></tr>";
+
+        return;
+    }
+
+    keys.sort(function(a, b) {
+        return Number(a) - Number(b);
+    });
+
+    keys.forEach(function(key) {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML =
+            "<td>" +
+            escapeHTML(key) +
+            "</td>" +
+
+            "<td>" +
+            prefixCount[key] +
+            "</td>";
+
+        body.appendChild(row);
+    });
+}
+
+
+/* --------------------------------------------------
+   Update Result Cards
+-------------------------------------------------- */
+
+function updateValues() {
+
+    document.getElementById("prefixSumValue")
+        .textContent = prefixSum;
+
+    document.getElementById("neededValue")
+        .textContent = prefixSum - target;
+
+    document.getElementById("countValue")
+        .textContent = count;
+
+    document.getElementById("indexValue")
+        .textContent =
+            currentIndex >= 0
+            ? currentIndex
+            : "-";
+}
+
+
+/* --------------------------------------------------
+   Status Message
+-------------------------------------------------- */
+
+function showStatus(message, type) {
+
+    const status =
+        document.getElementById("status");
+
+    status.innerHTML = message;
+
+    status.className = "status";
+
+    if (type) {
+        status.classList.add(type);
+    }
+}
+
+
+/* --------------------------------------------------
+   Event Listeners
+-------------------------------------------------- */
+
+document
+    .getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document
+    .getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document
+    .getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", resetVisualizer);
+
+</script>
+
+</body>
+</html>

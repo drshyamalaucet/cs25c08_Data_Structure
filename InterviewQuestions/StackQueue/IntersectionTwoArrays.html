@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intersection of Two Arrays - Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        color: #17365d;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #5b6777;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #17365d;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    .problem {
+        background: #eef6ff;
+        border-left: 5px solid #2563eb;
+    }
+
+    .input-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 6px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 16px;
+    }
+
+    .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #2563eb;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    button.secondary {
+        background: #475569;
+    }
+
+    button.success {
+        background: #15803d;
+    }
+
+    button.warning {
+        background: #d97706;
+    }
+
+    button.danger {
+        background: #dc2626;
+    }
+
+    .array-title {
+        font-weight: bold;
+        margin: 15px 0 8px;
+    }
+
+    .array {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        min-height: 60px;
+        padding: 15px;
+        background: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .element {
+        min-width: 48px;
+        padding: 10px 14px;
+        text-align: center;
+        border-radius: 7px;
+        background: #dbeafe;
+        border: 2px solid #93c5fd;
+        font-weight: bold;
+        transition: all 0.3s ease;
+    }
+
+    .element.current {
+        background: #fef3c7;
+        border-color: #f59e0b;
+        transform: scale(1.08);
+    }
+
+    .element.match {
+        background: #dcfce7;
+        border-color: #22c55e;
+        transform: scale(1.08);
+    }
+
+    .element.skip {
+        background: #f1f5f9;
+        border-color: #94a3b8;
+        opacity: 0.65;
+    }
+
+    .set-box {
+        margin-top: 20px;
+        padding: 18px;
+        border-radius: 9px;
+        background: #f8fafc;
+        border: 2px dashed #64748b;
+    }
+
+    .set-values {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 10px;
+    }
+
+    .set-item {
+        padding: 9px 15px;
+        border-radius: 20px;
+        background: #e0e7ff;
+        border: 1px solid #6366f1;
+        font-weight: bold;
+    }
+
+    .result {
+        padding: 18px;
+        margin-top: 20px;
+        border-radius: 9px;
+        background: #ecfdf5;
+        border: 2px solid #22c55e;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #eff6ff;
+        border-left: 4px solid #2563eb;
+        font-weight: bold;
+    }
+
+    .pseudocode {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    pre {
+        margin: 0;
+        white-space: pre-wrap;
+    }
+
+    .code {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 8px;
+        overflow-x: auto;
+    }
+
+    .explanation-list li {
+        margin-bottom: 9px;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .complexity-box {
+        padding: 18px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+    }
+
+    .example {
+        background: #fffbeb;
+        border-left: 5px solid #f59e0b;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .legend span {
+        padding: 6px 10px;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+
+    .legend-current {
+        background: #fef3c7;
+    }
+
+    .legend-match {
+        background: #dcfce7;
+    }
+
+    .legend-skip {
+        background: #f1f5f9;
+    }
+
+    @media (max-width: 700px) {
+        body {
+            padding: 12px;
+        }
+
+        .input-grid,
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        .buttons {
+            flex-direction: column;
+        }
+
+        button {
+            width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Intersection of Two Arrays</h1>
+    <p class="subtitle">
+        Interactive Set-Based Algorithm Visualizer
+    </p>
+
+    <!-- 1. Problem -->
+    <div class="card problem">
+        <h2>1. Problem Statement</h2>
+
+        <p>
+            Given two integer arrays, return an array containing their
+            <strong>intersection</strong>.
+        </p>
+
+        <p>
+            Each element in the result must be <strong>unique</strong>.
+        </p>
+
+        <p>
+            Example:
+            <strong>nums1 = [1, 2, 2, 1]</strong>,
+            <strong>nums2 = [2, 2]</strong>
+        </p>
+
+        <p>
+            Output:
+            <strong>[2]</strong>
+        </p>
+    </div>
+
+    <!-- 2. Input -->
+    <div class="card">
+        <h2>2. Input Arrays</h2>
+
+        <div class="input-grid">
+            <div>
+                <label for="array1">Array 1</label>
+                <input id="array1" value="1,2,2,1">
+            </div>
+
+            <div>
+                <label for="array2">Array 2</label>
+                <input id="array2" value="2,2">
+            </div>
+        </div>
+
+        <div class="buttons">
+            <button id="startBtn">Start</button>
+            <button id="nextBtn">Next Step</button>
+            <button id="autoBtn" class="success">Auto Run</button>
+            <button id="resetBtn" class="secondary">Reset</button>
+        </div>
+    </div>
+
+    <!-- 3. Visualization -->
+    <div class="card">
+        <h2>3. Step-by-Step Visualization</h2>
+
+        <div class="array-title">Array 1</div>
+        <div id="array1View" class="array"></div>
+
+        <div class="array-title">Array 2</div>
+        <div id="array2View" class="array"></div>
+
+        <div class="set-box">
+            <strong>Set from Array 1:</strong>
+            <div id="setView" class="set-values">
+                Empty
+            </div>
+        </div>
+
+        <div class="set-box">
+            <strong>Intersection Result:</strong>
+            <div id="resultView" class="set-values">
+                Empty
+            </div>
+        </div>
+
+        <div id="status" class="status">
+            Click "Start" to begin.
+        </div>
+
+        <div class="legend">
+            <span class="legend-current">Current Element</span>
+            <span class="legend-match">Found in Array 1</span>
+            <span class="legend-skip">Not Found / Skipped</span>
+        </div>
+    </div>
+
+    <!-- 4. Example -->
+    <div class="card example">
+        <h2>4. Example Walkthrough</h2>
+
+        <p>
+            Array 1:
+            <strong>[1, 2, 2, 1]</strong>
+        </p>
+
+        <p>
+            Array 2:
+            <strong>[2, 2]</strong>
+        </p>
+
+        <p>
+            First create a set from Array 1:
+            <strong>{1, 2}</strong>
+        </p>
+
+        <p>
+            Check Array 2:
+        </p>
+
+        <ul>
+            <li>2 exists in the set → add 2 to result.</li>
+            <li>The second 2 also exists, but it is already in result.</li>
+        </ul>
+
+        <p>
+            Final result:
+            <strong>[2]</strong>
+        </p>
+    </div>
+
+    <!-- 5. Algorithm -->
+    <div class="card">
+        <h2>5. Algorithm</h2>
+
+        <ol>
+            <li>Create a set containing all unique elements of Array 1.</li>
+            <li>Create an empty result set.</li>
+            <li>Traverse Array 2.</li>
+            <li>For each element, check whether it exists in the Array 1 set.</li>
+            <li>If it exists, add it to the result set.</li>
+            <li>Because a set contains only unique values, duplicates are automatically removed.</li>
+            <li>Convert the result set into an array.</li>
+        </ol>
+    </div>
+
+    <!-- 6. Pseudocode -->
+    <div class="card">
+        <h2>6. Pseudocode</h2>
+
+        <div class="pseudocode">
+<pre>
+FUNCTION intersection(nums1, nums2)
+
+    set1 ← empty set
+    result ← empty set
+
+    FOR each num IN nums1
+        add num to set1
+    END FOR
+
+    FOR each num IN nums2
+
+        IF num exists in set1 THEN
+            add num to result
+        END IF
+
+    END FOR
+
+    RETURN result as an array
+
+END FUNCTION
+</pre>
+        </div>
+    </div>
+
+    <!-- 7. Python -->
+    <div class="card">
+        <h2>7. Python Implementation</h2>
+
+        <div class="code">
+<pre>
+def intersection(nums1, nums2):
+    set1 = set(nums1)
+    result = set()
+
+    for num in nums2:
+        if num in set1:
+            result.add(num)
+
+    return list(result)
+
+
+# Example
+nums1 = [1, 2, 2, 1]
+nums2 = [2, 2]
+
+print(intersection(nums1, nums2))
+</pre>
+        </div>
+
+        <p>
+            Output:
+            <strong>[2]</strong>
+        </p>
+    </div>
+
+    <!-- 8. Short Python -->
+    <div class="card">
+        <h2>8. Short Python Solution</h2>
+
+        <div class="code">
+<pre>
+def intersection(nums1, nums2):
+    return list(set(nums1) & set(nums2))
+</pre>
+        </div>
+
+        <p>
+            The <strong>&</strong> operator performs set intersection.
+        </p>
+    </div>
+
+    <!-- 9. Explanation -->
+    <div class="card">
+        <h2>9. Explanation</h2>
+
+        <ul class="explanation-list">
+            <li>
+                A <strong>set</strong> stores only unique elements.
+            </li>
+
+            <li>
+                Therefore, duplicates in the input arrays do not create
+                duplicate values in the answer.
+            </li>
+
+            <li>
+                We first convert Array 1 into a set so membership checking
+                is efficient.
+            </li>
+
+            <li>
+                We then examine every element of Array 2.
+            </li>
+
+            <li>
+                If the element exists in the first set, it belongs to the
+                intersection.
+            </li>
+
+            <li>
+                The result is also stored in a set, ensuring that every
+                result element is unique.
+            </li>
+        </ul>
+    </div>
+
+    <!-- 10. Complexity -->
+    <div class="card">
+        <h2>10. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <h3>Time Complexity</h3>
+                <p>
+                    <strong>O(n + m)</strong> average time
+                </p>
+                <p>
+                    where n is the length of Array 1 and m is the length
+                    of Array 2.
+                </p>
+            </div>
+
+            <div class="complexity-box">
+                <h3>Space Complexity</h3>
+                <p>
+                    <strong>O(n)</strong> auxiliary space
+                </p>
+                <p>
+                    for storing the unique elements of Array 1.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 11. Important -->
+    <div class="card">
+        <h2>11. Important Observation</h2>
+
+        <p>
+            This problem is different from the
+            <strong>Intersection of Two Arrays II</strong>.
+        </p>
+
+        <p>
+            Here, duplicates are ignored.
+        </p>
+
+        <p>
+            For example:
+        </p>
+
+        <p>
+            <strong>[1, 2, 2, 3]</strong> ∩
+            <strong>[2, 2, 2, 3]</strong>
+        </p>
+
+        <p>
+            Result:
+            <strong>[2, 3]</strong>
+        </p>
+
+        <p>
+            The value <strong>2</strong> appears only once in the result
+            because the problem requires every result element to be unique.
+        </p>
+    </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* ================================
+   Global State
+================================ */
+
+let nums1 = [];
+let nums2 = [];
+
+let set1 = new Set();
+let resultSet = new Set();
+
+let currentIndex = -1;
+let phase = 0;
+/*
+    0 = not started
+    1 = processing
+    2 = completed
+*/
+
+let timer = null;
+
+
+/* ================================
+   DOM Elements
+================================ */
+
+const array1Input = document.getElementById("array1");
+const array2Input = document.getElementById("array2");
+
+const array1View = document.getElementById("array1View");
+const array2View = document.getElementById("array2View");
+
+const setView = document.getElementById("setView");
+const resultView = document.getElementById("resultView");
+
+const statusBox = document.getElementById("status");
+
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+
+/* ================================
+   Parse Input
+================================ */
+
+function parseArray(value) {
+    return value
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== "")
+        .map(Number)
+        .filter(item => Number.isFinite(item));
+}
+
+
+/* ================================
+   Render Array
+================================ */
+
+function renderArray(container, array, activeIndex, mode) {
+
+    container.innerHTML = "";
+
+    if (array.length === 0) {
+        container.textContent = "Empty";
+        return;
+    }
+
+    array.forEach((value, index) => {
+
+        const element = document.createElement("div");
+        element.className = "element";
+        element.textContent = value;
+
+        if (mode === "array1") {
+
+            if (index === activeIndex) {
+                element.classList.add("current");
+            }
+
+        } else if (mode === "array2") {
+
+            if (index === activeIndex) {
+
+                if (set1.has(value)) {
+                    element.classList.add("match");
+                } else {
+                    element.classList.add("skip");
+                }
+            }
+        }
+
+        container.appendChild(element);
+    });
+}
+
+
+/* ================================
+   Render Set
+================================ */
+
+function renderSet() {
+
+    setView.innerHTML = "";
+
+    if (set1.size === 0) {
+        setView.textContent = "Empty";
+        return;
+    }
+
+    [...set1].forEach(value => {
+
+        const item = document.createElement("div");
+        item.className = "set-item";
+        item.textContent = value;
+
+        setView.appendChild(item);
+    });
+}
+
+
+/* ================================
+   Render Result
+================================ */
+
+function renderResult() {
+
+    resultView.innerHTML = "";
+
+    if (resultSet.size === 0) {
+        resultView.textContent = "Empty";
+        return;
+    }
+
+    [...resultSet].forEach(value => {
+
+        const item = document.createElement("div");
+        item.className = "set-item";
+        item.textContent = value;
+
+        resultView.appendChild(item);
+    });
+}
+
+
+/* ================================
+   Start Algorithm
+================================ */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    nums1 = parseArray(array1Input.value);
+    nums2 = parseArray(array2Input.value);
+
+    set1 = new Set(nums1);
+    resultSet = new Set();
+
+    currentIndex = -1;
+    phase = 1;
+
+    renderArray(array1View, nums1, -1, "array1");
+    renderArray(array2View, nums2, -1, "array2");
+
+    renderSet();
+    renderResult();
+
+    statusBox.textContent =
+        "Array 1 has been converted into a set. Click 'Next Step' to examine Array 2.";
+}
+
+
+/* ================================
+   Next Step
+================================ */
+
+function nextStep() {
+
+    if (phase === 0) {
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === 2) {
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= nums2.length) {
+
+        phase = 2;
+
+        renderArray(array1View, nums1, -1, "array1");
+        renderArray(array2View, nums2, -1, "array2");
+        renderSet();
+        renderResult();
+
+        statusBox.textContent =
+            "Algorithm completed. The intersection contains only unique elements.";
+
+        stopAutoRun();
+        return;
+    }
+
+    const currentValue = nums2[currentIndex];
+
+    renderArray(array1View, nums1, -1, "array1");
+    renderArray(array2View, nums2, currentIndex, "array2");
+    renderSet();
+
+    if (set1.has(currentValue)) {
+
+        const alreadyPresent = resultSet.has(currentValue);
+
+        resultSet.add(currentValue);
+        renderResult();
+
+        if (alreadyPresent) {
+
+            statusBox.textContent =
+                currentValue +
+                " exists in Array 1, but it is already in the result. Duplicate ignored.";
+
+        } else {
+
+            statusBox.textContent =
+                currentValue +
+                " exists in Array 1. Add " +
+                currentValue +
+                " to the intersection result.";
+        }
+
+    } else {
+
+        renderResult();
+
+        statusBox.textContent =
+            currentValue +
+            " does not exist in Array 1. Skip it.";
+    }
+}
+
+
+/* ================================
+   Auto Run
+================================ */
+
+function autoRun() {
+
+    if (phase === 2) {
+        return;
+    }
+
+    if (phase === 0) {
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    timer = setInterval(() => {
+
+        if (phase === 2) {
+            stopAutoRun();
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* ================================
+   Stop Auto Run
+================================ */
+
+function stopAutoRun() {
+
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+}
+
+
+/* ================================
+   Reset
+================================ */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    nums1 = [];
+    nums2 = [];
+
+    set1 = new Set();
+    resultSet = new Set();
+
+    currentIndex = -1;
+    phase = 0;
+
+    array1Input.value = "1,2,2,1";
+    array2Input.value = "2,2";
+
+    array1View.innerHTML = "";
+    array2View.innerHTML = "";
+
+    setView.textContent = "Empty";
+    resultView.textContent = "Empty";
+
+    statusBox.textContent =
+        "Click 'Start' to begin.";
+}
+
+
+/* ================================
+   Event Listeners
+================================ */
+
+startBtn.addEventListener("click", startAlgorithm);
+
+nextBtn.addEventListener("click", nextStep);
+
+autoBtn.addEventListener("click", autoRun);
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+
+/* ================================
+   Initial State
+================================ */
+
+resetAlgorithm();
+
+</script>
+
+</body>
+</html>

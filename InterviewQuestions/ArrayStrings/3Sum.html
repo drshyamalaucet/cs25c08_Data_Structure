@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>3Sum - Unique Triplets Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1e293b;
+    line-height: 1.6;
+}
+
+header {
+    background: linear-gradient(135deg, #6d28d9, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+header p {
+    margin: 8px 0 0;
+    font-size: 17px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    color: #6d28d9;
+    border-bottom: 2px solid #ede9fe;
+    padding-bottom: 10px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+}
+
+input {
+    width: 340px;
+    padding: 11px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    border: none;
+    padding: 11px 18px;
+    border-radius: 8px;
+    background: #2563eb;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.auto {
+    background: #7c3aed;
+}
+
+button.reset {
+    background: #64748b;
+}
+
+.visual {
+    margin-top: 25px;
+    padding: 25px;
+    background: #f8fafc;
+    border-radius: 12px;
+    overflow-x: auto;
+}
+
+.array {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    min-width: max-content;
+}
+
+.item {
+    width: 70px;
+    height: 80px;
+    border: 3px solid #94a3b8;
+    border-radius: 10px;
+    background: white;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    transition: 0.3s;
+}
+
+.index {
+    font-size: 12px;
+    color: #64748b;
+}
+
+.value {
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.fixed {
+    background: #ede9fe;
+    border-color: #7c3aed;
+    transform: translateY(-8px);
+}
+
+.left {
+    background: #dbeafe;
+    border-color: #2563eb;
+    transform: translateY(-8px);
+}
+
+.right {
+    background: #fef3c7;
+    border-color: #d97706;
+    transform: translateY(-8px);
+}
+
+.found {
+    background: #dcfce7;
+    border-color: #16a34a;
+    transform: translateY(-10px) scale(1.05);
+}
+
+.pointer {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+    font-weight: bold;
+}
+
+.fixed-text {
+    color: #7c3aed;
+}
+
+.left-text {
+    color: #2563eb;
+}
+
+.right-text {
+    color: #d97706;
+}
+
+.status {
+    margin-top: 20px;
+    padding: 15px;
+    border-left: 5px solid #2563eb;
+    background: #eff6ff;
+    border-radius: 6px;
+}
+
+.success {
+    background: #dcfce7;
+    border-left-color: #16a34a;
+    color: #166534;
+}
+
+.warning {
+    background: #fef3c7;
+    border-left-color: #d97706;
+    color: #92400e;
+}
+
+.error {
+    background: #fee2e2;
+    border-left-color: #dc2626;
+    color: #991b1b;
+}
+
+.steps {
+    margin-top: 20px;
+    padding: 15px;
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+}
+
+.step {
+    background: white;
+    padding: 12px;
+    margin: 8px 0;
+    border-left: 4px solid #7c3aed;
+}
+
+.step-number {
+    background: #7c3aed;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 15px;
+    margin-right: 8px;
+}
+
+.triplets {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.triplet {
+    padding: 10px 15px;
+    border-radius: 8px;
+    background: #dcfce7;
+    border: 2px solid #16a34a;
+    font-weight: bold;
+}
+
+.formula {
+    background: #f1f5f9;
+    padding: 15px;
+    text-align: center;
+    border-radius: 8px;
+    margin: 15px 0;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #6d28d9;
+    color: white;
+}
+
+tr:nth-child(even) {
+    background: #f8fafc;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    padding: 20px;
+    background: #faf5ff;
+    border: 1px solid #ddd6fe;
+    border-radius: 10px;
+}
+
+.complexity-box h3 {
+    color: #6d28d9;
+}
+
+footer {
+    background: #1e293b;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+@media(max-width: 600px) {
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    input {
+        width: 100%;
+    }
+
+    .item {
+        width: 60px;
+        height: 70px;
+    }
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+    <h1>3Sum – Unique Triplets</h1>
+    <p>Find all unique triplets that sum to zero</p>
+</header>
+
+<div class="container">
+
+<!-- ===================================================== -->
+
+<!-- PROBLEM -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>1. Problem Statement</h2>
+
+<p>
+Given an unsorted integer array, find all unique triplets
+<strong>[a, b, c]</strong> such that:
+</p>
+
+<div class="formula">
+a + b + c = 0
+</div>
+
+<p>
+Duplicate triplets must not be included in the result.
+</p>
+
+<pre>
+Input:
+[-1, 0, 1, 2, -1, -4]
+
+Output:
+[[-1, -1, 2], [-1, 0, 1]]
+</pre>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- VISUALIZER -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>2. Interactive Visual Representation</h2>
+
+<div class="controls">
+
+<label>
+Array:
+</label>
+
+<input
+id="arrayInput"
+type="text"
+value="-1,0,1,2,-1,-4"
+
+>
+
+<button id="startBtn">
+Start
+</button>
+
+<button id="nextBtn">
+Next Step
+</button>
+
+<button id="autoBtn" class="auto">
+Auto Run
+</button>
+
+<button id="resetBtn" class="reset">
+Reset
+</button>
+
+</div>
+
+<div class="visual">
+
+<div id="array" class="array"></div>
+
+</div>
+
+<div id="pointer" class="pointer"></div>
+
+<div id="status" class="status">
+
+Enter an array and click <strong>Start</strong>.
+
+</div>
+
+<div class="steps">
+
+<strong>Execution Steps</strong>
+
+<div id="steps">
+Waiting to start...
+</div>
+
+</div>
+
+<h3>Unique Triplets Found</h3>
+
+<div id="triplets" class="triplets">
+None yet
+</div>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- ALGORITHM -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>3. Algorithm</h2>
+
+<ol>
+
+<li>Sort the input array.</li>
+
+<li>Select one element as the fixed element.</li>
+
+<li>Set Left pointer to the next element.</li>
+
+<li>Set Right pointer to the last element.</li>
+
+<li>Calculate the sum of the three values.</li>
+
+<li>If sum is zero, save the triplet.</li>
+
+<li>If sum is less than zero, move Left forward.</li>
+
+<li>If sum is greater than zero, move Right backward.</li>
+
+<li>Skip duplicate values.</li>
+
+</ol>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- PSEUDOCODE -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre>
+ThreeSum(nums)
+
+    sort(nums)
+
+    result = []
+
+    for i = 0 to n - 3
+
+        if i > 0 and nums[i] == nums[i - 1]
+            continue
+
+        left = i + 1
+        right = n - 1
+
+        while left < right
+
+            sum = nums[i] + nums[left] + nums[right]
+
+            if sum == 0
+
+                add [nums[i], nums[left], nums[right]]
+
+                skip duplicate left values
+                skip duplicate right values
+
+                left++
+                right--
+
+            else if sum < 0
+
+                left++
+
+            else
+
+                right--
+
+    return result
+</pre>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- PYTHON -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>5. Python Implementation</h2>
+
+<pre>
+def three_sum(nums):
+
+    nums.sort()
+
+    result = []
+
+    for i in range(len(nums) - 2):
+
+        # Skip duplicate fixed values
+        if i > 0 and nums[i] == nums[i - 1]:
+            continue
+
+        left = i + 1
+        right = len(nums) - 1
+
+        while left < right:
+
+            total = nums[i] + nums[left] + nums[right]
+
+            if total == 0:
+
+                result.append([
+                    nums[i],
+                    nums[left],
+                    nums[right]
+                ])
+
+                # Skip duplicates
+                while left < right and \
+                      nums[left] == nums[left + 1]:
+                    left += 1
+
+                while left < right and \
+                      nums[right] == nums[right - 1]:
+                    right -= 1
+
+                left += 1
+                right -= 1
+
+            elif total < 0:
+
+                left += 1
+
+            else:
+
+                right -= 1
+
+    return result
+
+
+# Example
+
+nums = [-1, 0, 1, 2, -1, -4]
+
+print(three_sum(nums))
+</pre>
+
+<p>
+Output:
+</p>
+
+<pre>
+[[-1, -1, 2], [-1, 0, 1]]
+</pre>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- EXPLANATION -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>6. Why Two Pointers?</h2>
+
+<p>
+After sorting the array, we can efficiently find the other two
+elements using two pointers.
+</p>
+
+<div class="formula">
+nums[i] + nums[left] + nums[right] = 0
+</div>
+
+<p>
+If the sum is too small, increase Left.
+</p>
+
+<p>
+If the sum is too large, decrease Right.
+</p>
+
+<p>
+This avoids checking every possible combination using three nested loops.
+</p>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- EXAMPLE -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>7. Example</h2>
+
+<pre>
+Input:
+
+[-1, 0, 1, 2, -1, -4]
+
+After sorting:
+
+[-4, -1, -1, 0, 1, 2]
+</pre>
+
+<table>
+
+<tr>
+<th>Fixed</th>
+<th>Left</th>
+<th>Right</th>
+<th>Sum</th>
+<th>Action</th>
+</tr>
+
+<tr>
+<td>-4</td>
+<td>-1</td>
+<td>2</td>
+<td>-3</td>
+<td>Left →</td>
+</tr>
+
+<tr>
+<td>-4</td>
+<td>0</td>
+<td>2</td>
+<td>-2</td>
+<td>Left →</td>
+</tr>
+
+<tr>
+<td>-4</td>
+<td>1</td>
+<td>2</td>
+<td>-1</td>
+<td>Left →</td>
+</tr>
+
+<tr>
+<td>-1</td>
+<td>-1</td>
+<td>2</td>
+<td>0</td>
+<td>Triplet Found</td>
+</tr>
+
+<tr>
+<td>-1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>Triplet Found</td>
+</tr>
+
+</table>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- COMPLEXITY -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>8. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<h3>Sorting</h3>
+
+<p>
+<strong>O(n log n)</strong>
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<h3>Search</h3>
+
+<p>
+<strong>O(n²)</strong>
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<h3>Total</h3>
+
+<p>
+<strong>O(n²)</strong>
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<h3>Extra Space</h3>
+
+<p>
+<strong>O(1)</strong>
+</p>
+
+<p>
+Excluding output and sorting implementation.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- ===================================================== -->
+
+<!-- COMPARISON -->
+
+<!-- ===================================================== -->
+
+<div class="card">
+
+<h2>9. Comparison</h2>
+
+<table>
+
+<tr>
+<th>Approach</th>
+<th>Time</th>
+<th>Space</th>
+</tr>
+
+<tr>
+<td>Three Nested Loops</td>
+<td>O(n³)</td>
+<td>O(1)</td>
+</tr>
+
+<tr>
+<td>Hashing</td>
+<td>O(n²)</td>
+<td>O(n)</td>
+</tr>
+
+<tr>
+<td><strong>Sorting + Two Pointers</strong></td>
+<td><strong>O(n²)</strong></td>
+<td><strong>O(1)</strong></td>
+</tr>
+
+</table>
+
+</div>
+
+</div>
+
+<footer>
+
+    <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+
+<br>
+
+3Sum – Unique Triplets Visualizer
+
+</footer>
+
+<!-- ===================================================== -->
+
+<!-- JAVASCRIPT -->
+
+<!-- IMPORTANT: KEEP THIS SCRIPT OUTSIDE ALL OTHER ELEMENTS -->
+
+<!-- ===================================================== -->
+
+<script>
+
+/* =========================================================
+   GLOBAL VARIABLES
+   ========================================================= */
+
+let nums = [];
+
+let i = 0;
+let left = 0;
+let right = 0;
+
+let results = [];
+
+let running = false;
+let finished = false;
+
+let stepNumber = 0;
+
+let autoTimer = null;
+
+
+/* =========================================================
+   GET ELEMENTS
+   ========================================================= */
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const arrayDiv =
+    document.getElementById("array");
+
+const pointerDiv =
+    document.getElementById("pointer");
+
+const statusDiv =
+    document.getElementById("status");
+
+const stepsDiv =
+    document.getElementById("steps");
+
+const tripletsDiv =
+    document.getElementById("triplets");
+
+
+/* =========================================================
+   PARSE ARRAY
+   ========================================================= */
+
+function readArray() {
+
+    const text = arrayInput.value.trim();
+
+    if (text === "") {
+        return false;
+    }
+
+    nums = text
+        .split(",")
+        .map(function(value) {
+            return Number(value.trim());
+        });
+
+    for (let k = 0; k < nums.length; k++) {
+
+        if (!Number.isFinite(nums[k])) {
+            return false;
+        }
+    }
+
+    return nums.length >= 3;
+}
+
+
+/* =========================================================
+   RENDER ARRAY
+   ========================================================= */
+
+function renderArray(found = []) {
+
+    arrayDiv.innerHTML = "";
+
+    for (let k = 0; k < nums.length; k++) {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "item";
+
+
+        /* Fixed pointer */
+
+        if (
+            running &&
+            !finished &&
+            k === i
+        ) {
+            item.classList.add("fixed");
+        }
+
+
+        /* Left pointer */
+
+        if (
+            running &&
+            !finished &&
+            k === left
+        ) {
+            item.classList.add("left");
+        }
+
+
+        /* Right pointer */
+
+        if (
+            running &&
+            !finished &&
+            k === right
+        ) {
+            item.classList.add("right");
+        }
+
+
+        /* Found triplet */
+
+        if (found.includes(k)) {
+            item.classList.add("found");
+        }
+
+
+        item.innerHTML =
+            "<div class='index'>Index " +
+            k +
+            "</div>" +
+
+            "<div class='value'>" +
+            nums[k] +
+            "</div>";
+
+
+        arrayDiv.appendChild(item);
+    }
+}
+
+
+/* =========================================================
+   POINTER DISPLAY
+   ========================================================= */
+
+function renderPointers() {
+
+    if (
+        !running ||
+        finished ||
+        left >= right
+    ) {
+        pointerDiv.innerHTML = "";
+        return;
+    }
+
+    pointerDiv.innerHTML =
+
+        "<span class='fixed-text'>" +
+        "Fixed i = " +
+        i +
+        " (" +
+        nums[i] +
+        ")" +
+        "</span>" +
+
+        "<span class='left-text'>" +
+        "Left = " +
+        left +
+        " (" +
+        nums[left] +
+        ")" +
+        "</span>" +
+
+        "<span class='right-text'>" +
+        "Right = " +
+        right +
+        " (" +
+        nums[right] +
+        ")" +
+        "</span>";
+}
+
+
+/* =========================================================
+   DISPLAY RESULTS
+   ========================================================= */
+
+function renderResults() {
+
+    if (results.length === 0) {
+
+        tripletsDiv.innerHTML =
+            "None yet";
+
+        return;
+    }
+
+    tripletsDiv.innerHTML = "";
+
+    results.forEach(function(triplet) {
+
+        const div =
+            document.createElement("div");
+
+        div.className = "triplet";
+
+        div.textContent =
+            "[" +
+            triplet.join(", ") +
+            "]";
+
+        tripletsDiv.appendChild(div);
+    });
+}
+
+
+/* =========================================================
+   ADD EXECUTION STEP
+   ========================================================= */
+
+function addStep(message) {
+
+    const div =
+        document.createElement("div");
+
+    div.className = "step";
+
+    div.innerHTML =
+
+        "<span class='step-number'>" +
+        stepNumber +
+        "</span>" +
+
+        message;
+
+    stepsDiv.appendChild(div);
+}
+
+
+/* =========================================================
+   START ALGORITHM
+   ========================================================= */
+
+function startAlgorithm() {
+
+    clearInterval(autoTimer);
+
+    if (!readArray()) {
+
+        statusDiv.className =
+            "status error";
+
+        statusDiv.innerHTML =
+            "Please enter at least three valid numbers.";
+
+        return;
+    }
+
+
+    /* Sort */
+
+    nums.sort(function(a, b) {
+        return a - b;
+    });
+
+
+    /* Initialize */
+
+    i = 0;
+
+    left = 1;
+
+    right = nums.length - 1;
+
+    results = [];
+
+    stepNumber = 0;
+
+    running = true;
+
+    finished = false;
+
+
+    stepsDiv.innerHTML =
+        "<div class='step'>" +
+        "<strong>Array sorted:</strong> [" +
+        nums.join(", ") +
+        "]" +
+        "</div>";
+
+
+    tripletsDiv.innerHTML =
+        "None yet";
+
+
+    statusDiv.className =
+        "status";
+
+    statusDiv.innerHTML =
+        "Algorithm started. " +
+        "Use <strong>Next Step</strong> " +
+        "to continue.";
+
+
+    renderArray();
+
+    renderPointers();
+
+    renderResults();
+}
+
+
+/* =========================================================
+   NEXT STEP
+   ========================================================= */
+
+function nextStep() {
+
+    if (!running) {
+
+        statusDiv.className =
+            "status warning";
+
+        statusDiv.innerHTML =
+            "Click <strong>Start</strong> first.";
+
+        return;
+    }
+
+
+    if (finished) {
+        return;
+    }
+
+
+    /* Move to next fixed element if necessary */
+
+    while (
+        i < nums.length - 2 &&
+        i > 0 &&
+        nums[i] === nums[i - 1]
+    ) {
+
+        stepNumber++;
+
+        addStep(
+            "Duplicate fixed value <strong>" +
+            nums[i] +
+            "</strong> skipped."
+        );
+
+        i++;
+
+    }
+
+
+    /* End condition */
+
+    if (i >= nums.length - 2) {
+
+        finishAlgorithm();
+
+        return;
+    }
+
+
+    /* Initialize pointers */
+
+    if (
+        left <= i ||
+        left >= nums.length ||
+        right >= nums.length ||
+        left >= right
+    ) {
+
+        left = i + 1;
+
+        right = nums.length - 1;
+    }
+
+
+    /* No more pairs for current i */
+
+    if (left >= right) {
+
+        i++;
+
+        if (i >= nums.length - 2) {
+
+            finishAlgorithm();
+
+            return;
+        }
+
+        left = i + 1;
+
+        right = nums.length - 1;
+
+        renderArray();
+
+        renderPointers();
+
+        return;
+    }
+
+
+    stepNumber++;
+
+
+    const a = nums[i];
+    const b = nums[left];
+    const c = nums[right];
+
+    const sum = a + b + c;
+
+
+    /* =====================================================
+       SUM == 0
+       ===================================================== */
+
+    if (sum === 0) {
+
+        const triplet = [a, b, c];
+
+        results.push(triplet);
+
+
+        addStep(
+
+            "<strong>" +
+            a +
+            "</strong> + <strong>" +
+            b +
+            "</strong> + <strong>" +
+            c +
+            "</strong> = " +
+
+            "<strong>0</strong> → " +
+
+            "Triplet found: " +
+
+            "<strong>[" +
+            triplet.join(", ") +
+            "]</strong>"
+
+        );
+
+
+        statusDiv.className =
+            "status success";
+
+        statusDiv.innerHTML =
+            "Triplet found: <strong>[" +
+            triplet.join(", ") +
+            "]</strong>";
+
+
+        renderResults();
+
+        renderArray([
+            i,
+            left,
+            right
+        ]);
+
+
+        /* Skip duplicate Left values */
+
+        while (
+            left < right &&
+            nums[left] === nums[left + 1]
+        ) {
+            left++;
+        }
+
+
+        /* Skip duplicate Right values */
+
+        while (
+            left < right &&
+            nums[right] === nums[right - 1]
+        ) {
+            right--;
+        }
+
+
+        left++;
+        right--;
+
+    }
+
+
+    /* =====================================================
+       SUM < 0
+       ===================================================== */
+
+    else if (sum < 0) {
+
+        addStep(
+
+            "<strong>" +
+            a +
+            "</strong> + <strong>" +
+            b +
+            "</strong> + <strong>" +
+            c +
+            "</strong> = " +
+
+            "<strong>" +
+            sum +
+            "</strong> → " +
+
+            "Sum is less than zero. " +
+
+            "Move <strong>Left</strong> right."
+
+        );
+
+
+        statusDiv.className =
+            "status";
+
+        statusDiv.innerHTML =
+            "Sum = <strong>" +
+            sum +
+            "</strong>. " +
+
+            "Since sum &lt; 0, move Left right.";
+
+
+        left++;
+
+    }
+
+
+    /* =====================================================
+       SUM > 0
+       ===================================================== */
+
+    else {
+
+        addStep(
+
+            "<strong>" +
+            a +
+            "</strong> + <strong>" +
+            b +
+            "</strong> + <strong>" +
+            c +
+            "</strong> = " +
+
+            "<strong>" +
+            sum +
+            "</strong> → " +
+
+            "Sum is greater than zero. " +
+
+            "Move <strong>Right</strong> left."
+
+        );
+
+
+        statusDiv.className =
+            "status";
+
+        statusDiv.innerHTML =
+            "Sum = <strong>" +
+            sum +
+            "</strong>. " +
+
+            "Since sum &gt; 0, move Right left.";
+
+
+        right--;
+    }
+
+
+    /* Move to next fixed element */
+
+    if (left >= right) {
+
+        i++;
+
+        if (i < nums.length - 2) {
+
+            while (
+                i < nums.length - 2 &&
+                nums[i] === nums[i - 1]
+            ) {
+
+                stepNumber++;
+
+                addStep(
+                    "Duplicate fixed value " +
+                    nums[i] +
+                    " skipped."
+                );
+
+                i++;
+            }
+
+            if (i < nums.length - 2) {
+
+                left = i + 1;
+
+                right = nums.length - 1;
+            }
+        }
+    }
+
+
+    /* Finished */
+
+    if (i >= nums.length - 2) {
+
+        finishAlgorithm();
+
+        return;
+    }
+
+
+    renderArray();
+
+    renderPointers();
+
+    renderResults();
+}
+
+
+/* =========================================================
+   FINISH
+   ========================================================= */
+
+function finishAlgorithm() {
+
+    clearInterval(autoTimer);
+
+    running = false;
+
+    finished = true;
+
+
+    pointerDiv.innerHTML = "";
+
+
+    statusDiv.className =
+        "status success";
+
+
+    statusDiv.innerHTML =
+        "Algorithm completed. " +
+
+        "Found <strong>" +
+        results.length +
+        "</strong> unique triplet(s).";
+
+
+    renderResults();
+
+    renderArray();
+}
+
+
+/* =========================================================
+   AUTO RUN
+   ========================================================= */
+
+function autoRun() {
+
+    if (!running) {
+
+        startAlgorithm();
+    }
+
+
+    clearInterval(autoTimer);
+
+
+    autoTimer = setInterval(function() {
+
+        if (finished) {
+
+            clearInterval(autoTimer);
+
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+function resetVisualizer() {
+
+    clearInterval(autoTimer);
+
+
+    nums = [];
+
+    i = 0;
+
+    left = 0;
+
+    right = 0;
+
+    results = [];
+
+    running = false;
+
+    finished = false;
+
+    stepNumber = 0;
+
+
+    arrayDiv.innerHTML = "";
+
+    pointerDiv.innerHTML = "";
+
+
+    statusDiv.className =
+        "status";
+
+    statusDiv.innerHTML =
+        "Enter an array and click " +
+        "<strong>Start</strong>.";
+
+
+    stepsDiv.innerHTML =
+        "Waiting to start...";
+
+
+    tripletsDiv.innerHTML =
+        "None yet";
+}
+
+
+/* =========================================================
+   BUTTON EVENT HANDLERS
+   ========================================================= */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetVisualizer
+    );
+
+
+</script>
+
+</body>
+</html>

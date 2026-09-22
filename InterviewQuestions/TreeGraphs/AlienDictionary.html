@@ -1,0 +1,1874 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alien Dictionary - Topological Sort Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        width: 92%;
+        max-width: 1250px;
+        margin: 25px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #312e81, #4f46e5);
+        color: white;
+        padding: 30px;
+        border-radius: 16px;
+        text-align: center;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    section {
+        background: white;
+        margin-top: 22px;
+        padding: 24px;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #312e81;
+        margin-top: 0;
+        border-bottom: 2px solid #e0e7ff;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        color: #4f46e5;
+    }
+
+    .problem {
+        background: #eef2ff;
+        border-left: 5px solid #4f46e5;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .input-area {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 15px;
+        align-items: center;
+        margin-top: 15px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input[type="text"] {
+        width: 100%;
+        padding: 11px;
+        border: 1px solid #cbd5e1;
+        border-radius: 7px;
+        font-size: 15px;
+    }
+
+    .example-box {
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        padding: 14px;
+        border-radius: 8px;
+        margin-top: 15px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        margin: 6px 4px 6px 0;
+        border-radius: 7px;
+        cursor: pointer;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    #startBtn {
+        background: #4f46e5;
+        color: white;
+    }
+
+    #nextBtn {
+        background: #059669;
+        color: white;
+    }
+
+    #autoBtn {
+        background: #7c3aed;
+        color: white;
+    }
+
+    #resetBtn {
+        background: #dc2626;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    button:disabled {
+        background: #94a3b8 !important;
+        cursor: not-allowed;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        font-weight: bold;
+    }
+
+    .dashboard {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .card {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        padding: 15px;
+        border-radius: 10px;
+        text-align: center;
+    }
+
+    .card strong {
+        display: block;
+        font-size: 25px;
+        color: #312e81;
+    }
+
+    .words-display {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 15px;
+    }
+
+    .word {
+        padding: 10px 15px;
+        background: #eef2ff;
+        border: 2px solid #c7d2fe;
+        border-radius: 8px;
+        font-family: Consolas, monospace;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .word.active {
+        background: #fef3c7;
+        border-color: #f59e0b;
+    }
+
+    .comparison {
+        margin-top: 15px;
+        padding: 16px;
+        background: #f8fafc;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        font-family: Consolas, monospace;
+    }
+
+    .char-highlight {
+        background: #fde68a;
+        padding: 3px 6px;
+        border-radius: 4px;
+        font-weight: bold;
+    }
+
+    .graph-area {
+        overflow-x: auto;
+        padding: 10px;
+    }
+
+    .graph {
+        min-width: 850px;
+        min-height: 410px;
+        position: relative;
+        background: #fafafa;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+    }
+
+    svg {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 1;
+    }
+
+    .edge {
+        stroke: #64748b;
+        stroke-width: 2.5;
+        marker-end: url(#arrow);
+    }
+
+    .edge.active {
+        stroke: #f59e0b;
+        stroke-width: 4;
+    }
+
+    .node {
+        position: absolute;
+        width: 58px;
+        height: 58px;
+        border-radius: 50%;
+        background: #e0e7ff;
+        border: 3px solid #4f46e5;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 20px;
+        z-index: 3;
+    }
+
+    .node.queued {
+        background: #ede9fe;
+        border-color: #7c3aed;
+    }
+
+    .node.current {
+        background: #fef3c7;
+        border-color: #d97706;
+        transform: scale(1.12);
+    }
+
+    .node.processed {
+        background: #dcfce7;
+        border-color: #16a34a;
+    }
+
+    .node.invalid {
+        background: #fee2e2;
+        border-color: #dc2626;
+    }
+
+    .queue-box {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 10px;
+        background: #f5f3ff;
+        border: 1px solid #ddd6fe;
+    }
+
+    .queue-item {
+        display: inline-block;
+        background: #7c3aed;
+        color: white;
+        padding: 7px 12px;
+        margin: 4px;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .order-box {
+        margin-top: 15px;
+        padding: 16px;
+        border-radius: 10px;
+        background: #ecfdf5;
+        border: 2px solid #10b981;
+        min-height: 60px;
+    }
+
+    .order-letter {
+        display: inline-block;
+        background: #059669;
+        color: white;
+        padding: 9px 14px;
+        margin: 4px;
+        border-radius: 7px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .failure {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #991b1b;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 10px;
+        overflow-x: auto;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, "Courier New", monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+    }
+
+    .complexity div {
+        background: #f8fafc;
+        padding: 16px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .important {
+        background: #fff7ed;
+        border-left: 5px solid #f97316;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 15px;
+    }
+
+    .legend span {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .legend-current {
+        background: #fef3c7;
+    }
+
+    .legend-queued {
+        background: #ede9fe;
+    }
+
+    .legend-processed {
+        background: #dcfce7;
+    }
+
+    .legend-invalid {
+        background: #fee2e2;
+    }
+
+    @media (max-width: 800px) {
+        .input-area {
+            grid-template-columns: 1fr;
+        }
+
+        .dashboard {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        header h1 {
+            font-size: 23px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Alien Dictionary</h1>
+    <p>Derive the Alien Alphabet Order using Topological Sorting</p>
+</header>
+
+<section>
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+        You are given a list of words from an alien language.
+        The words are already sorted lexicographically according to
+        the alien language's alphabet.
+
+        <br><br>
+
+        Determine the order of characters in the alien alphabet.
+
+        <br><br>
+
+        If the ordering cannot be determined because the input contains
+        an invalid prefix relationship or a cycle, return an empty string.
+    </div>
+
+    <div class="example-box">
+        <b>Example:</b>
+
+        <br><br>
+
+        words =
+        <code>["wrt", "wrf", "er", "ett", "rftt"]</code>
+
+        <br><br>
+
+        Derived order:
+
+        <b>wertf</b>
+    </div>
+</section>
+
+<section>
+    <h2>2. Input</h2>
+
+    <div class="input-area">
+
+        <label for="wordsInput">
+            Alien Dictionary Words:
+        </label>
+
+        <input
+            type="text"
+            id="wordsInput"
+            value='["wrt","wrf","er","ett","rftt"]'
+        >
+
+    </div>
+
+    <p>
+        Enter the words as a JSON array of strings.
+    </p>
+
+    <button id="startBtn">Start Algorithm</button>
+    <button id="nextBtn" disabled>Next Step</button>
+    <button id="autoBtn" disabled>Auto Run</button>
+    <button id="resetBtn">Reset</button>
+
+    <div class="status" id="status">
+        Enter the dictionary and click Start Algorithm.
+    </div>
+</section>
+
+<section>
+    <h2>3. Dictionary Visualization</h2>
+
+    <div class="words-display" id="wordsDisplay"></div>
+
+    <div class="comparison" id="comparison">
+        No comparison has started.
+    </div>
+</section>
+
+<section>
+    <h2>4. Algorithm Dashboard</h2>
+
+    <div class="dashboard">
+
+        <div class="card">
+            <span>Characters</span>
+            <strong id="charCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Relations</span>
+            <strong id="relationCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Processed</span>
+            <strong id="processedCount">0</strong>
+        </div>
+
+        <div class="card">
+            <span>Queue</span>
+            <strong id="queueCount">0</strong>
+        </div>
+
+    </div>
+
+    <div class="queue-box">
+        <b>Ready Characters (indegree = 0):</b>
+        <div id="queueDisplay">Empty</div>
+    </div>
+
+    <div class="order-box" id="orderBox">
+        <b>Alien Alphabet Order:</b>
+
+        <div id="orderDisplay">
+            Not determined yet.
+        </div>
+    </div>
+</section>
+
+<section>
+    <h2>5. Character Dependency Graph</h2>
+
+    <div class="graph-area">
+        <div class="graph" id="graph">
+            <svg id="svg"></svg>
+        </div>
+    </div>
+
+    <div class="legend">
+        <span class="legend-current">Current</span>
+        <span class="legend-queued">Ready / Queue</span>
+        <span class="legend-processed">Processed</span>
+        <span class="legend-invalid">Invalid / Cycle</span>
+    </div>
+</section>
+
+<section>
+    <h2>6. Key Idea</h2>
+
+    <p>
+        Compare every pair of <b>adjacent words</b>.
+        Find the first character position where the two words differ.
+    </p>
+
+    <div class="important">
+
+        If:
+
+        <br><br>
+
+        <code>word1 = "wrt"</code>
+
+        <br>
+
+        <code>word2 = "wrf"</code>
+
+        <br><br>
+
+        The first difference is:
+
+        <br>
+
+        <b>t vs f</b>
+
+        <br><br>
+
+        Since "wrt" comes before "wrf":
+
+        <br><br>
+
+        <b>t → f</b>
+
+        <br><br>
+
+        Therefore <b>t comes before f</b> in the alien alphabet.
+
+    </div>
+</section>
+
+<section>
+    <h2>7. Algorithm Steps</h2>
+
+    <ol>
+        <li>Collect every unique character appearing in the words.</li>
+
+        <li>
+            Compare each pair of adjacent words.
+        </li>
+
+        <li>
+            Find their first different characters.
+        </li>
+
+        <li>
+            Add a directed edge from the first character to the second.
+        </li>
+
+        <li>
+            Increase the indegree of the second character.
+        </li>
+
+        <li>
+            Put all characters with indegree 0 into a queue.
+        </li>
+
+        <li>
+            Perform topological sorting.
+        </li>
+
+        <li>
+            The resulting sequence is the alien alphabet order.
+        </li>
+
+        <li>
+            If not all characters are processed, a cycle exists.
+        </li>
+    </ol>
+</section>
+
+<section>
+    <h2>8. Pseudocode</h2>
+
+<pre><code>AlienDictionary(words):
+
+    graph = empty adjacency list
+    indegree = empty map
+
+    for every word:
+        for every character c:
+            create c in graph
+            indegree[c] = 0
+
+    for i from 0 to words.length - 2:
+
+        word1 = words[i]
+        word2 = words[i + 1]
+
+        if word1 is longer than word2
+           and word1 starts with word2:
+
+            return ""
+
+        for j from 0 to min(length(word1), length(word2)) - 1:
+
+            if word1[j] != word2[j]:
+
+                u = word1[j]
+                v = word2[j]
+
+                if v is not already in graph[u]:
+
+                    graph[u].append(v)
+                    indegree[v]++
+
+                break
+
+    queue = all characters whose indegree is 0
+
+    order = []
+
+    while queue is not empty:
+
+        current = queue.pop()
+
+        order.append(current)
+
+        for next in graph[current]:
+
+            indegree[next]--
+
+            if indegree[next] == 0:
+                queue.push(next)
+
+    if length(order) != number of unique characters:
+
+        return ""
+
+    return order</code></pre>
+</section>
+
+<section>
+    <h2>9. Python Implementation</h2>
+
+<pre><code>from collections import deque
+
+def alien_order(words):
+
+    # Create graph and indegree for every character
+    graph = {c: set() for word in words for c in word}
+    indegree = {c: 0 for c in graph}
+
+    # Compare adjacent words
+    for w1, w2 in zip(words, words[1:]):
+
+        # Invalid prefix case
+        if len(w1) > len(w2) and w1.startswith(w2):
+            return ""
+
+        for c1, c2 in zip(w1, w2):
+
+            if c1 != c2:
+
+                # Avoid duplicate edges
+                if c2 not in graph[c1]:
+                    graph[c1].add(c2)
+                    indegree[c2] += 1
+
+                break
+
+    # Characters with no prerequisites
+    queue = deque(
+        c for c in indegree
+        if indegree[c] == 0
+    )
+
+    order = []
+
+    # Topological sort
+    while queue:
+
+        current = queue.popleft()
+        order.append(current)
+
+        for nxt in graph[current]:
+
+            indegree[nxt] -= 1
+
+            if indegree[nxt] == 0:
+                queue.append(nxt)
+
+    # Cycle detected
+    if len(order) != len(graph):
+        return ""
+
+    return "".join(order)
+
+
+# Example
+words = [
+    "wrt",
+    "wrf",
+    "er",
+    "ett",
+    "rftt"
+]
+
+print(alien_order(words))</code></pre>
+
+<h3>Output</h3>
+
+<pre><code>wertf</code></pre>
+
+<p>
+The exact answer can vary when the input does not uniquely determine
+the relative order of some characters.
+</p>
+</section>
+
+<section>
+    <h2>10. Example Walkthrough</h2>
+
+    <div class="example-box">
+
+        <b>Input:</b>
+
+        <br><br>
+
+        <code>
+        ["wrt", "wrf", "er", "ett", "rftt"]
+        </code>
+
+        <br><br>
+
+        Adjacent comparisons:
+
+        <br><br>
+
+        <b>1. "wrt" vs "wrf"</b>
+        <br>
+        First difference: <code>t → f</code>
+
+        <br><br>
+
+        <b>2. "wrf" vs "er"</b>
+        <br>
+        First difference: <code>w → e</code>
+
+        <br><br>
+
+        <b>3. "er" vs "ett"</b>
+        <br>
+        First difference: <code>r → t</code>
+
+        <br><br>
+
+        <b>4. "ett" vs "rftt"</b>
+        <br>
+        First difference: <code>e → r</code>
+
+        <br><br>
+
+        Therefore the dependency graph contains:
+
+        <br><br>
+
+        <code>
+        t → f<br>
+        w → e<br>
+        r → t<br>
+        e → r
+        </code>
+
+        <br><br>
+
+        Topological ordering:
+
+        <br>
+
+        <b>w → e → r → t → f</b>
+
+        <br><br>
+
+        Final answer:
+
+        <br>
+
+        <b>wertf</b>
+
+    </div>
+</section>
+
+<section>
+    <h2>11. Important Invalid Case</h2>
+
+    <div class="important">
+
+        Consider:
+
+        <br><br>
+
+        <code>["abc", "ab"]</code>
+
+        <br><br>
+
+        The second word is a prefix of the first word,
+        but it appears after the first word.
+
+        <br><br>
+
+        This is impossible in lexicographical ordering.
+
+        <br><br>
+
+        Therefore the answer is:
+
+        <br><br>
+
+        <code>""</code>
+
+    </div>
+</section>
+
+<section>
+    <h2>12. Cycle Detection</h2>
+
+    <p>
+        Consider dependencies such as:
+    </p>
+
+    <pre><code>a → b
+b → c
+c → a</code></pre>
+
+    <p>
+        No character can be placed first because every character
+        depends on another character.
+    </p>
+
+    <p>
+        Therefore topological sorting processes fewer characters than
+        actually exist, indicating a cycle.
+    </p>
+
+    <p>
+        In that case the algorithm returns an empty string.
+    </p>
+</section>
+
+<section>
+    <h2>13. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div>
+            <h3>Time Complexity</h3>
+
+            <p>
+                <b>O(C + E + L)</b>
+            </p>
+
+            <p>
+                C = number of unique characters<br>
+                E = number of character relationships<br>
+                L = total number of characters in all words
+            </p>
+        </div>
+
+        <div>
+            <h3>Space Complexity</h3>
+
+            <p>
+                <b>O(C + E)</b>
+            </p>
+
+            <p>
+                Space is required for the graph, indegree map,
+                queue and resulting order.
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<section>
+    <h2>14. Important Observations</h2>
+
+    <ul>
+        <li>
+            Only <b>adjacent words</b> need to be compared.
+        </li>
+
+        <li>
+            Only the <b>first differing character</b> gives a valid
+            ordering constraint.
+        </li>
+
+        <li>
+            <code>[a,b]</code> in the dependency graph means
+            <b>a must appear before b</b>.
+        </li>
+
+        <li>
+            Duplicate edges must not increase indegree more than once.
+        </li>
+
+        <li>
+            A cycle means the alien alphabet order is impossible.
+        </li>
+
+        <li>
+            An invalid prefix such as <code>["abc","ab"]</code>
+            must also return an empty string.
+        </li>
+
+        <li>
+            If multiple characters have indegree 0 simultaneously,
+            more than one valid alphabet ordering may exist.
+        </li>
+    </ul>
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================
+   Global State
+   ========================================= */
+
+let words = [];
+let characters = [];
+let graph = {};
+let indegree = {};
+
+let queue = [];
+let order = [];
+
+let comparisonIndex = 0;
+let topoStarted = false;
+let finished = false;
+
+let autoTimer = null;
+let currentChar = "";
+
+let comparisonEdges = [];
+
+
+/* =========================================
+   DOM Elements
+   ========================================= */
+
+const wordsInput =
+    document.getElementById("wordsInput");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const autoBtn =
+    document.getElementById("autoBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const statusBox =
+    document.getElementById("status");
+
+const wordsDisplay =
+    document.getElementById("wordsDisplay");
+
+const comparison =
+    document.getElementById("comparison");
+
+const charCount =
+    document.getElementById("charCount");
+
+const relationCount =
+    document.getElementById("relationCount");
+
+const processedCount =
+    document.getElementById("processedCount");
+
+const queueCount =
+    document.getElementById("queueCount");
+
+const queueDisplay =
+    document.getElementById("queueDisplay");
+
+const orderDisplay =
+    document.getElementById("orderDisplay");
+
+const orderBox =
+    document.getElementById("orderBox");
+
+const graphElement =
+    document.getElementById("graph");
+
+const svg =
+    document.getElementById("svg");
+
+
+/* =========================================
+   Parse Input
+   ========================================= */
+
+function parseInput() {
+
+    const input = wordsInput.value.trim();
+
+    if (!input) {
+        throw new Error("Please enter at least one word.");
+    }
+
+    words = JSON.parse(input);
+
+    if (!Array.isArray(words)) {
+        throw new Error("Input must be a JSON array.");
+    }
+
+    if (words.length === 0) {
+        throw new Error("The dictionary cannot be empty.");
+    }
+
+    for (const word of words) {
+
+        if (typeof word !== "string") {
+            throw new Error(
+                "Every dictionary entry must be a string."
+            );
+        }
+    }
+}
+
+
+/* =========================================
+   Initialize
+   ========================================= */
+
+function initialize() {
+
+    graph = {};
+    indegree = {};
+    queue = [];
+    order = [];
+
+    comparisonIndex = 0;
+    topoStarted = false;
+    finished = false;
+    currentChar = "";
+
+    comparisonEdges = [];
+
+    characters = [
+        ...new Set(words.join("").split(""))
+    ].sort();
+
+    characters.forEach(char => {
+
+        graph[char] = [];
+        indegree[char] = 0;
+    });
+
+    renderWords();
+    drawGraph();
+    updateDashboard();
+}
+
+
+/* =========================================
+   Display Words
+   ========================================= */
+
+function renderWords(activeIndex = -1) {
+
+    wordsDisplay.innerHTML = "";
+
+    words.forEach((word, index) => {
+
+        const element =
+            document.createElement("div");
+
+        element.className = "word";
+
+        if (
+            index === activeIndex ||
+            index === activeIndex + 1
+        ) {
+            element.classList.add("active");
+        }
+
+        element.textContent = word;
+
+        wordsDisplay.appendChild(element);
+    });
+}
+
+
+/* =========================================
+   Compare Next Pair
+   ========================================= */
+
+function processComparison() {
+
+    if (comparisonIndex >= words.length - 1) {
+
+        startTopologicalSort();
+        return;
+    }
+
+    const word1 = words[comparisonIndex];
+    const word2 = words[comparisonIndex + 1];
+
+    renderWords(comparisonIndex);
+
+    let foundDifference = false;
+
+    const minLength =
+        Math.min(word1.length, word2.length);
+
+    for (let i = 0; i < minLength; i++) {
+
+        if (word1[i] !== word2[i]) {
+
+            const first = word1[i];
+            const second = word2[i];
+
+            foundDifference = true;
+
+            comparison.innerHTML =
+                "Comparing: <b>" +
+                word1 +
+                "</b> and <b>" +
+                word2 +
+                "</b><br><br>" +
+                "First difference: " +
+                "<span class='char-highlight'>" +
+                first +
+                "</span> → " +
+                "<span class='char-highlight'>" +
+                second +
+                "</span><br><br>" +
+                "Therefore <b>" +
+                first +
+                "</b> must come before <b>" +
+                second +
+                "</b>.";
+
+            addEdge(first, second);
+
+            statusBox.textContent =
+                "Added dependency: " +
+                first +
+                " → " +
+                second;
+
+            break;
+        }
+    }
+
+    /* Invalid prefix case */
+    if (!foundDifference &&
+        word1.length > word2.length) {
+
+        statusBox.textContent =
+            "Invalid dictionary: " +
+            word2 +
+            " is a prefix of " +
+            word1 +
+            " but appears after it.";
+
+        comparison.innerHTML =
+            "<b>Invalid prefix ordering detected.</b><br><br>" +
+            word2 +
+            " is a prefix of " +
+            word1 +
+            ".";
+
+        finished = true;
+
+        orderBox.classList.add("failure");
+
+        nextBtn.disabled = true;
+        autoBtn.disabled = true;
+
+        return;
+    }
+
+    if (!foundDifference) {
+
+        comparison.innerHTML =
+            "Comparing <b>" +
+            word1 +
+            "</b> and <b>" +
+            word2 +
+            "<br><br>" +
+            "No differing character was found.<br>" +
+            "No dependency is added.";
+
+        statusBox.textContent =
+            "The words do not provide a new ordering constraint.";
+    }
+
+    comparisonIndex++;
+
+    updateDashboard();
+
+    if (comparisonIndex >= words.length - 1) {
+
+        statusBox.textContent +=
+            " All adjacent word comparisons are complete.";
+    }
+}
+
+
+/* =========================================
+   Add Graph Edge
+   ========================================= */
+
+function addEdge(from, to) {
+
+    if (!graph[from].includes(to)) {
+
+        graph[from].push(to);
+        indegree[to]++;
+
+        comparisonEdges.push({
+            from: from,
+            to: to
+        });
+    }
+
+    drawGraph();
+    updateDashboard();
+}
+
+
+/* =========================================
+   Start Topological Sort
+   ========================================= */
+
+function startTopologicalSort() {
+
+    if (topoStarted || finished) {
+        return;
+    }
+
+    topoStarted = true;
+
+    queue = [];
+
+    characters.forEach(char => {
+
+        if (indegree[char] === 0) {
+            queue.push(char);
+        }
+    });
+
+    statusBox.textContent =
+        "All dependencies are built. " +
+        "Starting topological sorting.";
+
+    comparison.innerHTML =
+        "<b>Dependency graph completed.</b><br><br>" +
+        "Characters with indegree 0 are ready to be placed " +
+        "in the alien alphabet.";
+
+    nextBtn.disabled = false;
+
+    updateDashboard();
+    drawGraph();
+
+    if (queue.length === 0) {
+
+        finishTopologicalSort();
+    }
+}
+
+
+/* =========================================
+   Topological Sort Step
+   ========================================= */
+
+function processTopologicalStep() {
+
+    if (!topoStarted || finished) {
+        return;
+    }
+
+    if (queue.length === 0) {
+
+        finishTopologicalSort();
+        return;
+    }
+
+    currentChar = queue.shift();
+
+    order.push(currentChar);
+
+    statusBox.textContent =
+        "Placed '" +
+        currentChar +
+        "' into the alien alphabet order.";
+
+    const neighbors = graph[currentChar];
+
+    neighbors.forEach(next => {
+
+        indegree[next]--;
+
+        if (indegree[next] === 0) {
+
+            queue.push(next);
+
+            statusBox.textContent +=
+                " Character '" +
+                next +
+                "' now has indegree 0 and is ready.";
+        }
+    });
+
+    updateDashboard();
+    drawGraph();
+
+    if (order.length === characters.length) {
+
+        finishTopologicalSort();
+    }
+}
+
+
+/* =========================================
+   Finish Topological Sort
+   ========================================= */
+
+function finishTopologicalSort() {
+
+    finished = true;
+    currentChar = "";
+
+    stopAuto();
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    updateDashboard();
+    drawGraph();
+
+    if (order.length === characters.length) {
+
+        orderBox.classList.remove("failure");
+
+        statusBox.textContent =
+            "Success! Alien alphabet order = " +
+            order.join("");
+
+    } else {
+
+        orderBox.classList.add("failure");
+
+        statusBox.textContent =
+            "Cycle detected. A valid alien alphabet order does not exist.";
+
+        graphElement
+            .querySelectorAll(".node")
+            .forEach(node => {
+
+                const char = node.dataset.char;
+
+                if (!order.includes(char)) {
+                    node.classList.add("invalid");
+                }
+            });
+    }
+}
+
+
+/* =========================================
+   Draw Graph
+   ========================================= */
+
+function drawGraph() {
+
+    graphElement
+        .querySelectorAll(".node")
+        .forEach(node => node.remove());
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+
+    if (characters.length === 0) {
+        return;
+    }
+
+    const defs =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "defs"
+        );
+
+    const marker =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "marker"
+        );
+
+    marker.setAttribute("id", "arrow");
+    marker.setAttribute("markerWidth", "10");
+    marker.setAttribute("markerHeight", "10");
+    marker.setAttribute("refX", "9");
+    marker.setAttribute("refY", "3");
+    marker.setAttribute("orient", "auto");
+
+    const polygon =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "polygon"
+        );
+
+    polygon.setAttribute(
+        "points",
+        "0 0, 10 3, 0 6"
+    );
+
+    polygon.setAttribute(
+        "fill",
+        "#64748b"
+    );
+
+    marker.appendChild(polygon);
+    defs.appendChild(marker);
+    svg.appendChild(defs);
+
+    const positions = calculatePositions();
+
+    /* Draw edges */
+    Object.keys(graph).forEach(from => {
+
+        graph[from].forEach(to => {
+
+            const p1 = positions[from];
+            const p2 = positions[to];
+
+            if (!p1 || !p2) return;
+
+            const line =
+                document.createElementNS(
+                    "http://www.w3.org/2000/svg",
+                    "line"
+                );
+
+            line.setAttribute(
+                "x1",
+                p1.x + 29
+            );
+
+            line.setAttribute(
+                "y1",
+                p1.y + 29
+            );
+
+            line.setAttribute(
+                "x2",
+                p2.x + 29
+            );
+
+            line.setAttribute(
+                "y2",
+                p2.y + 29
+            );
+
+            line.setAttribute(
+                "class",
+                "edge"
+            );
+
+            if (
+                currentChar &&
+                from === currentChar
+            ) {
+                line.classList.add("active");
+            }
+
+            svg.appendChild(line);
+        });
+    });
+
+    /* Draw nodes */
+    characters.forEach(char => {
+
+        const node =
+            document.createElement("div");
+
+        node.className = "node";
+
+        node.dataset.char = char;
+
+        node.textContent = char;
+
+        node.style.left =
+            positions[char].x + "px";
+
+        node.style.top =
+            positions[char].y + "px";
+
+        if (char === currentChar) {
+
+            node.classList.add("current");
+
+        } else if (order.includes(char)) {
+
+            node.classList.add("processed");
+
+        } else if (queue.includes(char)) {
+
+            node.classList.add("queued");
+
+        } else if (
+            finished &&
+            !order.includes(char)
+        ) {
+
+            node.classList.add("invalid");
+        }
+
+        graphElement.appendChild(node);
+    });
+}
+
+
+/* =========================================
+   Calculate Positions
+   ========================================= */
+
+function calculatePositions() {
+
+    const positions = {};
+
+    const count = characters.length;
+
+    const columns = Math.min(6, Math.max(1, count));
+
+    const rows = Math.ceil(count / columns);
+
+    graphElement.style.minHeight =
+        Math.max(
+            410,
+            rows * 120 + 100
+        ) + "px";
+
+    graphElement.style.minWidth =
+        Math.max(
+            850,
+            columns * 120 + 100
+        ) + "px";
+
+    characters.forEach((char, index) => {
+
+        const row =
+            Math.floor(index / columns);
+
+        const col =
+            index % columns;
+
+        positions[char] = {
+            x: 70 + col * 125,
+            y: 55 + row * 110
+        };
+    });
+
+    return positions;
+}
+
+
+/* =========================================
+   Dashboard
+   ========================================= */
+
+function updateDashboard() {
+
+    charCount.textContent =
+        characters.length;
+
+    relationCount.textContent =
+        Object.values(graph)
+            .reduce(
+                (sum, list) => sum + list.length,
+                0
+            );
+
+    processedCount.textContent =
+        order.length;
+
+    queueCount.textContent =
+        queue.length;
+
+    if (queue.length === 0) {
+
+        queueDisplay.textContent = "Empty";
+
+    } else {
+
+        queueDisplay.innerHTML = "";
+
+        queue.forEach(char => {
+
+            const item =
+                document.createElement("span");
+
+            item.className = "queue-item";
+
+            item.textContent = char;
+
+            queueDisplay.appendChild(item);
+        });
+    }
+
+    if (order.length === 0) {
+
+        orderDisplay.textContent =
+            "Not determined yet.";
+
+    } else {
+
+        orderDisplay.innerHTML = "";
+
+        order.forEach(char => {
+
+            const item =
+                document.createElement("span");
+
+            item.className = "order-letter";
+
+            item.textContent = char;
+
+            orderDisplay.appendChild(item);
+        });
+    }
+}
+
+
+/* =========================================
+   Start
+   ========================================= */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    try {
+
+        parseInput();
+        initialize();
+
+        nextBtn.disabled = false;
+        autoBtn.disabled = false;
+
+        statusBox.textContent =
+            "Starting dictionary comparison. " +
+            "Click Next Step to compare adjacent words.";
+
+        orderBox.classList.remove("failure");
+
+    } catch (error) {
+
+        statusBox.textContent =
+            "Input Error: " +
+            error.message;
+
+        nextBtn.disabled = true;
+        autoBtn.disabled = true;
+    }
+}
+
+
+/* =========================================
+   Next Step
+   ========================================= */
+
+function nextStep() {
+
+    if (finished) {
+        return;
+    }
+
+    if (!topoStarted) {
+
+        processComparison();
+
+    } else {
+
+        processTopologicalStep();
+    }
+}
+
+
+/* =========================================
+   Auto Run
+   ========================================= */
+
+function autoRun() {
+
+    if (finished) {
+        return;
+    }
+
+    stopAuto();
+
+    autoTimer = setInterval(() => {
+
+        if (finished) {
+
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+}
+
+
+/* =========================================
+   Stop Auto
+   ========================================= */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+
+/* =========================================
+   Reset
+   ========================================= */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    words = [];
+    characters = [];
+    graph = {};
+    indegree = {};
+    queue = [];
+    order = [];
+
+    comparisonIndex = 0;
+    topoStarted = false;
+    finished = false;
+
+    currentChar = "";
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    charCount.textContent = "0";
+    relationCount.textContent = "0";
+    processedCount.textContent = "0";
+    queueCount.textContent = "0";
+
+    queueDisplay.textContent = "Empty";
+
+    orderDisplay.textContent =
+        "Not determined yet.";
+
+    wordsDisplay.innerHTML = "";
+
+    comparison.textContent =
+        "No comparison has started.";
+
+    statusBox.textContent =
+        "Enter the dictionary and click Start Algorithm.";
+
+    orderBox.classList.remove("failure");
+
+    graphElement
+        .querySelectorAll(".node")
+        .forEach(node => node.remove());
+
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+}
+
+
+/* =========================================
+   Event Listeners
+   ========================================= */
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+</script>
+
+</body>
+</html>

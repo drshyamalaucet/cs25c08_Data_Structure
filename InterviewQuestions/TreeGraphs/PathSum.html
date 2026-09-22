@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Path Sum - Binary Tree Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 8px;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+    }
+
+    .problem {
+        line-height: 1.7;
+        font-size: 16px;
+    }
+
+    .example {
+        background: #f8fafc;
+        border-left: 5px solid #4f46e5;
+        padding: 15px;
+        border-radius: 6px;
+        line-height: 1.7;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 18px 0;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #4f46e5;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .reset {
+        background: #64748b;
+    }
+
+    .auto {
+        background: #059669;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .stat {
+        background: #f8fafc;
+        padding: 15px;
+        text-align: center;
+        border-radius: 8px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 24px;
+        margin-top: 5px;
+    }
+
+    .tree-container {
+        overflow-x: auto;
+        padding: 20px;
+        min-height: 390px;
+        background: #f8fafc;
+        border-radius: 10px;
+    }
+
+    svg {
+        display: block;
+        margin: auto;
+        min-width: 700px;
+    }
+
+    .edge {
+        stroke: #94a3b8;
+        stroke-width: 3;
+    }
+
+    .node {
+        fill: white;
+        stroke: #334155;
+        stroke-width: 3;
+    }
+
+    .node.current {
+        fill: #fde68a;
+        stroke: #d97706;
+        stroke-width: 5;
+    }
+
+    .node.path {
+        fill: #bbf7d0;
+        stroke: #16a34a;
+        stroke-width: 4;
+    }
+
+    .node.success {
+        fill: #86efac;
+        stroke: #15803d;
+        stroke-width: 5;
+    }
+
+    .node.fail {
+        fill: #fecaca;
+        stroke: #dc2626;
+        stroke-width: 5;
+    }
+
+    .node-text {
+        font-size: 18px;
+        font-weight: bold;
+        text-anchor: middle;
+        dominant-baseline: middle;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #eef2ff;
+        border-left: 5px solid #4f46e5;
+        font-weight: bold;
+        min-height: 50px;
+    }
+
+    .success-box {
+        background: #dcfce7;
+        border-left-color: #16a34a;
+    }
+
+    .fail-box {
+        background: #fee2e2;
+        border-left-color: #dc2626;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        padding: 14px;
+        border-radius: 7px;
+        font-family: Consolas, monospace;
+        font-size: 16px;
+        margin: 10px 0;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .observation {
+        padding: 15px;
+        background: #f8fafc;
+        border-left: 4px solid #0ea5e9;
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 800px) {
+        body {
+            padding: 12px;
+        }
+
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🌳 Path Sum in a Binary Tree</h1>
+    <div class="subtitle">
+        Interactive Visualization + Pseudocode + Python Implementation
+    </div>
+
+    <!-- 1. Problem -->
+    <div class="card">
+        <h2>1. Problem Statement</h2>
+
+        <div class="problem">
+            Given the root of a binary tree and an integer
+            <strong>targetSum</strong>, determine whether the tree has a
+            <strong>root-to-leaf path</strong> such that the sum of all node
+            values along that path equals the target sum.
+        </div>
+
+        <div class="example">
+            <strong>Example:</strong><br><br>
+
+            Binary Tree:
+            <br><br>
+
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;5
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
+            <br>
+            &nbsp;&nbsp;&nbsp;&nbsp;4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;8
+            <br>
+            &nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;&nbsp;\
+            <br>
+            &nbsp;&nbsp;11&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;13&nbsp;&nbsp;&nbsp;&nbsp;4
+            <br>
+            &nbsp;&nbsp;/&nbsp;&nbsp;\
+            <br>
+            7&nbsp;&nbsp;&nbsp;&nbsp;2
+
+            <br><br>
+
+            Target Sum = <strong>22</strong>
+
+            <br><br>
+
+            Path:
+            <strong>5 → 4 → 11 → 2</strong>
+
+            <br><br>
+
+            5 + 4 + 11 + 2 = <strong>22</strong>
+
+            <br><br>
+
+            Therefore, the answer is <strong>True</strong>.
+        </div>
+    </div>
+
+    <!-- 2. Visualization -->
+    <div class="card">
+        <h2>2. Interactive Visualization</h2>
+
+        <div class="stats">
+            <div class="stat">
+                Target Sum
+                <strong id="targetDisplay">22</strong>
+            </div>
+
+            <div class="stat">
+                Current Sum
+                <strong id="currentSum">0</strong>
+            </div>
+
+            <div class="stat">
+                Remaining
+                <strong id="remaining">22</strong>
+            </div>
+
+            <div class="stat">
+                Step
+                <strong id="stepDisplay">0</strong>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button id="startBtn">▶ Start</button>
+            <button id="nextBtn">➡ Next Step</button>
+            <button id="autoBtn" class="auto">⏩ Auto Run</button>
+            <button id="resetBtn" class="reset">↺ Reset</button>
+        </div>
+
+        <div class="tree-container">
+            <svg id="treeSvg" width="850" height="360"
+                 viewBox="0 0 850 360">
+            </svg>
+        </div>
+
+        <div id="status" class="status">
+            Click <strong>Start</strong> to begin the root-to-leaf traversal.
+        </div>
+    </div>
+
+    <!-- 3. Algorithm -->
+    <div class="card">
+        <h2>3. Algorithm</h2>
+
+        <ol>
+            <li>Start from the root node.</li>
+            <li>Add the current node's value to the running sum.</li>
+            <li>If the node is a leaf, compare the sum with targetSum.</li>
+            <li>If they are equal, return <strong>True</strong>.</li>
+            <li>Otherwise, recursively check the left and right subtrees.</li>
+            <li>If no root-to-leaf path matches, return <strong>False</strong>.</li>
+        </ol>
+
+        <div class="formula">
+            newSum = currentSum + node.value
+        </div>
+    </div>
+
+    <!-- 4. Pseudocode -->
+    <div class="card">
+        <h2>4. Pseudocode</h2>
+
+<pre><code>FUNCTION hasPathSum(root, targetSum):
+
+    IF root is NULL:
+        RETURN False
+
+    currentSum = targetSum - root.value
+
+    IF root.left is NULL AND root.right is NULL:
+        RETURN currentSum == 0
+
+    RETURN hasPathSum(root.left, currentSum)
+           OR
+           hasPathSum(root.right, currentSum)</code></pre>
+    </div>
+
+    <!-- 5. Python -->
+    <div class="card">
+        <h2>5. Python Implementation</h2>
+
+<pre><code>class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
+def hasPathSum(root, targetSum):
+    if root is None:
+        return False
+
+    targetSum -= root.val
+
+    # Leaf node
+    if root.left is None and root.right is None:
+        return targetSum == 0
+
+    return (
+        hasPathSum(root.left, targetSum)
+        or hasPathSum(root.right, targetSum)
+    )</code></pre>
+    </div>
+
+    <!-- 6. Alternative Python -->
+    <div class="card">
+        <h2>6. Iterative Python Implementation</h2>
+
+<pre><code>def hasPathSum(root, targetSum):
+
+    if root is None:
+        return False
+
+    stack = [(root, root.val)]
+
+    while stack:
+
+        node, current_sum = stack.pop()
+
+        if node.left is None and node.right is None:
+            if current_sum == targetSum:
+                return True
+
+        if node.right:
+            stack.append(
+                (node.right, current_sum + node.right.val)
+            )
+
+        if node.left:
+            stack.append(
+                (node.left, current_sum + node.left.val)
+            )
+
+    return False</code></pre>
+    </div>
+
+    <!-- 7. Explanation -->
+    <div class="card">
+        <h2>7. Step-by-Step Example</h2>
+
+        <div class="two-column">
+
+            <div>
+                <h3>Path 1</h3>
+
+                <div class="formula">
+                    5 → 4 → 11 → 7
+                </div>
+
+                <div class="formula">
+                    5 + 4 + 11 + 7 = 27
+                </div>
+
+                <p>27 ≠ 22 → Not a valid path.</p>
+            </div>
+
+            <div>
+                <h3>Path 2</h3>
+
+                <div class="formula">
+                    5 → 4 → 11 → 2
+                </div>
+
+                <div class="formula">
+                    5 + 4 + 11 + 2 = 22
+                </div>
+
+                <p>22 = 22 → Valid root-to-leaf path.</p>
+            </div>
+
+        </div>
+
+        <div class="observation">
+            <strong>Important:</strong>
+            The path must start at the root and must end at a leaf.
+            A partial path that reaches the target sum at an internal node
+            does not count.
+        </div>
+    </div>
+
+    <!-- 8. Complexity -->
+    <div class="card">
+        <h2>8. Complexity Analysis</h2>
+
+        <div class="two-column">
+
+            <div>
+                <h3>Time Complexity</h3>
+                <div class="formula">
+                    O(N)
+                </div>
+                <p>
+                    In the worst case, every node may need to be visited.
+                </p>
+            </div>
+
+            <div>
+                <h3>Space Complexity</h3>
+                <div class="formula">
+                    O(H)
+                </div>
+                <p>
+                    Recursive stack space depends on the height H of the tree.
+                </p>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- 9. Key points -->
+    <div class="card">
+        <h2>9. Important Observations</h2>
+
+        <div class="observation">
+            <strong>1. Root-to-leaf:</strong>
+            The path cannot start from an arbitrary node.
+        </div>
+
+        <div class="observation">
+            <strong>2. Leaf condition:</strong>
+            The target sum must be checked when a leaf node is reached.
+        </div>
+
+        <div class="observation">
+            <strong>3. Negative values:</strong>
+            The algorithm also works when tree nodes contain negative values.
+        </div>
+
+        <div class="observation">
+            <strong>4. Early termination:</strong>
+            Once a valid path is found, the algorithm can immediately return
+            True.
+        </div>
+    </div>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------
+   Binary Tree
+--------------------------------------- */
+
+const tree = {
+    id: "root",
+    value: 5,
+    left: {
+        id: "n4",
+        value: 4,
+        left: {
+            id: "n11",
+            value: 11,
+            left: {
+                id: "n7",
+                value: 7,
+                left: null,
+                right: null
+            },
+            right: {
+                id: "n2",
+                value: 2,
+                left: null,
+                right: null
+            }
+        },
+        right: null
+    },
+    right: {
+        id: "n8",
+        value: 8,
+        left: {
+            id: "n13",
+            value: 13,
+            left: null,
+            right: null
+        },
+        right: {
+            id: "n4b",
+            value: 4,
+            left: null,
+            right: null
+        }
+    }
+};
+
+const targetSum = 22;
+
+let steps = [];
+let currentStep = -1;
+let autoTimer = null;
+
+/* ---------------------------------------
+   Build traversal steps
+--------------------------------------- */
+
+function buildSteps() {
+
+    steps = [];
+
+    function dfs(node, currentSum, path) {
+
+        if (!node) {
+            return;
+        }
+
+        const newSum = currentSum + node.value;
+        const newPath = [...path, node.id];
+
+        steps.push({
+            type: "visit",
+            nodeId: node.id,
+            value: node.value,
+            currentSum: newSum,
+            path: newPath
+        });
+
+        const isLeaf =
+            node.left === null &&
+            node.right === null;
+
+        if (isLeaf) {
+
+            if (newSum === targetSum) {
+
+                steps.push({
+                    type: "success",
+                    nodeId: node.id,
+                    value: node.value,
+                    currentSum: newSum,
+                    path: newPath
+                });
+
+                return true;
+            }
+
+            steps.push({
+                type: "fail",
+                nodeId: node.id,
+                value: node.value,
+                currentSum: newSum,
+                path: newPath
+            });
+
+            return false;
+        }
+
+        if (dfs(node.left, newSum, newPath)) {
+            return true;
+        }
+
+        if (dfs(node.right, newSum, newPath)) {
+            return true;
+        }
+
+        return false;
+    }
+
+    dfs(tree, 0, []);
+}
+
+/* ---------------------------------------
+   SVG Tree Drawing
+--------------------------------------- */
+
+const svg = document.getElementById("treeSvg");
+
+function clearSVG() {
+    while (svg.firstChild) {
+        svg.removeChild(svg.firstChild);
+    }
+}
+
+function createSVGElement(type, attributes) {
+
+    const element =
+        document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            type
+        );
+
+    Object.entries(attributes).forEach(([key, value]) => {
+        element.setAttribute(key, value);
+    });
+
+    return element;
+}
+
+function getPositions() {
+
+    return {
+        root: { x: 425, y: 55 },
+
+        n4:  { x: 240, y: 145 },
+        n8:  { x: 610, y: 145 },
+
+        n11: { x: 145, y: 235 },
+        n13: { x: 520, y: 235 },
+        n4b: { x: 700, y: 235 },
+
+        n7:  { x: 95,  y: 325 },
+        n2:  { x: 195, y: 325 }
+    };
+}
+
+function drawEdges() {
+
+    const positions = getPositions();
+
+    const edges = [
+        ["root", "n4"],
+        ["root", "n8"],
+        ["n4", "n11"],
+        ["n8", "n13"],
+        ["n8", "n4b"],
+        ["n11", "n7"],
+        ["n11", "n2"]
+    ];
+
+    edges.forEach(([from, to]) => {
+
+        const p1 = positions[from];
+        const p2 = positions[to];
+
+        const line = createSVGElement("line", {
+            x1: p1.x,
+            y1: p1.y,
+            x2: p2.x,
+            y2: p2.y,
+            class: "edge"
+        });
+
+        svg.appendChild(line);
+    });
+}
+
+function getNodeMap() {
+
+    return {
+        root: tree,
+        n4: tree.left,
+        n8: tree.right,
+        n11: tree.left.left,
+        n13: tree.right.left,
+        n4b: tree.right.right,
+        n7: tree.left.left.left,
+        n2: tree.left.left.right
+    };
+}
+
+function drawTree(highlightedId = null, path = [], resultType = null) {
+
+    clearSVG();
+
+    drawEdges();
+
+    const positions = getPositions();
+    const nodes = getNodeMap();
+
+    Object.keys(nodes).forEach(id => {
+
+        const node = nodes[id];
+        const pos = positions[id];
+
+        let className = "node";
+
+        if (path.includes(id)) {
+            className += " path";
+        }
+
+        if (id === highlightedId) {
+            className = "node current";
+        }
+
+        if (resultType === "success" && id === highlightedId) {
+            className = "node success";
+        }
+
+        if (resultType === "fail" && id === highlightedId) {
+            className = "node fail";
+        }
+
+        const circle = createSVGElement("circle", {
+            cx: pos.x,
+            cy: pos.y,
+            r: 27,
+            class: className
+        });
+
+        const text = createSVGElement("text", {
+            x: pos.x,
+            y: pos.y,
+            class: "node-text"
+        });
+
+        text.textContent = node.value;
+
+        svg.appendChild(circle);
+        svg.appendChild(text);
+    });
+}
+
+/* ---------------------------------------
+   Update display
+--------------------------------------- */
+
+function updateStats(sum, step) {
+
+    document.getElementById("currentSum").textContent = sum;
+    document.getElementById("remaining").textContent =
+        targetSum - sum;
+    document.getElementById("stepDisplay").textContent = step;
+}
+
+/* ---------------------------------------
+   Start
+--------------------------------------- */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    buildSteps();
+
+    currentStep = -1;
+
+    updateStats(0, 0);
+
+    drawTree();
+
+    document.getElementById("status").className = "status";
+
+    document.getElementById("status").innerHTML =
+        "Traversal initialized. Click <strong>Next Step</strong>.";
+}
+
+/* ---------------------------------------
+   Next Step
+--------------------------------------- */
+
+function nextStep() {
+
+    if (steps.length === 0) {
+        startAlgorithm();
+    }
+
+    if (currentStep >= steps.length - 1) {
+
+        document.getElementById("status").innerHTML =
+            "Algorithm has finished.";
+
+        return;
+    }
+
+    currentStep++;
+
+    const step = steps[currentStep];
+
+    updateStats(
+        step.currentSum,
+        currentStep + 1
+    );
+
+    if (step.type === "visit") {
+
+        drawTree(
+            step.nodeId,
+            step.path
+        );
+
+        const isLeaf =
+            step.nodeId === "n7" ||
+            step.nodeId === "n2" ||
+            step.nodeId === "n13" ||
+            step.nodeId === "n4b";
+
+        if (isLeaf) {
+
+            document.getElementById("status").innerHTML =
+                `Reached leaf <strong>${step.value}</strong>.
+                 Current path sum =
+                 <strong>${step.currentSum}</strong>.
+                 Target =
+                 <strong>${targetSum}</strong>.`;
+        } else {
+
+            document.getElementById("status").innerHTML =
+                `Visiting node <strong>${step.value}</strong>.
+                 Running sum =
+                 <strong>${step.currentSum}</strong>.`;
+        }
+    }
+
+    else if (step.type === "fail") {
+
+        drawTree(
+            step.nodeId,
+            step.path,
+            "fail"
+        );
+
+        document.getElementById("status").className =
+            "status fail-box";
+
+        document.getElementById("status").innerHTML =
+            `Leaf reached with sum
+             <strong>${step.currentSum}</strong>.
+             It does not equal
+             <strong>${targetSum}</strong>.
+             Backtracking...`;
+    }
+
+    else if (step.type === "success") {
+
+        drawTree(
+            step.nodeId,
+            step.path,
+            "success"
+        );
+
+        document.getElementById("status").className =
+            "status success-box";
+
+        document.getElementById("status").innerHTML =
+            `🎉 <strong>Path Sum Found!</strong><br>
+             Path sum =
+             <strong>${step.currentSum}</strong>.
+             Target =
+             <strong>${targetSum}</strong>.`;
+    }
+}
+
+/* ---------------------------------------
+   Auto Run
+--------------------------------------- */
+
+function autoRun() {
+
+    if (autoTimer !== null) {
+        stopAuto();
+        return;
+    }
+
+    if (steps.length === 0 || currentStep >= steps.length - 1) {
+        startAlgorithm();
+    }
+
+    autoTimer = setInterval(() => {
+
+        if (currentStep >= steps.length - 1) {
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 1100);
+}
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+/* ---------------------------------------
+   Reset
+--------------------------------------- */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    currentStep = -1;
+
+    steps = [];
+
+    updateStats(0, 0);
+
+    drawTree();
+
+    document.getElementById("status").className = "status";
+
+    document.getElementById("status").innerHTML =
+        "Click <strong>Start</strong> to begin the root-to-leaf traversal.";
+}
+
+/* ---------------------------------------
+   Event Listeners
+--------------------------------------- */
+
+document
+    .getElementById("startBtn")
+    .addEventListener("click", startAlgorithm);
+
+document
+    .getElementById("nextBtn")
+    .addEventListener("click", nextStep);
+
+document
+    .getElementById("autoBtn")
+    .addEventListener("click", autoRun);
+
+document
+    .getElementById("resetBtn")
+    .addEventListener("click", resetAlgorithm);
+
+/* ---------------------------------------
+   Initial Display
+--------------------------------------- */
+
+document.getElementById("targetDisplay").textContent = targetSum;
+
+drawTree();
+
+</script>
+
+</body>
+</html>

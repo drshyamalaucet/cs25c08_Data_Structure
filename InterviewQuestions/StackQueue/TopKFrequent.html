@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Top K Frequent Elements</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+header {
+    background: linear-gradient(135deg, #ef6c00, #ff9800);
+    color: white;
+    text-align: center;
+    padding: 28px 20px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 22px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #e65100;
+    margin-top: 0;
+}
+
+h3 {
+    color: #444;
+}
+
+.input-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+}
+
+input {
+    padding: 12px;
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+#arrayInput {
+    width: 420px;
+    max-width: 100%;
+}
+
+#kInput {
+    width: 80px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    background: #ef6c00;
+    color: white;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d84315;
+}
+
+button.secondary {
+    background: #546e7a;
+}
+
+button.secondary:hover {
+    background: #37474f;
+}
+
+.array-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.array-item {
+    width: 55px;
+    height: 55px;
+    border: 2px solid #90a4ae;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    background: #eceff1;
+    position: relative;
+}
+
+.array-item.active {
+    background: #ffcc80;
+    border-color: #ef6c00;
+    transform: scale(1.08);
+}
+
+.array-item.selected {
+    background: #a5d6a7;
+    border-color: #2e7d32;
+}
+
+.index {
+    position: absolute;
+    bottom: -19px;
+    font-size: 11px;
+    color: #777;
+}
+
+.frequency-table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.frequency-table th,
+.frequency-table td {
+    border: 1px solid #ddd;
+    padding: 11px;
+    text-align: center;
+}
+
+.frequency-table th {
+    background: #ef6c00;
+    color: white;
+}
+
+.frequency-table tr.active-row {
+    background: #ffe0b2;
+}
+
+.frequency-table tr.selected-row {
+    background: #c8e6c9;
+    font-weight: bold;
+}
+
+.result {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.result-item {
+    background: #2e7d32;
+    color: white;
+    padding: 14px 20px;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.step {
+    background: #fff3e0;
+    border-left: 5px solid #ef6c00;
+    padding: 15px;
+    margin-top: 15px;
+    border-radius: 5px;
+}
+
+pre {
+    background: #263238;
+    color: #eceff1;
+    padding: 18px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity div {
+    background: #f5f5f5;
+    padding: 18px;
+    border-radius: 8px;
+    border-left: 5px solid #ef6c00;
+}
+
+footer {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+.message {
+    margin-top: 15px;
+    font-weight: bold;
+    color: #c62828;
+}
+
+@media (max-width: 600px) {
+    header h1 {
+        font-size: 25px;
+    }
+
+    .card {
+        padding: 16px;
+    }
+
+    .array-item {
+        width: 45px;
+        height: 45px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Top K Frequent Elements</h1>
+    <p>Interactive Hash Map + Sorting Visualizer</p>
+</header>
+
+<div class="container">
+
+    <!-- PROBLEM -->
+    <section class="card">
+
+        <h2>Problem</h2>
+
+        <p>
+            Given an integer array, return the <strong>k most frequent elements</strong>.
+        </p>
+
+        <p>
+            The answer may be returned in any order.
+        </p>
+
+        <h3>Example</h3>
+
+        <p>
+            Input:
+            <strong>nums = [1,1,1,2,2,3], k = 2</strong>
+        </p>
+
+        <p>
+            Output:
+            <strong>[1,2]</strong>
+        </p>
+
+    </section>
+
+
+    <!-- INPUT -->
+    <section class="card">
+
+        <h2>Interactive Input</h2>
+
+        <div class="input-area">
+
+            <input
+                type="text"
+                id="arrayInput"
+                value="1,1,1,2,2,3"
+                placeholder="Enter array: 1,1,1,2,2,3"
+            >
+
+            <label>
+                <strong>k:</strong>
+            </label>
+
+            <input
+                type="number"
+                id="kInput"
+                value="2"
+                min="1"
+            >
+
+            <button id="startBtn">
+                Start
+            </button>
+
+            <button id="nextBtn" class="secondary">
+                Next Step
+            </button>
+
+            <button id="resetBtn" class="secondary">
+                Reset
+            </button>
+
+        </div>
+
+        <div id="message" class="message"></div>
+
+    </section>
+
+
+    <!-- ARRAY -->
+    <section class="card">
+
+        <h2>Input Array</h2>
+
+        <div id="arrayView" class="array-container"></div>
+
+    </section>
+
+
+    <!-- STEP -->
+    <section class="card">
+
+        <h2>Algorithm Visualization</h2>
+
+        <div id="stepDescription" class="step">
+            Click <strong>Start</strong> to begin.
+        </div>
+
+        <div id="frequencyView"></div>
+
+    </section>
+
+
+    <!-- RESULT -->
+    <section class="card">
+
+        <h2>Result</h2>
+
+        <div id="resultView" class="result">
+            <span>Result will appear here.</span>
+        </div>
+
+    </section>
+
+
+    <!-- ALGORITHM -->
+    <section class="card">
+
+        <h2>Algorithm</h2>
+
+        <ol>
+            <li>Create a frequency map.</li>
+            <li>Traverse the array and count the occurrence of every element.</li>
+            <li>Convert the frequency map into key-frequency pairs.</li>
+            <li>Sort the pairs in descending order of frequency.</li>
+            <li>Take the first <strong>k</strong> elements.</li>
+            <li>Return those elements.</li>
+        </ol>
+
+    </section>
+
+
+    <!-- PSEUDOCODE -->
+    <section class="card">
+
+        <h2>Pseudocode</h2>
+
+<pre><code>TOP_K_FREQUENT(nums, k)
+
+    frequency = empty map
+
+    for each num in nums
+        frequency[num]++
+
+    pairs = convert frequency to list
+
+    sort pairs by frequency descending
+
+    result = empty list
+
+    for i = 0 to k - 1
+        result.push(pairs[i].value)
+
+    return result</code></pre>
+
+    </section>
+
+
+    <!-- C++ -->
+    <section class="card">
+
+        <h2>C++ Implementation</h2>
+
+<pre><code>#include &lt;bits/stdc++.h&gt;
+using namespace std;
+
+vector&lt;int&gt; topKFrequent(vector&lt;int&gt;&amp; nums, int k) {
+
+    unordered_map&lt;int, int&gt; freq;
+
+    // Count frequency
+    for (int x : nums) {
+        freq[x]++;
+    }
+
+    // Store pairs
+    vector&lt;pair&lt;int, int&gt;&gt; pairs;
+
+    for (auto &amp;p : freq) {
+        pairs.push_back({p.second, p.first});
+    }
+
+    // Sort by frequency descending
+    sort(pairs.begin(), pairs.end(),
+        [](const pair&lt;int,int&gt;&amp; a,
+           const pair&lt;int,int&gt;&amp; b) {
+            return a.first &gt; b.first;
+        });
+
+    vector&lt;int&gt; result;
+
+    for (int i = 0; i &lt; k; i++) {
+        result.push_back(pairs[i].second);
+    }
+
+    return result;
+}</code></pre>
+
+    </section>
+
+
+    <!-- PYTHON -->
+    <section class="card">
+
+        <h2>Python Implementation</h2>
+
+<pre><code>from collections import Counter
+
+def topKFrequent(nums, k):
+
+    # Count frequencies
+    frequency = Counter(nums)
+
+    # Sort by frequency
+    pairs = sorted(
+        frequency.items(),
+        key=lambda x: x[1],
+        reverse=True
+    )
+
+    # Take first k elements
+    return [x[0] for x in pairs[:k]]
+
+
+# Example
+nums = [1, 1, 1, 2, 2, 3]
+k = 2
+
+print(topKFrequent(nums, k))
+# Output: [1, 2]</code></pre>
+
+    </section>
+
+
+    <!-- COMPLEXITY -->
+    <section class="card">
+
+        <h2>Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div>
+                <h3>Time Complexity</h3>
+                <p>
+                    <strong>O(n + m log m)</strong>
+                </p>
+                <p>
+                    n = number of array elements<br>
+                    m = number of unique elements
+                </p>
+            </div>
+
+            <div>
+                <h3>Space Complexity</h3>
+                <p>
+                    <strong>O(m)</strong>
+                </p>
+                <p>
+                    The frequency map stores each unique element.
+                </p>
+            </div>
+
+        </div>
+
+    </section>
+
+</div>
+
+
+<footer>
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+"use strict";
+
+/* ==========================================
+   GLOBAL VARIABLES
+   ========================================== */
+
+let nums = [];
+let k = 0;
+
+let currentIndex = 0;
+let frequency = {};
+let frequencyEntries = [];
+
+let stage = "idle";
+let selected = [];
+
+
+/* ==========================================
+   DOM ELEMENTS
+   ========================================== */
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const kInput =
+    document.getElementById("kInput");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const arrayView =
+    document.getElementById("arrayView");
+
+const frequencyView =
+    document.getElementById("frequencyView");
+
+const resultView =
+    document.getElementById("resultView");
+
+const stepDescription =
+    document.getElementById("stepDescription");
+
+const message =
+    document.getElementById("message");
+
+
+/* ==========================================
+   START
+   ========================================== */
+
+startBtn.addEventListener("click", startAlgorithm);
+
+
+function startAlgorithm() {
+
+    message.textContent = "";
+
+    const input =
+        arrayInput.value.trim();
+
+    if (!input) {
+        message.textContent =
+            "Please enter an array.";
+        return;
+    }
+
+    nums = input
+        .split(",")
+        .map(x => Number(x.trim()));
+
+    if (nums.some(x => Number.isNaN(x))) {
+        message.textContent =
+            "Please enter valid integers separated by commas.";
+        return;
+    }
+
+    k = Number(kInput.value);
+
+    if (k <= 0 || k > new Set(nums).size) {
+        message.textContent =
+            "k must be between 1 and the number of unique elements.";
+        return;
+    }
+
+    currentIndex = 0;
+    frequency = {};
+    frequencyEntries = [];
+    selected = [];
+
+    stage = "counting";
+
+    renderArray();
+
+    frequencyView.innerHTML = "";
+
+    resultView.innerHTML =
+        "<span>Result will appear here.</span>";
+
+    stepDescription.innerHTML =
+        "We will now scan the array and build the frequency map.";
+
+}
+
+
+/* ==========================================
+   NEXT STEP
+   ========================================== */
+
+nextBtn.addEventListener("click", nextStep);
+
+
+function nextStep() {
+
+    if (stage === "idle") {
+
+        stepDescription.innerHTML =
+            "Click <strong>Start</strong> first.";
+
+        return;
+    }
+
+
+    /* ================================
+       STAGE 1 – COUNT FREQUENCY
+       ================================ */
+
+    if (stage === "counting") {
+
+        if (currentIndex < nums.length) {
+
+            const value =
+                nums[currentIndex];
+
+            if (frequency[value] === undefined) {
+                frequency[value] = 0;
+            }
+
+            frequency[value]++;
+
+            highlightArrayItem(currentIndex);
+
+            renderFrequency();
+
+            stepDescription.innerHTML =
+                `Processing <strong>${value}</strong> at index 
+                 <strong>${currentIndex}</strong>.
+                 Its frequency is now
+                 <strong>${frequency[value]}</strong>.`;
+
+            currentIndex++;
+
+            return;
+        }
+
+
+        /* Finished counting */
+
+        frequencyEntries =
+            Object.keys(frequency)
+            .map(Number)
+            .map(value => ({
+                value: value,
+                count: frequency[value]
+            }));
+
+        stage = "sorting";
+
+        currentIndex = 0;
+
+        stepDescription.innerHTML =
+            "Frequency counting is complete. " +
+            "Next, sort the elements by frequency in descending order.";
+
+        return;
+    }
+
+
+    /* ================================
+       STAGE 2 – SORT
+       ================================ */
+
+    if (stage === "sorting") {
+
+        frequencyEntries.sort(
+            (a, b) => b.count - a.count
+        );
+
+        renderFrequency();
+
+        stage = "selecting";
+
+        currentIndex = 0;
+
+        stepDescription.innerHTML =
+            "The frequency table has been sorted. " +
+            `Now select the top <strong>${k}</strong> elements.`;
+
+        return;
+    }
+
+
+    /* ================================
+       STAGE 3 – SELECT
+       ================================ */
+
+    if (stage === "selecting") {
+
+        if (currentIndex < k) {
+
+            const item =
+                frequencyEntries[currentIndex];
+
+            selected.push(item.value);
+
+            renderFrequency();
+
+            renderResult();
+
+            stepDescription.innerHTML =
+                `Selected <strong>${item.value}</strong> because it 
+                 occurs <strong>${item.count}</strong> time(s).`;
+
+            currentIndex++;
+
+            return;
+        }
+
+
+        stage = "complete";
+
+        stepDescription.innerHTML =
+            `<strong>Algorithm complete!</strong>
+             The ${k} most frequent elements have been found.`;
+
+        return;
+    }
+
+
+    /* ================================
+       COMPLETE
+       ================================ */
+
+    if (stage === "complete") {
+
+        stepDescription.innerHTML =
+            "Algorithm has already completed. Click Reset to run it again.";
+
+    }
+
+}
+
+
+/* ==========================================
+   RENDER ARRAY
+   ========================================== */
+
+function renderArray() {
+
+    arrayView.innerHTML = "";
+
+    nums.forEach((value, index) => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "array-item";
+
+        item.id = "array-" + index;
+
+        item.innerHTML =
+            `${value}
+             <span class="index">${index}</span>`;
+
+        arrayView.appendChild(item);
+
+    });
+
+}
+
+
+/* ==========================================
+   HIGHLIGHT ARRAY ELEMENT
+   ========================================== */
+
+function highlightArrayItem(index) {
+
+    document
+        .querySelectorAll(".array-item")
+        .forEach(item => {
+            item.classList.remove("active");
+        });
+
+    const item =
+        document.getElementById("array-" + index);
+
+    if (item) {
+        item.classList.add("active");
+    }
+
+}
+
+
+/* ==========================================
+   RENDER FREQUENCY TABLE
+   ========================================== */
+
+function renderFrequency() {
+
+    frequencyView.innerHTML = "";
+
+    let entries;
+
+    if (stage === "counting") {
+
+        entries =
+            Object.keys(frequency)
+            .map(Number)
+            .map(value => ({
+                value: value,
+                count: frequency[value]
+            }));
+
+    } else {
+
+        entries = frequencyEntries;
+
+    }
+
+
+    if (entries.length === 0) {
+
+        frequencyView.innerHTML =
+            "<p>No frequency data yet.</p>";
+
+        return;
+    }
+
+
+    const table =
+        document.createElement("table");
+
+    table.className =
+        "frequency-table";
+
+
+    table.innerHTML = `
+        <tr>
+            <th>Element</th>
+            <th>Frequency</th>
+            <th>Status</th>
+        </tr>
+    `;
+
+
+    entries.forEach((entry, index) => {
+
+        const row =
+            document.createElement("tr");
+
+        let status = "";
+
+
+        if (
+            stage === "selecting" &&
+            index < selected.length
+        ) {
+            row.classList.add("selected-row");
+            status = "Selected";
+        }
+
+
+        if (
+            stage === "selecting" &&
+            index === currentIndex
+        ) {
+            row.classList.add("active-row");
+            status = "Selecting";
+        }
+
+
+        row.innerHTML = `
+            <td>${entry.value}</td>
+            <td>${entry.count}</td>
+            <td>${status}</td>
+        `;
+
+        table.appendChild(row);
+
+    });
+
+
+    frequencyView.appendChild(table);
+
+}
+
+
+/* ==========================================
+   RENDER RESULT
+   ========================================== */
+
+function renderResult() {
+
+    resultView.innerHTML = "";
+
+    selected.forEach(value => {
+
+        const item =
+            document.createElement("div");
+
+        item.className =
+            "result-item";
+
+        item.textContent =
+            value;
+
+        resultView.appendChild(item);
+
+    });
+
+}
+
+
+/* ==========================================
+   RESET
+   ========================================== */
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+
+function resetAlgorithm() {
+
+    nums = [];
+    k = 0;
+
+    currentIndex = 0;
+
+    frequency = {};
+    frequencyEntries = [];
+
+    selected = [];
+
+    stage = "idle";
+
+    arrayView.innerHTML = "";
+
+    frequencyView.innerHTML = "";
+
+    resultView.innerHTML =
+        "<span>Result will appear here.</span>";
+
+    stepDescription.innerHTML =
+        "Click <strong>Start</strong> to begin.";
+
+    message.textContent = "";
+
+}
+
+
+/* ==========================================
+   INITIAL DISPLAY
+   ========================================== */
+
+renderArray();
+
+</script>
+
+</body>
+</html>

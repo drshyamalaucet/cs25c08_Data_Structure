@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Maximum Points from Cards - Sliding Window</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+h1 {
+    text-align: center;
+    color: #1f3c88;
+}
+
+h2 {
+    color: #1f3c88;
+    border-bottom: 2px solid #1f3c88;
+    padding-bottom: 8px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+}
+
+.problem {
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+input {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 7px;
+}
+
+#cardsInput {
+    flex: 1;
+    min-width: 300px;
+}
+
+#kInput {
+    width: 100px;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#startBtn {
+    background: #2563eb;
+    color: white;
+}
+
+#nextBtn {
+    background: #16a34a;
+    color: white;
+}
+
+#autoBtn {
+    background: #9333ea;
+    color: white;
+}
+
+#resetBtn {
+    background: #dc2626;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.cards-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 40px 0 30px;
+}
+
+.card-box {
+    width: 70px;
+    height: 75px;
+    border: 2px solid #aaa;
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    font-weight: bold;
+    background: white;
+    position: relative;
+}
+
+.left-card {
+    background: #dbeafe;
+    border: 3px solid #2563eb;
+}
+
+.right-card {
+    background: #fef3c7;
+    border: 3px solid #f59e0b;
+}
+
+.middle-window {
+    background: #fee2e2;
+    border: 3px solid #dc2626;
+}
+
+.best-card {
+    background: #dcfce7;
+    border: 3px solid #16a34a;
+}
+
+.index {
+    position: absolute;
+    bottom: -20px;
+    font-size: 11px;
+    color: #555;
+    font-weight: normal;
+}
+
+.pointer {
+    position: absolute;
+    top: -25px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.left-pointer {
+    color: #2563eb;
+}
+
+.right-pointer {
+    color: #f59e0b;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.info-box {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.info-box h3 {
+    margin: 5px;
+    color: #1f3c88;
+}
+
+.info-value {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.status {
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.step {
+    background: #f8fafc;
+    border-left: 5px solid #2563eb;
+    padding: 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    background: #ecfdf5;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #166534;
+}
+
+.example {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.legend span {
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    padding: 18px;
+    background: #eef4ff;
+    border-radius: 8px;
+    text-align: center;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Maximum Points You Can Obtain from Cards</h1>
+
+
+<!-- Problem Statement -->
+<div class="card problem">
+
+<h2>1. Problem Statement</h2>
+
+<p>
+Several cards are arranged in a row. Each card contains a number
+of points.
+</p>
+
+<p>
+In one step, you can take exactly one card from either:
+</p>
+
+<ul>
+<li>The beginning of the row</li>
+<li>The end of the row</li>
+</ul>
+
+<p>
+Given an integer <b>k</b>, find the maximum number of points
+you can obtain by taking exactly <b>k cards</b>.
+</p>
+
+<div class="example">
+
+<b>Example:</b><br><br>
+
+Cards:
+<code>[1, 2, 3, 4, 5, 6, 1]</code><br>
+
+k = <code>3</code><br><br>
+
+One optimal choice is:
+
+<code>1 + 6 + 5 = 12</code>
+
+<br><br>
+
+<b>Maximum points = 12</b>
+
+</div>
+
+</div>
+
+
+<!-- Visualization -->
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<div class="input-area">
+
+<input
+    type="text"
+    id="cardsInput"
+    value="1,2,3,4,5,6,1"
+    placeholder="Enter card points"
+>
+
+<input
+    type="number"
+    id="kInput"
+    value="3"
+    min="1"
+    placeholder="k"
+>
+
+<button id="startBtn">Start</button>
+<button id="nextBtn">Next Step</button>
+<button id="autoBtn">Auto Run</button>
+<button id="resetBtn">Reset</button>
+
+</div>
+
+
+<div id="cardsContainer" class="cards-container"></div>
+
+
+<div class="legend">
+
+<span style="background:#dbeafe;">
+Left / Beginning
+</span>
+
+<span style="background:#fef3c7;">
+Right / End
+</span>
+
+<span style="background:#fee2e2;">
+Cards Left in Middle
+</span>
+
+<span style="background:#dcfce7;">
+Best Selection
+</span>
+
+</div>
+
+
+<div class="info-grid">
+
+<div class="info-box">
+<h3>k</h3>
+<div id="kValue" class="info-value">-</div>
+</div>
+
+<div class="info-box">
+<h3>Cards Taken</h3>
+<div id="takenValue" class="info-value">0</div>
+</div>
+
+<div class="info-box">
+<h3>Current Points</h3>
+<div id="currentValue" class="info-value">0</div>
+</div>
+
+<div class="info-box">
+<h3>Maximum Points</h3>
+<div id="maxValue" class="info-value">0</div>
+</div>
+
+</div>
+
+
+<div id="status" class="status">
+Click <b>Start</b> to begin.
+</div>
+
+<div id="stepLog"></div>
+
+<div
+    id="result"
+    class="result"
+    style="display:none;">
+</div>
+
+</div>
+
+
+<!-- Key Idea -->
+<div class="card">
+
+<h2>3. Key Idea – Sliding Window</h2>
+
+<p>
+Suppose the array contains <b>n</b> cards and we must take
+exactly <b>k</b> cards.
+</p>
+
+<p>
+Instead of trying every combination of cards taken from the
+left and right, observe that:
+</p>
+
+<div class="example">
+
+<b>Taking k cards from the two ends</b>
+is equivalent to
+<b>leaving n - k consecutive cards in the middle.</b>
+
+</div>
+
+<p>
+Therefore:
+</p>
+
+<ol>
+
+<li>Calculate the total points of all cards.</li>
+
+<li>Find the minimum sum of any window of length
+<b>n - k</b>.</li>
+
+<li>Subtract that minimum middle sum from the total sum.</li>
+
+</ol>
+
+<pre><code>Maximum Points
+=
+Total Points
+-
+Minimum Sum of (n - k) Consecutive Cards</code></pre>
+
+</div>
+
+
+<!-- Algorithm -->
+<div class="card">
+
+<h2>4. Algorithm</h2>
+
+<ol>
+
+<li>
+Calculate the total sum of all card points.
+</li>
+
+<li>
+Let <b>windowSize = n - k</b>.
+</li>
+
+<li>
+Find the minimum sum of a contiguous window of size
+<b>windowSize</b>.
+</li>
+
+<li>
+The cards outside this minimum window are the cards taken.
+</li>
+
+<li>
+Return:
+<code>Total Sum - Minimum Window Sum</code>.
+</li>
+
+</ol>
+
+<p>
+This reduces the problem from potentially exponential choices
+to an efficient <b>O(n)</b> sliding-window solution.
+</p>
+
+</div>
+
+
+<!-- Pseudocode -->
+<div class="card">
+
+<h2>5. Pseudocode</h2>
+
+<pre><code>MAX_POINTS(cards, k)
+
+    n = length(cards)
+
+    total = sum(cards)
+
+    windowSize = n - k
+
+    if windowSize == 0
+        return total
+
+    windowSum = sum of first windowSize cards
+
+    minWindowSum = windowSum
+
+    for i = windowSize to n - 1
+
+        windowSum =
+            windowSum
+            + cards[i]
+            - cards[i - windowSize]
+
+        minWindowSum =
+            minimum(
+                minWindowSum,
+                windowSum
+            )
+
+    return total - minWindowSum</code></pre>
+
+</div>
+
+
+<!-- Python -->
+<div class="card">
+
+<h2>6. Python Implementation</h2>
+
+<pre><code>def max_score(cards, k):
+
+    n = len(cards)
+
+    total = sum(cards)
+
+    window_size = n - k
+
+    if window_size == 0:
+        return total
+
+    window_sum = sum(cards[:window_size])
+
+    min_window_sum = window_sum
+
+    for i in range(window_size, n):
+
+        window_sum += cards[i]
+        window_sum -= cards[i - window_size]
+
+        min_window_sum = min(
+            min_window_sum,
+            window_sum
+        )
+
+    return total - min_window_sum
+
+
+# Example
+cards = [1, 2, 3, 4, 5, 6, 1]
+k = 3
+
+print("Maximum points:",
+      max_score(cards, k))</code></pre>
+
+<div class="example">
+
+<b>Output:</b>
+
+<code>
+Maximum points: 12
+</code>
+
+</div>
+
+</div>
+
+
+<!-- Alternative Python -->
+<div class="card">
+
+<h2>7. Alternative Two-Sided Approach</h2>
+
+<p>
+We can also directly consider all possible combinations of taking
+some cards from the left and the remaining cards from the right.
+</p>
+
+<pre><code>def max_score(cards, k):
+
+    current = sum(cards[:k])
+    answer = current
+
+    n = len(cards)
+
+    for i in range(k):
+
+        current -= cards[k - 1 - i]
+
+        current += cards[n - 1 - i]
+
+        answer = max(answer, current)
+
+    return answer
+
+
+cards = [1, 2, 3, 4, 5, 6, 1]
+k = 3
+
+print(max_score(cards, k))</code></pre>
+
+<p>
+For teaching purposes, this version is particularly intuitive:
+start by taking all <b>k cards from the left</b>, then gradually
+replace left cards with cards from the right.
+</p>
+
+</div>
+
+
+<!-- Walkthrough -->
+<div class="card">
+
+<h2>8. Example Walkthrough</h2>
+
+<div class="example">
+
+Cards:
+
+<code>[1, 2, 3, 4, 5, 6, 1]</code>
+
+<br><br>
+
+k = <code>3</code>
+
+</div>
+
+<p>
+There are 7 cards, so we must leave:
+</p>
+
+<pre><code>n - k = 7 - 3 = 4</code></pre>
+
+<p>
+Find the minimum sum of four consecutive cards.
+</p>
+
+<table style="width:100%; border-collapse:collapse; text-align:center;">
+
+<tr style="background:#eef4ff;">
+
+<th style="padding:10px;border:1px solid #ccc;">
+Window
+</th>
+
+<th style="padding:10px;border:1px solid #ccc;">
+Sum
+</th>
+
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[1, 2, 3, 4]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+10
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[2, 3, 4, 5]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+14
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[3, 4, 5, 6]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+18
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[4, 5, 6, 1]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+16
+</td>
+</tr>
+
+</table>
+
+<p>
+Minimum middle-window sum = <b>10</b>.
+</p>
+
+<p>
+Total points:
+</p>
+
+<pre><code>1 + 2 + 3 + 4 + 5 + 6 + 1 = 22</code></pre>
+
+<p>
+Therefore:
+</p>
+
+<pre><code>Maximum Points
+= 22 - 10
+= 12</code></pre>
+
+<div class="example">
+
+<b>Cards taken:</b>
+
+<code>[5, 6, 1]</code>
+
+<br><br>
+
+<b>Maximum points = 12</b>
+
+</div>
+
+</div>
+
+
+<!-- Complexity -->
+<div class="card">
+
+<h2>9. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<h3>Time Complexity</h3>
+
+<p style="font-size:28px;">
+<b>O(n)</b>
+</p>
+
+<p>
+Each card is processed a constant number of times.
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<h3>Space Complexity</h3>
+
+<p style="font-size:28px;">
+<b>O(1)</b>
+</p>
+
+<p>
+Only a few variables are used.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Important Concepts -->
+<div class="card">
+
+<h2>10. Important Concepts</h2>
+
+<ul>
+
+<li>
+<b>Exactly k:</b>
+The algorithm must select exactly k cards.
+</li>
+
+<li>
+<b>Two Ends:</b>
+A card can only be selected from the beginning or the end.
+</li>
+
+<li>
+<b>Sliding Window:</b>
+Instead of maximizing the selected cards directly, minimize
+the cards that remain.
+</li>
+
+<li>
+<b>Complementary Approach:</b>
+Taking k cards means leaving n-k cards.
+</li>
+
+<li>
+<b>Minimum Window:</b>
+The minimum-sum window represents the cards that should be left.
+</li>
+
+</ul>
+
+</div>
+
+
+<!-- Applications -->
+<div class="card">
+
+<h2>11. Applications</h2>
+
+<ul>
+
+<li>Game scoring systems</li>
+<li>Resource selection problems</li>
+<li>Competitive programming</li>
+<li>Optimization problems</li>
+<li>Sliding-window algorithm teaching</li>
+<li>Array and sequence optimization</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<footer>
+    <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+let cards = [];
+let k = 0;
+
+let total = 0;
+let windowSize = 0;
+
+let currentWindowSum = 0;
+let minWindowSum = Infinity;
+
+let windowStart = 0;
+let windowEnd = -1;
+
+let bestStart = -1;
+let bestEnd = -1;
+
+let step = 0;
+let running = false;
+let autoTimer = null;
+
+const cardsInput =
+    document.getElementById("cardsInput");
+
+const kInput =
+    document.getElementById("kInput");
+
+const cardsContainer =
+    document.getElementById("cardsContainer");
+
+const status =
+    document.getElementById("status");
+
+const stepLog =
+    document.getElementById("stepLog");
+
+const result =
+    document.getElementById("result");
+
+
+function parseInput() {
+
+    cards = cardsInput.value
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => !Number.isNaN(x));
+
+    k = Number(kInput.value);
+}
+
+
+function renderCards() {
+
+    cardsContainer.innerHTML = "";
+
+    cards.forEach((value, index) => {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "card-box";
+
+        box.textContent = value;
+
+        const indexLabel =
+            document.createElement("span");
+
+        indexLabel.className = "index";
+
+        indexLabel.textContent = index;
+
+        box.appendChild(indexLabel);
+
+
+        /*
+         * Current sliding window
+         */
+        if (
+            running &&
+            index >= windowStart &&
+            index <= windowEnd
+        ) {
+
+            box.classList.add("middle-window");
+
+        }
+
+
+        /*
+         * Best minimum window
+         */
+        if (
+            index >= bestStart &&
+            index <= bestEnd
+        ) {
+
+            box.classList.remove("middle-window");
+
+            box.classList.add("best-card");
+
+        }
+
+
+        /*
+         * Beginning / left card
+         */
+        if (
+            running &&
+            index === windowStart
+        ) {
+
+            const pointer =
+                document.createElement("span");
+
+            pointer.className =
+                "pointer left-pointer";
+
+            pointer.textContent = "L";
+
+            box.appendChild(pointer);
+        }
+
+
+        /*
+         * End / right card
+         */
+        if (
+            running &&
+            index === windowEnd
+        ) {
+
+            const pointer =
+                document.createElement("span");
+
+            pointer.className =
+                "pointer right-pointer";
+
+            pointer.textContent = "R";
+
+            box.appendChild(pointer);
+        }
+
+
+        cardsContainer.appendChild(box);
+
+    });
+
+}
+
+
+function updateInfo() {
+
+    document.getElementById("kValue")
+        .textContent =
+        k || "-";
+
+    document.getElementById("takenValue")
+        .textContent =
+        k;
+
+    /*
+     * Points taken =
+     * total - current middle window
+     */
+    const currentPoints =
+        total - currentWindowSum;
+
+    document.getElementById("currentValue")
+        .textContent =
+        currentPoints;
+
+    const maxPoints =
+        minWindowSum === Infinity
+        ? 0
+        : total - minWindowSum;
+
+    document.getElementById("maxValue")
+        .textContent =
+        maxPoints;
+
+}
+
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    parseInput();
+
+
+    if (cards.length === 0) {
+
+        status.className = "status warning";
+
+        status.textContent =
+            "Please enter valid card points.";
+
+        return;
+    }
+
+
+    if (
+        !Number.isInteger(k) ||
+        k < 1 ||
+        k > cards.length
+    ) {
+
+        status.className = "status warning";
+
+        status.textContent =
+            "k must be between 1 and the number of cards.";
+
+        return;
+    }
+
+
+    if (cards.some(x => x < 0)) {
+
+        status.className = "status warning";
+
+        status.textContent =
+            "Card points should be non-negative.";
+
+        return;
+    }
+
+
+    total =
+        cards.reduce(
+            (sum, value) => sum + value,
+            0
+        );
+
+
+    windowSize =
+        cards.length - k;
+
+
+    /*
+     * If k == n,
+     * take all cards.
+     */
+    if (windowSize === 0) {
+
+        running = false;
+
+        currentWindowSum = 0;
+
+        minWindowSum = 0;
+
+        bestStart = -1;
+        bestEnd = -1;
+
+        updateInfo();
+
+        renderCards();
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            "✓ All cards are selected.<br><br>" +
+            "Maximum Points = " +
+            total;
+
+        status.className = "status success";
+
+        status.innerHTML =
+            "Since k equals the number of cards, all cards are taken.";
+
+        return;
+    }
+
+
+    windowStart = 0;
+
+    windowEnd = windowSize - 1;
+
+
+    currentWindowSum = 0;
+
+    for (
+        let i = windowStart;
+        i <= windowEnd;
+        i++
+    ) {
+
+        currentWindowSum += cards[i];
+
+    }
+
+
+    minWindowSum = currentWindowSum;
+
+    bestStart = windowStart;
+    bestEnd = windowEnd;
+
+    step = 0;
+
+    running = true;
+
+    stepLog.innerHTML = "";
+
+    result.style.display = "none";
+
+    updateInfo();
+
+    renderCards();
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Initial window of <b>" +
+        windowSize +
+        "</b> cards created. Click <b>Next Step</b>.";
+
+}
+
+
+function nextStep() {
+
+    if (!running) {
+
+        status.className = "status warning";
+
+        status.innerHTML =
+            "Click <b>Start</b> before running.";
+
+        return;
+    }
+
+
+    /*
+     * Move sliding window
+     */
+    if (
+        windowEnd <
+        cards.length - 1
+    ) {
+
+        const removed =
+            cards[windowStart];
+
+        const added =
+            cards[windowEnd + 1];
+
+
+        currentWindowSum -= removed;
+
+        windowStart++;
+
+        windowEnd++;
+
+        currentWindowSum += added;
+
+        step++;
+
+
+        addStep(
+            "Step " +
+            step +
+            ": Slide window. Remove " +
+            removed +
+            " and add " +
+            added +
+            ". Window sum = " +
+            currentWindowSum
+        );
+
+
+        /*
+         * Update minimum window
+         */
+        if (
+            currentWindowSum <
+            minWindowSum
+        ) {
+
+            minWindowSum =
+                currentWindowSum;
+
+            bestStart =
+                windowStart;
+
+            bestEnd =
+                windowEnd;
+
+
+            addStep(
+                "New minimum middle-window sum = " +
+                minWindowSum +
+                "."
+            );
+
+        }
+
+
+        const pointsTaken =
+            total - currentWindowSum;
+
+
+        status.className = "status success";
+
+        status.innerHTML =
+            "Current points from selected cards = <b>" +
+            pointsTaken +
+            "</b>.";
+
+        updateInfo();
+
+        renderCards();
+
+    }
+
+
+    /*
+     * End of sliding windows
+     */
+    else {
+
+        running = false;
+
+        showResult();
+
+    }
+
+}
+
+
+function showResult() {
+
+    const maximumPoints =
+        total - minWindowSum;
+
+
+    const selectedLeft =
+        cards.slice(
+            0,
+            bestStart
+        );
+
+
+    const selectedRight =
+        cards.slice(
+            bestEnd + 1
+        );
+
+
+    const selected =
+        selectedLeft.concat(
+            selectedRight
+        );
+
+
+    result.style.display = "block";
+
+    result.innerHTML =
+        "✓ Maximum Points = " +
+        maximumPoints +
+        "<br><br>" +
+        "Cards Taken = [" +
+        selected.join(", ") +
+        "]";
+
+
+    status.className = "status success";
+
+    status.innerHTML =
+        "Algorithm completed successfully.";
+
+    updateInfo();
+
+    renderCards();
+
+
+    addStep(
+        "Final answer: maximum points = " +
+        maximumPoints
+    );
+
+}
+
+
+function addStep(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.className = "step";
+
+    div.textContent = text;
+
+    stepLog.appendChild(div);
+
+    div.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+}
+
+
+function autoRun() {
+
+    if (!running) {
+
+        startAlgorithm();
+
+    }
+
+    stopAuto();
+
+    autoTimer =
+        setInterval(() => {
+
+            if (!running) {
+
+                stopAuto();
+
+                return;
+            }
+
+            nextStep();
+
+        }, 900);
+
+}
+
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+    }
+
+}
+
+
+function resetVisualizer() {
+
+    stopAuto();
+
+    cards = [];
+
+    k = 0;
+
+    total = 0;
+
+    windowSize = 0;
+
+    currentWindowSum = 0;
+
+    minWindowSum = Infinity;
+
+    windowStart = 0;
+
+    windowEnd = -1;
+
+    bestStart = -1;
+
+    bestEnd = -1;
+
+    step = 0;
+
+    running = false;
+
+    cardsContainer.innerHTML = "";
+
+    stepLog.innerHTML = "";
+
+    result.style.display = "none";
+
+    document.getElementById("kValue")
+        .textContent = "-";
+
+    document.getElementById("takenValue")
+        .textContent = "0";
+
+    document.getElementById("currentValue")
+        .textContent = "0";
+
+    document.getElementById("maxValue")
+        .textContent = "0";
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Click <b>Start</b> to begin.";
+
+}
+
+
+/*
+ * Event listeners
+ *
+ * No inline onclick handlers are used.
+ * This helps prevent "function is not defined"
+ * errors when opening the HTML file locally.
+ */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetVisualizer
+    );
+
+</script>
+
+</body>
+</html>

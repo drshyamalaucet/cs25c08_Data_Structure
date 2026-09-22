@@ -1,0 +1,1422 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Number of Islands - Interactive Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+header {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb);
+    color: white;
+    padding: 28px;
+    border-radius: 14px;
+    margin-bottom: 24px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.section {
+    background: white;
+    padding: 24px;
+    margin-bottom: 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+.section h2 {
+    margin-top: 0;
+    color: #1d4ed8;
+    border-bottom: 2px solid #dbeafe;
+    padding-bottom: 10px;
+}
+
+.problem {
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.input-area {
+    margin-top: 18px;
+}
+
+textarea {
+    width: 100%;
+    min-height: 150px;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-family: Consolas, monospace;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.input-help {
+    margin-top: 8px;
+    color: #64748b;
+    font-size: 14px;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 18px;
+}
+
+button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    font-size: 15px;
+    cursor: pointer;
+    font-weight: bold;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.88;
+}
+
+.btn-start {
+    background: #16a34a;
+}
+
+.btn-next {
+    background: #2563eb;
+}
+
+.btn-auto {
+    background: #9333ea;
+}
+
+.btn-reset {
+    background: #dc2626;
+}
+
+.status {
+    margin-top: 18px;
+    padding: 15px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-weight: bold;
+    min-height: 50px;
+}
+
+.grid-wrapper {
+    overflow-x: auto;
+    padding: 20px 5px;
+}
+
+.grid {
+    display: grid;
+    gap: 4px;
+    width: max-content;
+    margin: auto;
+}
+
+.cell {
+    width: 52px;
+    height: 52px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+    font-weight: bold;
+    border: 2px solid #cbd5e1;
+    transition: all 0.2s ease;
+}
+
+.water {
+    background: #bfdbfe;
+    color: #1e40af;
+}
+
+.land {
+    background: #86efac;
+    color: #166534;
+}
+
+.visited {
+    background: #94a3b8;
+    color: white;
+    border-color: #475569;
+}
+
+.current {
+    background: #fde68a;
+    color: #92400e;
+    border-color: #f59e0b;
+    transform: scale(1.08);
+}
+
+.neighbor {
+    background: #ddd6fe;
+    color: #5b21b6;
+    border-color: #8b5cf6;
+}
+
+.new-island {
+    box-shadow: 0 0 0 4px #22c55e;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.info-card {
+    padding: 18px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+}
+
+.info-card h3 {
+    margin-top: 0;
+    color: #1d4ed8;
+}
+
+.big-number {
+    font-size: 34px;
+    font-weight: bold;
+    color: #16a34a;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.legend-box {
+    width: 25px;
+    height: 25px;
+    border-radius: 4px;
+    border: 2px solid #cbd5e1;
+}
+
+.legend-water {
+    background: #bfdbfe;
+}
+
+.legend-land {
+    background: #86efac;
+}
+
+.legend-current {
+    background: #fde68a;
+}
+
+.legend-visited {
+    background: #94a3b8;
+}
+
+.legend-neighbor {
+    background: #ddd6fe;
+}
+
+.explanation {
+    background: #f0fdf4;
+    border-left: 5px solid #16a34a;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 18px;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.5;
+    font-size: 14px;
+}
+
+code {
+    font-family: Consolas, Monaco, monospace;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+}
+
+.complexity-card {
+    background: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.complexity-card strong {
+    display: block;
+    font-size: 24px;
+    color: #1d4ed8;
+    margin-bottom: 5px;
+}
+
+.step-box {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 18px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+th,
+td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #dbeafe;
+}
+
+@media (max-width: 800px) {
+    .info-grid,
+    .complexity {
+        grid-template-columns: 1fr;
+    }
+
+    .cell {
+        width: 42px;
+        height: 42px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Number of Islands</h1>
+    <p>Interactive DFS Flood-Fill Visualization</p>
+</header>
+
+<!-- =====================================================
+     1. Problem Statement
+====================================================== -->
+<section class="section">
+
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+
+        <p>
+            Given an <strong>m × n</strong> 2D binary grid representing a map,
+            where <strong>'1'</strong> represents land and <strong>'0'</strong>
+            represents water, return the total number of connected islands.
+        </p>
+
+        <p>
+            An island is formed by connecting adjacent land cells horizontally
+            or vertically.
+        </p>
+
+        <p>
+            Diagonal cells are <strong>not</strong> considered connected.
+        </p>
+
+        <p>
+            <strong>Example:</strong>
+        </p>
+
+        <pre><code>1 1 1 1 0
+1 1 0 1 0
+1 1 0 0 0
+0 0 0 0 0
+
+Number of islands = 1</code></pre>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     2. Input
+====================================================== -->
+<section class="section">
+
+    <h2>2. Enter Binary Grid</h2>
+
+    <div class="input-area">
+
+        <textarea id="gridInput">1 1 1 1 0
+1 1 0 1 0
+1 1 0 0 0
+0 0 0 0 0</textarea>
+
+        <div class="input-help">
+            Enter 0 and 1 values. Separate columns with spaces.
+            Put each row on a new line.
+        </div>
+
+    </div>
+
+    <div class="controls">
+
+        <button class="btn-start" id="startBtn">
+            Start
+        </button>
+
+        <button class="btn-next" id="nextBtn">
+            Next Step
+        </button>
+
+        <button class="btn-auto" id="autoBtn">
+            Auto Run
+        </button>
+
+        <button class="btn-reset" id="resetBtn">
+            Reset
+        </button>
+
+    </div>
+
+    <div class="status" id="statusBox">
+        Click Start to load the grid.
+    </div>
+
+</section>
+
+<!-- =====================================================
+     3. Visualization
+====================================================== -->
+<section class="section">
+
+    <h2>3. Interactive Grid Visualization</h2>
+
+    <div class="grid-wrapper">
+        <div class="grid" id="gridDisplay"></div>
+    </div>
+
+    <div class="info-grid">
+
+        <div class="info-card">
+            <h3>Current Cell</h3>
+            <div id="currentCell" class="big-number">—</div>
+        </div>
+
+        <div class="info-card">
+            <h3>Islands Found</h3>
+            <div id="islandCount" class="big-number">0</div>
+        </div>
+
+        <div class="info-card">
+            <h3>Cells Visited</h3>
+            <div id="visitedCount" class="big-number">0</div>
+        </div>
+
+    </div>
+
+    <div class="legend">
+
+        <div class="legend-item">
+            <div class="legend-box legend-water"></div>
+            Water
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-land"></div>
+            Unvisited Land
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-current"></div>
+            Current Cell
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-visited"></div>
+            Visited
+        </div>
+
+        <div class="legend-item">
+            <div class="legend-box legend-neighbor"></div>
+            Neighbor
+        </div>
+
+    </div>
+
+    <div class="step-box" id="stepExplanation">
+        The algorithm scans the grid from left to right and top to bottom.
+    </div>
+
+</section>
+
+<!-- =====================================================
+     4. Approach
+====================================================== -->
+<section class="section">
+
+    <h2>4. Approach – DFS Flood Fill</h2>
+
+    <ol>
+
+        <li>
+            Traverse every cell in the grid.
+        </li>
+
+        <li>
+            If the current cell contains <strong>'1'</strong>,
+            a new island has been discovered.
+        </li>
+
+        <li>
+            Increment the island count.
+        </li>
+
+        <li>
+            Start DFS from that cell.
+        </li>
+
+        <li>
+            DFS visits all connected land cells horizontally and vertically.
+        </li>
+
+        <li>
+            Mark every visited land cell so that it is not counted again.
+        </li>
+
+    </ol>
+
+    <div class="explanation">
+
+        <strong>Key idea:</strong>
+
+        <p>
+            Every time we encounter an unvisited land cell, it must belong
+            to a new island. DFS then explores the complete connected
+            component and marks it as visited.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     5. Pseudocode
+====================================================== -->
+<section class="section">
+
+    <h2>5. Pseudocode</h2>
+
+<pre><code>function numIslands(grid):
+
+    count = 0
+
+    for each cell (r, c):
+
+        if grid[r][c] == '1':
+
+            count = count + 1
+
+            DFS(r, c)
+
+    return count
+
+
+function DFS(r, c):
+
+    if r is outside grid:
+        return
+
+    if c is outside grid:
+        return
+
+    if grid[r][c] == '0':
+        return
+
+    grid[r][c] = '0'
+
+    DFS(r + 1, c)
+    DFS(r - 1, c)
+    DFS(r, c + 1)
+    DFS(r, c - 1)</code></pre>
+
+</section>
+
+<!-- =====================================================
+     6. Python Recursive
+====================================================== -->
+<section class="section">
+
+    <h2>6. Python Implementation – Recursive DFS</h2>
+
+<pre><code>class Solution:
+
+    def numIslands(self, grid):
+
+        rows = len(grid)
+        cols = len(grid[0])
+
+        count = 0
+
+        def dfs(r, c):
+
+            if r &lt; 0 or r &gt;= rows:
+                return
+
+            if c &lt; 0 or c &gt;= cols:
+                return
+
+            if grid[r][c] == "0":
+                return
+
+            # Mark as visited
+            grid[r][c] = "0"
+
+            # Explore four directions
+            dfs(r + 1, c)
+            dfs(r - 1, c)
+            dfs(r, c + 1)
+            dfs(r, c - 1)
+
+        for r in range(rows):
+
+            for c in range(cols):
+
+                if grid[r][c] == "1":
+
+                    count += 1
+
+                    dfs(r, c)
+
+        return count</code></pre>
+
+</section>
+
+<!-- =====================================================
+     7. Python Iterative
+====================================================== -->
+<section class="section">
+
+    <h2>7. Python Implementation – Iterative DFS</h2>
+
+<pre><code>class Solution:
+
+    def numIslands(self, grid):
+
+        rows = len(grid)
+        cols = len(grid[0])
+
+        count = 0
+
+        for r in range(rows):
+
+            for c in range(cols):
+
+                if grid[r][c] != "1":
+                    continue
+
+                count += 1
+
+                stack = [(r, c)]
+
+                grid[r][c] = "0"
+
+                while stack:
+
+                    x, y = stack.pop()
+
+                    directions = [
+                        (1, 0),
+                        (-1, 0),
+                        (0, 1),
+                        (0, -1)
+                    ]
+
+                    for dx, dy in directions:
+
+                        nx = x + dx
+                        ny = y + dy
+
+                        if (
+                            0 &lt;= nx &lt; rows
+                            and
+                            0 &lt;= ny &lt; cols
+                            and
+                            grid[nx][ny] == "1"
+                        ):
+
+                            grid[nx][ny] = "0"
+
+                            stack.append((nx, ny))
+
+        return count</code></pre>
+
+</section>
+
+<!-- =====================================================
+     8. Example
+====================================================== -->
+<section class="section">
+
+    <h2>8. Example Walkthrough</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Step</th>
+                <th>Cell</th>
+                <th>Action</th>
+                <th>Islands</th>
+            </tr>
+        </thead>
+
+        <tbody>
+
+            <tr>
+                <td>1</td>
+                <td>(0,0)</td>
+                <td>New island → DFS</td>
+                <td>1</td>
+            </tr>
+
+            <tr>
+                <td>2</td>
+                <td>Connected cells</td>
+                <td>Mark as visited</td>
+                <td>1</td>
+            </tr>
+
+            <tr>
+                <td>3</td>
+                <td>Water cells</td>
+                <td>Ignore</td>
+                <td>1</td>
+            </tr>
+
+            <tr>
+                <td>4</td>
+                <td>Remaining cells</td>
+                <td>No additional island</td>
+                <td>1</td>
+            </tr>
+
+        </tbody>
+
+    </table>
+
+</section>
+
+<!-- =====================================================
+     9. Four Directions
+====================================================== -->
+<section class="section">
+
+    <h2>9. Four-Direction Connectivity</h2>
+
+    <p>
+        From every land cell, DFS checks four possible directions:
+    </p>
+
+<pre><code>        Up
+         ↑
+         |
+Left ← Cell → Right
+         |
+         ↓
+       Down</code></pre>
+
+    <p>
+        Diagonal directions are intentionally ignored.
+    </p>
+
+</section>
+
+<!-- =====================================================
+     10. Complexity
+====================================================== -->
+<section class="section">
+
+    <h2>10. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-card">
+
+            <strong>O(m × n)</strong>
+
+            Time Complexity
+
+            <p>
+                Every cell is visited at most once.
+            </p>
+
+        </div>
+
+        <div class="complexity-card">
+
+            <strong>O(m × n)</strong>
+
+            Worst-Case Space
+
+            <p>
+                DFS recursion stack or explicit stack.
+            </p>
+
+        </div>
+
+        <div class="complexity-card">
+
+            <strong>O(1)</strong>
+
+            Extra Space
+
+            <p>
+                If the input grid itself is modified to mark visited cells.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+<!-- =====================================================
+     11. Important Observations
+====================================================== -->
+<section class="section">
+
+    <h2>11. Important Observations</h2>
+
+    <ul>
+
+        <li>
+            Each unvisited land cell starts exactly one DFS traversal.
+        </li>
+
+        <li>
+            One DFS traversal completely explores one island.
+        </li>
+
+        <li>
+            Therefore, the number of DFS starts equals the number of islands.
+        </li>
+
+        <li>
+            Horizontal and vertical connections count.
+        </li>
+
+        <li>
+            Diagonal connections do not count.
+        </li>
+
+        <li>
+            Marking cells as water after visiting prevents duplicate counting.
+        </li>
+
+        <li>
+            BFS can also be used instead of DFS with the same
+            <strong>O(m × n)</strong> time complexity.
+        </li>
+
+    </ul>
+
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   Number of Islands Interactive Visualizer
+   Uses DFS-style step generation.
+   No inline onclick handlers.
+========================================================= */
+
+let originalGrid = [];
+let workingGrid = [];
+
+let rows = 0;
+let cols = 0;
+
+let steps = [];
+let currentStep = 0;
+
+let islandCount = 0;
+let visitedCount = 0;
+
+let autoTimer = null;
+let started = false;
+
+/* =========================================================
+   DOM Elements
+========================================================= */
+
+const gridInput = document.getElementById("gridInput");
+
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const gridDisplay = document.getElementById("gridDisplay");
+
+const statusBox = document.getElementById("statusBox");
+const stepExplanation = document.getElementById("stepExplanation");
+
+const currentCellDisplay = document.getElementById("currentCell");
+const islandCountDisplay = document.getElementById("islandCount");
+const visitedCountDisplay = document.getElementById("visitedCount");
+
+/* =========================================================
+   Parse Input
+========================================================= */
+
+function parseGrid() {
+
+    const text = gridInput.value.trim();
+
+    if (!text) {
+        throw new Error("Grid cannot be empty.");
+    }
+
+    const lines = text.split(/\n+/);
+
+    const parsed = [];
+
+    for (let i = 0; i < lines.length; i++) {
+
+        const line = lines[i].trim();
+
+        if (!line) {
+            continue;
+        }
+
+        const values = line.split(/[\s,]+/);
+
+        const row = [];
+
+        for (let j = 0; j < values.length; j++) {
+
+            if (values[j] !== "0" && values[j] !== "1") {
+                throw new Error(
+                    "Only 0 and 1 are allowed in the grid."
+                );
+            }
+
+            row.push(values[j]);
+        }
+
+        parsed.push(row);
+    }
+
+    if (parsed.length === 0) {
+        throw new Error("Grid cannot be empty.");
+    }
+
+    const columnCount = parsed[0].length;
+
+    if (columnCount === 0) {
+        throw new Error("Each row must contain values.");
+    }
+
+    for (let i = 1; i < parsed.length; i++) {
+
+        if (parsed[i].length !== columnCount) {
+
+            throw new Error(
+                "All rows must contain the same number of columns."
+            );
+        }
+    }
+
+    return parsed;
+}
+
+/* =========================================================
+   Create Visualization Steps
+========================================================= */
+
+function buildSteps() {
+
+    steps = [];
+
+    const grid = originalGrid.map(function(row) {
+        return row.slice();
+    });
+
+    let count = 0;
+
+    let visited = 0;
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            if (grid[r][c] === "1") {
+
+                count++;
+
+                steps.push({
+                    type: "newIsland",
+                    r: r,
+                    c: c,
+                    count: count,
+                    visited: visited,
+                    message:
+                        "Found unvisited land at (" +
+                        r +
+                        ", " +
+                        c +
+                        "). This starts Island " +
+                        count +
+                        "."
+                });
+
+                const stack = [[r, c]];
+
+                grid[r][c] = "0";
+
+                while (stack.length > 0) {
+
+                    const position = stack.pop();
+
+                    const x = position[0];
+                    const y = position[1];
+
+                    visited++;
+
+                    steps.push({
+                        type: "visit",
+                        r: x,
+                        c: y,
+                        count: count,
+                        visited: visited,
+                        message:
+                            "DFS visits land cell (" +
+                            x +
+                            ", " +
+                            y +
+                            ") and marks it as visited."
+                    });
+
+                    const directions = [
+                        [-1, 0],
+                        [1, 0],
+                        [0, -1],
+                        [0, 1]
+                    ];
+
+                    for (let d = 0; d < directions.length; d++) {
+
+                        const nx = x + directions[d][0];
+                        const ny = y + directions[d][1];
+
+                        if (
+                            nx >= 0 &&
+                            nx < rows &&
+                            ny >= 0 &&
+                            ny < cols
+                        ) {
+
+                            if (grid[nx][ny] === "1") {
+
+                                steps.push({
+                                    type: "neighbor",
+                                    r: nx,
+                                    c: ny,
+                                    parentR: x,
+                                    parentC: y,
+                                    count: count,
+                                    visited: visited,
+                                    message:
+                                        "Neighbor (" +
+                                        nx +
+                                        ", " +
+                                        ny +
+                                        ") is connected land. Add it to the DFS stack."
+                                });
+
+                                grid[nx][ny] = "0";
+
+                                stack.push([nx, ny]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    steps.push({
+        type: "complete",
+        count: count,
+        visited: visited,
+        message:
+            "Traversal complete. Total number of islands = " +
+            count +
+            "."
+    });
+}
+
+/* =========================================================
+   Render Grid
+========================================================= */
+
+function renderGrid(step) {
+
+    gridDisplay.innerHTML = "";
+
+    gridDisplay.style.gridTemplateColumns =
+        "repeat(" + cols + ", 52px)";
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            const cell = document.createElement("div");
+
+            cell.className = "cell";
+
+            const value = originalGrid[r][c];
+
+            if (value === "0") {
+
+                cell.classList.add("water");
+
+            } else {
+
+                cell.classList.add("land");
+            }
+
+            if (
+                step &&
+                step.r === r &&
+                step.c === c
+            ) {
+
+                if (step.type === "newIsland") {
+
+                    cell.classList.add("current");
+                    cell.classList.add("new-island");
+
+                } else if (step.type === "visit") {
+
+                    cell.classList.add("current");
+
+                } else if (step.type === "neighbor") {
+
+                    cell.classList.add("neighbor");
+                }
+            }
+
+            if (
+                step &&
+                step.type === "visit" &&
+                (
+                    r < step.r ||
+                    c < step.c
+                )
+            ) {
+
+                /*
+                   Visual indication only.
+                   Actual visited cells are represented by
+                   the traversal progress.
+                */
+            }
+
+            cell.textContent = value;
+
+            gridDisplay.appendChild(cell);
+        }
+    }
+}
+
+/* =========================================================
+   Start Algorithm
+========================================================= */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    try {
+
+        originalGrid = parseGrid();
+
+    } catch (error) {
+
+        statusBox.textContent = error.message;
+
+        return;
+    }
+
+    rows = originalGrid.length;
+    cols = originalGrid[0].length;
+
+    workingGrid = originalGrid.map(function(row) {
+        return row.slice();
+    });
+
+    islandCount = 0;
+    visitedCount = 0;
+    currentStep = 0;
+
+    buildSteps();
+
+    started = true;
+
+    renderGrid(null);
+
+    currentCellDisplay.textContent = "—";
+    islandCountDisplay.textContent = "0";
+    visitedCountDisplay.textContent = "0";
+
+    statusBox.textContent =
+        "Grid loaded. Click Next Step to begin scanning.";
+
+    stepExplanation.textContent =
+        "The algorithm scans every cell. When it finds unvisited land, a new island is counted and DFS begins.";
+
+}
+
+/* =========================================================
+   Next Step
+========================================================= */
+
+function nextStep() {
+
+    if (!started) {
+
+        statusBox.textContent =
+            "Click Start first.";
+
+        return;
+    }
+
+    if (currentStep >= steps.length) {
+
+        statusBox.textContent =
+            "Algorithm has finished.";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    const step = steps[currentStep];
+
+    currentStep++;
+
+    islandCount = step.count || islandCount;
+
+    visitedCount = step.visited || visitedCount;
+
+    renderGrid(step);
+
+    islandCountDisplay.textContent = islandCount;
+
+    visitedCountDisplay.textContent = visitedCount;
+
+    if (
+        step.r !== undefined &&
+        step.c !== undefined
+    ) {
+
+        currentCellDisplay.textContent =
+            "(" + step.r + ", " + step.c + ")";
+
+    } else {
+
+        currentCellDisplay.textContent = "—";
+    }
+
+    statusBox.textContent = step.message;
+
+    stepExplanation.textContent = step.message;
+
+    if (step.type === "newIsland") {
+
+        stepExplanation.textContent +=
+            " The island counter is increased by one.";
+
+    } else if (step.type === "visit") {
+
+        stepExplanation.textContent +=
+            " DFS explores only horizontally and vertically connected land.";
+
+    } else if (step.type === "neighbor") {
+
+        stepExplanation.textContent +=
+            " This cell will be explored as part of the same island.";
+
+    } else if (step.type === "complete") {
+
+        stepExplanation.textContent =
+            "All cells have been processed. The final answer is " +
+            islandCount +
+            " island(s).";
+
+        stopAutoRun();
+    }
+}
+
+/* =========================================================
+   Auto Run
+========================================================= */
+
+function autoRun() {
+
+    if (!started) {
+
+        startAlgorithm();
+
+        if (!started) {
+            return;
+        }
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(function() {
+
+        if (currentStep >= steps.length) {
+
+            stopAutoRun();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 800);
+}
+
+/* =========================================================
+   Stop Auto Run
+========================================================= */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+/* =========================================================
+   Reset
+========================================================= */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    originalGrid = [];
+    workingGrid = [];
+
+    rows = 0;
+    cols = 0;
+
+    steps = [];
+    currentStep = 0;
+
+    islandCount = 0;
+    visitedCount = 0;
+
+    started = false;
+
+    gridDisplay.innerHTML = "";
+
+    currentCellDisplay.textContent = "—";
+    islandCountDisplay.textContent = "0";
+    visitedCountDisplay.textContent = "0";
+
+    statusBox.textContent =
+        "Visualizer reset. Enter a grid and click Start.";
+
+    stepExplanation.textContent =
+        "The algorithm scans the grid from left to right and top to bottom.";
+}
+
+/* =========================================================
+   Event Listeners
+========================================================= */
+
+startBtn.addEventListener("click", startAlgorithm);
+
+nextBtn.addEventListener("click", nextStep);
+
+autoBtn.addEventListener("click", autoRun);
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+/* =========================================================
+   Initial State
+========================================================= */
+
+resetAlgorithm();
+
+</script>
+
+</body>
+</html>

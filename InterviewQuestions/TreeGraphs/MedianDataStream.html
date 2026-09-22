@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Median from Data Stream</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+        line-height: 1.6;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 1250px;
+        margin: 30px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1d4ed8, #2563eb);
+        color: white;
+        padding: 28px;
+        border-radius: 14px;
+        margin-bottom: 24px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.12);
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    .section {
+        background: white;
+        padding: 24px;
+        margin-bottom: 24px;
+        border-radius: 14px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .section h2 {
+        margin-top: 0;
+        color: #1d4ed8;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    .problem {
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        padding: 16px;
+        border-radius: 8px;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+    }
+
+    input[type="text"] {
+        flex: 1;
+        min-width: 280px;
+        padding: 12px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 11px 18px;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        background: #2563eb;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.88;
+    }
+
+    .btn-start {
+        background: #16a34a;
+    }
+
+    .btn-next {
+        background: #2563eb;
+    }
+
+    .btn-auto {
+        background: #9333ea;
+    }
+
+    .btn-reset {
+        background: #dc2626;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 18px;
+    }
+
+    .status {
+        margin-top: 18px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #f1f5f9;
+        font-weight: bold;
+        min-height: 50px;
+    }
+
+    .visual-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-top: 20px;
+    }
+
+    .heap-panel {
+        border: 2px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 18px;
+        min-height: 220px;
+        background: #f8fafc;
+    }
+
+    .heap-panel h3 {
+        margin-top: 0;
+        text-align: center;
+    }
+
+    .max-title {
+        color: #b91c1c;
+    }
+
+    .min-title {
+        color: #047857;
+    }
+
+    .heap {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 20px;
+        min-height: 65px;
+    }
+
+    .heap-value {
+        width: 55px;
+        height: 55px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        border: 3px solid;
+        background: white;
+    }
+
+    .max-value {
+        border-color: #dc2626;
+        color: #991b1b;
+    }
+
+    .min-value {
+        border-color: #059669;
+        color: #047857;
+    }
+
+    .top-value {
+        box-shadow: 0 0 0 4px #facc15;
+    }
+
+    .median-box {
+        margin-top: 20px;
+        padding: 20px;
+        text-align: center;
+        background: #fef3c7;
+        border: 2px solid #f59e0b;
+        border-radius: 12px;
+    }
+
+    .median-label {
+        font-size: 17px;
+        font-weight: bold;
+    }
+
+    .median-value {
+        font-size: 36px;
+        font-weight: bold;
+        color: #b45309;
+        margin-top: 5px;
+    }
+
+    .stream {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+    }
+
+    .stream-value {
+        padding: 8px 14px;
+        background: #e0e7ff;
+        border-radius: 20px;
+        font-weight: bold;
+    }
+
+    .current {
+        background: #fde68a;
+        border: 2px solid #f59e0b;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.5;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, Monaco, monospace;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .info-card {
+        padding: 18px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .info-card h3 {
+        color: #1d4ed8;
+        margin-top: 0;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .complexity div {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 10px;
+        padding: 15px;
+        text-align: center;
+    }
+
+    .complexity strong {
+        display: block;
+        font-size: 22px;
+        color: #1d4ed8;
+    }
+
+    .step-box {
+        margin-top: 15px;
+        padding: 15px;
+        background: #f0fdf4;
+        border-left: 5px solid #16a34a;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 800px) {
+        .visual-grid,
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+
+        .complexity {
+            grid-template-columns: 1fr;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Find Median from Data Stream</h1>
+    <p>Interactive visualization using two heaps</p>
+</header>
+
+<!-- 1. Problem -->
+<section class="section">
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+        <p>
+            Design a data structure that supports adding integers from a continuous
+            data stream and finding the median of all elements looked at so far.
+        </p>
+
+        <p>
+            A median is the middle value when all numbers are sorted.
+            If there are an even number of elements, the median is the average
+            of the two middle values.
+        </p>
+
+        <p>
+            <strong>Example:</strong>
+            Stream = 5, 15, 1, 3
+        </p>
+
+        <p>
+            After adding all elements:
+            Sorted order = 1, 3, 5, 15
+        </p>
+
+        <p>
+            Median = (3 + 5) / 2 = 4
+        </p>
+    </div>
+</section>
+
+<!-- 2. Input -->
+<section class="section">
+    <h2>2. Enter Data Stream</h2>
+
+    <div class="input-area">
+        <input
+            type="text"
+            id="streamInput"
+            value="5,15,1,3,8,7,9,2"
+            placeholder="Enter integers separated by commas"
+        >
+    </div>
+
+    <div class="controls">
+        <button class="btn-start" id="startBtn">Start</button>
+        <button class="btn-next" id="nextBtn">Next Step</button>
+        <button class="btn-auto" id="autoBtn">Auto Run</button>
+        <button class="btn-reset" id="resetBtn">Reset</button>
+    </div>
+
+    <div class="status" id="statusBox">
+        Click Start to load the data stream.
+    </div>
+</section>
+
+<!-- 3. Visualization -->
+<section class="section">
+    <h2>3. Interactive Visualization</h2>
+
+    <h3>Input Stream</h3>
+    <div class="stream" id="streamDisplay"></div>
+
+    <div class="visual-grid">
+
+        <div class="heap-panel">
+            <h3 class="max-title">
+                Max Heap — Lower Half
+            </h3>
+
+            <p>
+                Stores the smaller half of the numbers.
+                The largest value is at the top.
+            </p>
+
+            <div class="heap" id="maxHeapDisplay"></div>
+
+            <p>
+                <strong>Top:</strong>
+                <span id="maxTop">—</span>
+            </p>
+        </div>
+
+        <div class="heap-panel">
+            <h3 class="min-title">
+                Min Heap — Upper Half
+            </h3>
+
+            <p>
+                Stores the larger half of the numbers.
+                The smallest value is at the top.
+            </p>
+
+            <div class="heap" id="minHeapDisplay"></div>
+
+            <p>
+                <strong>Top:</strong>
+                <span id="minTop">—</span>
+            </p>
+        </div>
+
+    </div>
+
+    <div class="median-box">
+        <div class="median-label">
+            Current Median
+        </div>
+
+        <div class="median-value" id="medianDisplay">
+            —
+        </div>
+    </div>
+
+    <div class="step-box" id="stepExplanation">
+        The two heaps will remain balanced so that their sizes differ by at most one.
+    </div>
+</section>
+
+<!-- 4. Algorithm -->
+<section class="section">
+    <h2>4. Algorithm</h2>
+
+    <div class="two-column">
+
+        <div class="info-card">
+            <h3>Max Heap</h3>
+            <p>
+                The max heap contains the lower half of the numbers.
+            </p>
+
+            <p>
+                Its top element is the largest element in the lower half.
+            </p>
+        </div>
+
+        <div class="info-card">
+            <h3>Min Heap</h3>
+            <p>
+                The min heap contains the upper half of the numbers.
+            </p>
+
+            <p>
+                Its top element is the smallest element in the upper half.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="step-box">
+        <strong>Balance rule:</strong>
+
+        <ol>
+            <li>
+                The max heap may contain one more element than the min heap.
+            </li>
+            <li>
+                The min heap may not contain more elements than the max heap.
+            </li>
+            <li>
+                If the sizes become unbalanced, move the root of one heap to the other.
+            </li>
+        </ol>
+    </div>
+</section>
+
+<!-- 5. Pseudocode -->
+<section class="section">
+    <h2>5. Pseudocode</h2>
+
+<pre><code>Initialize maxHeap
+Initialize minHeap
+
+function addNum(num):
+
+    if maxHeap is empty OR num &lt;= maxHeap.top:
+        insert num into maxHeap
+    else:
+        insert num into minHeap
+
+    if size(maxHeap) &gt; size(minHeap) + 1:
+        move maxHeap.top to minHeap
+
+    if size(minHeap) &gt; size(maxHeap):
+        move minHeap.top to maxHeap
+
+
+function findMedian():
+
+    if size(maxHeap) &gt; size(minHeap):
+        return maxHeap.top
+
+    else:
+        return (maxHeap.top + minHeap.top) / 2.0</code></pre>
+</section>
+
+<!-- 6. Python -->
+<section class="section">
+    <h2>6. Python Implementation</h2>
+
+<pre><code>import heapq
+
+
+class MedianFinder:
+
+    def __init__(self):
+        # Max heap implemented using negative values
+        self.lower = []
+
+        # Min heap
+        self.upper = []
+
+    def addNum(self, num):
+
+        # Add to lower half
+        if not self.lower or num &lt;= -self.lower[0]:
+            heapq.heappush(self.lower, -num)
+        else:
+            heapq.heappush(self.upper, num)
+
+        # Balance heaps
+        if len(self.lower) &gt; len(self.upper) + 1:
+            value = -heapq.heappop(self.lower)
+            heapq.heappush(self.upper, value)
+
+        elif len(self.upper) &gt; len(self.lower):
+            value = heapq.heappop(self.upper)
+            heapq.heappush(self.lower, -value)
+
+    def findMedian(self):
+
+        if len(self.lower) &gt; len(self.upper):
+            return -self.lower[0]
+
+        return (-self.lower[0] + self.upper[0]) / 2.0
+
+
+# Example
+mf = MedianFinder()
+
+stream = [5, 15, 1, 3]
+
+for x in stream:
+    mf.addNum(x)
+    print("Added:", x)
+    print("Median:", mf.findMedian())</code></pre>
+</section>
+
+<!-- 7. Short Python -->
+<section class="section">
+    <h2>7. Python Explanation</h2>
+
+<pre><code>import heapq
+
+lower = []   # max heap using negative values
+upper = []   # min heap
+
+def addNum(num):
+
+    if not lower or num &lt;= -lower[0]:
+        heapq.heappush(lower, -num)
+    else:
+        heapq.heappush(upper, num)
+
+    if len(lower) &gt; len(upper) + 1:
+        heapq.heappush(upper, -heapq.heappop(lower))
+
+    if len(upper) &gt; len(lower):
+        heapq.heappush(lower, -heapq.heappop(upper))
+
+
+def findMedian():
+
+    if len(lower) &gt; len(upper):
+        return -lower[0]
+
+    return (-lower[0] + upper[0]) / 2</code></pre>
+
+    <p>
+        Python's <code>heapq</code> provides a min heap.
+        Therefore, negative values are used to simulate a max heap.
+    </p>
+</section>
+
+<!-- 8. Example -->
+<section class="section">
+    <h2>8. Example Walkthrough</h2>
+
+    <table style="width:100%; border-collapse:collapse;">
+        <thead>
+            <tr style="background:#dbeafe;">
+                <th style="padding:12px; border:1px solid #cbd5e1;">Added</th>
+                <th style="padding:12px; border:1px solid #cbd5e1;">Sorted Values</th>
+                <th style="padding:12px; border:1px solid #cbd5e1;">Median</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td style="padding:12px; border:1px solid #cbd5e1;">5</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">5</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">5</td>
+            </tr>
+
+            <tr>
+                <td style="padding:12px; border:1px solid #cbd5e1;">15</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">5, 15</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">10</td>
+            </tr>
+
+            <tr>
+                <td style="padding:12px; border:1px solid #cbd5e1;">1</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">1, 5, 15</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">5</td>
+            </tr>
+
+            <tr>
+                <td style="padding:12px; border:1px solid #cbd5e1;">3</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">1, 3, 5, 15</td>
+                <td style="padding:12px; border:1px solid #cbd5e1;">4</td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- 9. Explanation -->
+<section class="section">
+    <h2>9. Why Use Two Heaps?</h2>
+
+    <p>
+        Keeping all numbers in a sorted array would make insertion expensive
+        because elements may need to be shifted.
+    </p>
+
+    <p>
+        Two heaps divide the data into two approximately equal halves:
+    </p>
+
+    <ul>
+        <li>
+            <strong>Max Heap:</strong> smaller half
+        </li>
+        <li>
+            <strong>Min Heap:</strong> larger half
+        </li>
+    </ul>
+
+    <p>
+        The median can then be obtained directly from the roots of the heaps.
+    </p>
+
+    <div class="step-box">
+        <strong>Important:</strong>
+        The maximum element of the lower half must always be less than or equal
+        to the minimum element of the upper half.
+    </div>
+</section>
+
+<!-- 10. Complexity -->
+<section class="section">
+    <h2>10. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div>
+            <strong>O(log N)</strong>
+            Time for addNum()
+        </div>
+
+        <div>
+            <strong>O(1)</strong>
+            Time for findMedian()
+        </div>
+
+        <div>
+            <strong>O(N)</strong>
+            Space
+        </div>
+
+    </div>
+</section>
+
+<!-- 11. Important -->
+<section class="section">
+    <h2>11. Important Observations</h2>
+
+    <ul>
+        <li>
+            The two heaps together contain every element seen so far.
+        </li>
+
+        <li>
+            Their sizes differ by at most one.
+        </li>
+
+        <li>
+            The max heap stores the lower half.
+        </li>
+
+        <li>
+            The min heap stores the upper half.
+        </li>
+
+        <li>
+            If the total number of elements is odd, the larger heap contains
+            the median.
+        </li>
+
+        <li>
+            If the total number is even, the median is the average of the two
+            heap roots.
+        </li>
+
+        <li>
+            Duplicate values are handled naturally.
+        </li>
+    </ul>
+</section>
+
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------------
+   Find Median from Data Stream
+   All controls use event listeners.
+--------------------------------------------------------- */
+
+let stream = [];
+let currentIndex = 0;
+
+let lowerHeap = [];
+let upperHeap = [];
+
+let autoTimer = null;
+let started = false;
+
+/* ---------------------------------------------------------
+   DOM elements
+--------------------------------------------------------- */
+
+const streamInput = document.getElementById("streamInput");
+
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+const statusBox = document.getElementById("statusBox");
+const streamDisplay = document.getElementById("streamDisplay");
+
+const maxHeapDisplay = document.getElementById("maxHeapDisplay");
+const minHeapDisplay = document.getElementById("minHeapDisplay");
+
+const maxTop = document.getElementById("maxTop");
+const minTop = document.getElementById("minTop");
+
+const medianDisplay = document.getElementById("medianDisplay");
+const stepExplanation = document.getElementById("stepExplanation");
+
+/* ---------------------------------------------------------
+   Max Heap functions
+--------------------------------------------------------- */
+
+function maxHeapPush(value) {
+
+    lowerHeap.push(value);
+
+    let index = lowerHeap.length - 1;
+
+    while (index > 0) {
+
+        const parent = Math.floor((index - 1) / 2);
+
+        if (lowerHeap[parent] >= lowerHeap[index]) {
+            break;
+        }
+
+        const temp = lowerHeap[parent];
+        lowerHeap[parent] = lowerHeap[index];
+        lowerHeap[index] = temp;
+
+        index = parent;
+    }
+}
+
+function maxHeapPop() {
+
+    if (lowerHeap.length === 0) {
+        return null;
+    }
+
+    if (lowerHeap.length === 1) {
+        return lowerHeap.pop();
+    }
+
+    const result = lowerHeap[0];
+
+    lowerHeap[0] = lowerHeap.pop();
+
+    let index = 0;
+
+    while (true) {
+
+        const left = 2 * index + 1;
+        const right = 2 * index + 2;
+
+        let largest = index;
+
+        if (
+            left < lowerHeap.length &&
+            lowerHeap[left] > lowerHeap[largest]
+        ) {
+            largest = left;
+        }
+
+        if (
+            right < lowerHeap.length &&
+            lowerHeap[right] > lowerHeap[largest]
+        ) {
+            largest = right;
+        }
+
+        if (largest === index) {
+            break;
+        }
+
+        const temp = lowerHeap[index];
+        lowerHeap[index] = lowerHeap[largest];
+        lowerHeap[largest] = temp;
+
+        index = largest;
+    }
+
+    return result;
+}
+
+/* ---------------------------------------------------------
+   Min Heap functions
+--------------------------------------------------------- */
+
+function minHeapPush(value) {
+
+    upperHeap.push(value);
+
+    let index = upperHeap.length - 1;
+
+    while (index > 0) {
+
+        const parent = Math.floor((index - 1) / 2);
+
+        if (upperHeap[parent] <= upperHeap[index]) {
+            break;
+        }
+
+        const temp = upperHeap[parent];
+        upperHeap[parent] = upperHeap[index];
+        upperHeap[index] = temp;
+
+        index = parent;
+    }
+}
+
+function minHeapPop() {
+
+    if (upperHeap.length === 0) {
+        return null;
+    }
+
+    if (upperHeap.length === 1) {
+        return upperHeap.pop();
+    }
+
+    const result = upperHeap[0];
+
+    upperHeap[0] = upperHeap.pop();
+
+    let index = 0;
+
+    while (true) {
+
+        const left = 2 * index + 1;
+        const right = 2 * index + 2;
+
+        let smallest = index;
+
+        if (
+            left < upperHeap.length &&
+            upperHeap[left] < upperHeap[smallest]
+        ) {
+            smallest = left;
+        }
+
+        if (
+            right < upperHeap.length &&
+            upperHeap[right] < upperHeap[smallest]
+        ) {
+            smallest = right;
+        }
+
+        if (smallest === index) {
+            break;
+        }
+
+        const temp = upperHeap[index];
+        upperHeap[index] = upperHeap[smallest];
+        upperHeap[smallest] = temp;
+
+        index = smallest;
+    }
+
+    return result;
+}
+
+/* ---------------------------------------------------------
+   Median
+--------------------------------------------------------- */
+
+function getMedian() {
+
+    if (lowerHeap.length === 0) {
+        return null;
+    }
+
+    if (lowerHeap.length > upperHeap.length) {
+        return lowerHeap[0];
+    }
+
+    return (lowerHeap[0] + upperHeap[0]) / 2;
+}
+
+/* ---------------------------------------------------------
+   Add number
+--------------------------------------------------------- */
+
+function addNumber(num) {
+
+    if (
+        lowerHeap.length === 0 ||
+        num <= lowerHeap[0]
+    ) {
+        maxHeapPush(num);
+    } else {
+        minHeapPush(num);
+    }
+
+    /*
+       Balance heaps.
+       lowerHeap is allowed to contain one extra element.
+    */
+
+    if (lowerHeap.length > upperHeap.length + 1) {
+
+        const moved = maxHeapPop();
+        minHeapPush(moved);
+
+    } else if (upperHeap.length > lowerHeap.length) {
+
+        const moved = minHeapPop();
+        maxHeapPush(moved);
+    }
+}
+
+/* ---------------------------------------------------------
+   Render stream
+--------------------------------------------------------- */
+
+function renderStream() {
+
+    streamDisplay.innerHTML = "";
+
+    stream.forEach(function(value, index) {
+
+        const item = document.createElement("div");
+
+        item.className = "stream-value";
+
+        if (index === currentIndex - 1) {
+            item.classList.add("current");
+        }
+
+        item.textContent = value;
+
+        streamDisplay.appendChild(item);
+    });
+}
+
+/* ---------------------------------------------------------
+   Render heaps
+--------------------------------------------------------- */
+
+function renderHeaps() {
+
+    maxHeapDisplay.innerHTML = "";
+    minHeapDisplay.innerHTML = "";
+
+    lowerHeap.forEach(function(value, index) {
+
+        const item = document.createElement("div");
+
+        item.className = "heap-value max-value";
+
+        if (index === 0) {
+            item.classList.add("top-value");
+        }
+
+        item.textContent = value;
+
+        maxHeapDisplay.appendChild(item);
+    });
+
+    upperHeap.forEach(function(value, index) {
+
+        const item = document.createElement("div");
+
+        item.className = "heap-value min-value";
+
+        if (index === 0) {
+            item.classList.add("top-value");
+        }
+
+        item.textContent = value;
+
+        minHeapDisplay.appendChild(item);
+    });
+
+    maxTop.textContent =
+        lowerHeap.length > 0 ? lowerHeap[0] : "—";
+
+    minTop.textContent =
+        upperHeap.length > 0 ? upperHeap[0] : "—";
+
+    const median = getMedian();
+
+    medianDisplay.textContent =
+        median === null ? "—" : median;
+}
+
+/* ---------------------------------------------------------
+   Start
+--------------------------------------------------------- */
+
+function startAlgorithm() {
+
+    stopAutoRun();
+
+    const text = streamInput.value.trim();
+
+    if (!text) {
+
+        statusBox.textContent =
+            "Please enter at least one integer.";
+
+        return;
+    }
+
+    const values = text
+        .split(",")
+        .map(function(value) {
+            return Number(value.trim());
+        });
+
+    if (values.some(function(value) {
+        return !Number.isFinite(value) || !Number.isInteger(value);
+    })) {
+
+        statusBox.textContent =
+            "Please enter valid integers separated by commas.";
+
+        return;
+    }
+
+    stream = values;
+
+    currentIndex = 0;
+
+    lowerHeap = [];
+    upperHeap = [];
+
+    started = true;
+
+    medianDisplay.textContent = "—";
+
+    renderStream();
+    renderHeaps();
+
+    statusBox.textContent =
+        "Data stream loaded. Click Next Step to add the first number.";
+
+    stepExplanation.textContent =
+        "The stream is ready. Each Next Step adds one number and rebalances the two heaps.";
+}
+
+/* ---------------------------------------------------------
+   Next Step
+--------------------------------------------------------- */
+
+function nextStep() {
+
+    if (!started) {
+
+        statusBox.textContent =
+            "Click Start first.";
+
+        return;
+    }
+
+    if (currentIndex >= stream.length) {
+
+        statusBox.textContent =
+            "All numbers have been processed.";
+
+        stepExplanation.textContent =
+            "The complete data stream has been processed.";
+
+        stopAutoRun();
+
+        return;
+    }
+
+    const num = stream[currentIndex];
+
+    const oldLowerSize = lowerHeap.length;
+    const oldUpperSize = upperHeap.length;
+
+    currentIndex++;
+
+    if (
+        lowerHeap.length === 0 ||
+        num <= lowerHeap[0]
+    ) {
+
+        maxHeapPush(num);
+
+        statusBox.textContent =
+            "Added " + num + " to the Max Heap.";
+
+        stepExplanation.textContent =
+            num +
+            " belongs to the lower half because it is less than or equal to the largest value currently in the lower half.";
+
+    } else {
+
+        minHeapPush(num);
+
+        statusBox.textContent =
+            "Added " + num + " to the Min Heap.";
+
+        stepExplanation.textContent =
+            num +
+            " belongs to the upper half, so it is inserted into the Min Heap.";
+    }
+
+    /*
+       Rebalance after insertion.
+    */
+
+    if (lowerHeap.length > upperHeap.length + 1) {
+
+        const moved = maxHeapPop();
+
+        minHeapPush(moved);
+
+        statusBox.textContent =
+            "Added " + num +
+            " and moved " + moved +
+            " from Max Heap to Min Heap to balance the heaps.";
+
+        stepExplanation.textContent =
+            "The Max Heap became too large. Its largest element was moved to the Min Heap.";
+    }
+
+    else if (upperHeap.length > lowerHeap.length) {
+
+        const moved = minHeapPop();
+
+        maxHeapPush(moved);
+
+        statusBox.textContent =
+            "Added " + num +
+            " and moved " + moved +
+            " from Min Heap to Max Heap to balance the heaps.";
+
+        stepExplanation.textContent =
+            "The Min Heap became larger than the Max Heap. Its smallest element was moved to the Max Heap.";
+    }
+
+    renderStream();
+    renderHeaps();
+
+    const median = getMedian();
+
+    statusBox.textContent +=
+        " Current median = " + median + ".";
+
+    if (lowerHeap.length === upperHeap.length) {
+
+        stepExplanation.textContent +=
+            " Both heaps contain the same number of elements, so the median is the average of their roots.";
+
+    } else {
+
+        stepExplanation.textContent +=
+            " The larger Max Heap contains the median at its root.";
+    }
+}
+
+/* ---------------------------------------------------------
+   Auto Run
+--------------------------------------------------------- */
+
+function autoRun() {
+
+    if (!started) {
+
+        startAlgorithm();
+    }
+
+    stopAutoRun();
+
+    autoTimer = setInterval(function() {
+
+        if (currentIndex >= stream.length) {
+
+            stopAutoRun();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+}
+
+/* ---------------------------------------------------------
+   Stop Auto
+--------------------------------------------------------- */
+
+function stopAutoRun() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+}
+
+/* ---------------------------------------------------------
+   Reset
+--------------------------------------------------------- */
+
+function resetAlgorithm() {
+
+    stopAutoRun();
+
+    stream = [];
+    currentIndex = 0;
+
+    lowerHeap = [];
+    upperHeap = [];
+
+    started = false;
+
+    streamDisplay.innerHTML = "";
+
+    maxHeapDisplay.innerHTML = "";
+    minHeapDisplay.innerHTML = "";
+
+    maxTop.textContent = "—";
+    minTop.textContent = "—";
+
+    medianDisplay.textContent = "—";
+
+    statusBox.textContent =
+        "Visualizer reset. Enter a stream and click Start.";
+
+    stepExplanation.textContent =
+        "The two heaps will remain balanced so that their sizes differ by at most one.";
+}
+
+/* ---------------------------------------------------------
+   Event listeners
+--------------------------------------------------------- */
+
+startBtn.addEventListener("click", startAlgorithm);
+
+nextBtn.addEventListener("click", nextStep);
+
+autoBtn.addEventListener("click", autoRun);
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+/* ---------------------------------------------------------
+   Initial display
+--------------------------------------------------------- */
+
+resetAlgorithm();
+</script>
+
+</body>
+</html>

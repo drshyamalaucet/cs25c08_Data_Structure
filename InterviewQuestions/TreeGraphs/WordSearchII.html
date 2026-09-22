@@ -1,0 +1,1650 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Word Search II - Trie + DFS Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+    line-height: 1.6;
+}
+
+.container {
+    width: 94%;
+    max-width: 1250px;
+    margin: 25px auto;
+}
+
+header {
+    background: linear-gradient(135deg, #0f766e, #14b8a6);
+    color: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,.12);
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 30px;
+}
+
+header p {
+    margin: 0;
+}
+
+section {
+    background: white;
+    margin-top: 22px;
+    padding: 24px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+}
+
+h2 {
+    color: #0f766e;
+    margin-top: 0;
+    border-bottom: 2px solid #ccfbf1;
+    padding-bottom: 8px;
+}
+
+h3 {
+    color: #0f766e;
+}
+
+.problem {
+    background: #ecfeff;
+    border-left: 5px solid #0f766e;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+.input-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 15px;
+    align-items: center;
+}
+
+label {
+    font-weight: bold;
+}
+
+textarea {
+    width: 100%;
+    min-height: 80px;
+    resize: vertical;
+    padding: 11px;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+}
+
+.example {
+    background: #f8fafc;
+    padding: 15px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+button {
+    border: none;
+    padding: 11px 18px;
+    margin: 6px 4px 6px 0;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+#startBtn {
+    background: #0f766e;
+    color: white;
+}
+
+#nextBtn {
+    background: #059669;
+    color: white;
+}
+
+#autoBtn {
+    background: #7c3aed;
+    color: white;
+}
+
+#resetBtn {
+    background: #dc2626;
+    color: white;
+}
+
+button:hover {
+    opacity: .88;
+}
+
+button:disabled {
+    background: #94a3b8 !important;
+    cursor: not-allowed;
+}
+
+.status {
+    margin-top: 15px;
+    padding: 14px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-weight: bold;
+}
+
+.dashboard {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+}
+
+.card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+.card strong {
+    display: block;
+    font-size: 24px;
+    color: #0f766e;
+}
+
+.board-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+    overflow-x: auto;
+}
+
+.board {
+    display: grid;
+    gap: 7px;
+    padding: 15px;
+    background: #e2e8f0;
+    border-radius: 12px;
+}
+
+.cell {
+    width: 58px;
+    height: 58px;
+    background: white;
+    border: 3px solid #94a3b8;
+    border-radius: 9px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: .2s;
+}
+
+.cell.current {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    transform: scale(1.08);
+}
+
+.cell.path {
+    background: #ccfbf1;
+    border-color: #0f766e;
+}
+
+.cell.found {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.cell.backtrack {
+    background: #fee2e2;
+    border-color: #dc2626;
+}
+
+.cell.neighbor {
+    background: #ede9fe;
+    border-color: #7c3aed;
+}
+
+.words-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.word-tag {
+    padding: 7px 12px;
+    border-radius: 18px;
+    background: #e2e8f0;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+}
+
+.word-tag.current {
+    background: #fef3c7;
+    border: 2px solid #f59e0b;
+}
+
+.word-tag.found {
+    background: #dcfce7;
+    border: 2px solid #16a34a;
+    color: #166534;
+}
+
+.word-tag.failed {
+    background: #fee2e2;
+    border: 2px solid #ef4444;
+}
+
+.result-box {
+    background: #ecfdf5;
+    border: 2px solid #10b981;
+    padding: 16px;
+    border-radius: 10px;
+    min-height: 65px;
+}
+
+.result-word {
+    display: inline-block;
+    background: #059669;
+    color: white;
+    padding: 8px 13px;
+    margin: 4px;
+    border-radius: 7px;
+    font-weight: bold;
+}
+
+.trie-box {
+    overflow-x: auto;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.trie-level {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 8px 0;
+}
+
+.trie-node {
+    padding: 7px 11px;
+    background: #e0f2fe;
+    border: 2px solid #0284c7;
+    border-radius: 7px;
+    font-family: Consolas, monospace;
+    font-weight: bold;
+}
+
+.trie-node.end {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+pre {
+    background: #111827;
+    color: #e5e7eb;
+    padding: 18px;
+    border-radius: 10px;
+    overflow-x: auto;
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.complexity div {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 16px;
+    border-radius: 10px;
+}
+
+.important {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    border-radius: 8px;
+}
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+.legend span {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.l-current { background: #fef3c7; }
+.l-path { background: #ccfbf1; }
+.l-found { background: #dcfce7; }
+.l-neighbor { background: #ede9fe; }
+
+@media (max-width: 800px) {
+    .input-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .complexity {
+        grid-template-columns: 1fr;
+    }
+
+    header h1 {
+        font-size: 24px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Word Search II</h1>
+    <p>Find all dictionary words in a character board using Trie + DFS Backtracking</p>
+</header>
+
+
+<section>
+<h2>1. Problem Statement</h2>
+
+<div class="problem">
+    Given an <b>m × n</b> board of characters and a list of strings
+    <b>words</b>, return all words that can be constructed from letters
+    of sequentially adjacent cells.
+    <br><br>
+
+    A word can be formed by moving:
+    <b>up, down, left, or right</b>.
+    Diagonal movement is not allowed.
+    <br><br>
+
+    The same cell cannot be used more than once while constructing
+    one word.
+</div>
+
+<div class="example">
+<b>Example:</b>
+<br><br>
+
+Board:
+<pre><code>[
+  ["o","a","a","n"],
+  ["e","t","a","e"],
+  ["i","h","k","r"],
+  ["i","f","l","v"]
+]</code></pre>
+
+Words:
+
+<code>["oath","pea","eat","rain"]</code>
+
+<br><br>
+
+Output:
+
+<b>["oath","eat"]</b>
+</div>
+</section>
+
+
+<section>
+<h2>2. Input</h2>
+
+<div class="input-grid">
+
+<label for="boardInput">Board:</label>
+
+<textarea id="boardInput">[
+["o","a","a","n"],
+["e","t","a","e"],
+["i","h","k","r"],
+["i","f","l","v"]
+]</textarea>
+
+<label for="wordsInput">Words:</label>
+
+<textarea id="wordsInput">["oath","pea","eat","rain"]</textarea>
+
+</div>
+
+<p>
+Use JSON format for both the board and the word list.
+</p>
+
+<button id="startBtn">Start Algorithm</button>
+<button id="nextBtn" disabled>Next Step</button>
+<button id="autoBtn" disabled>Auto Run</button>
+<button id="resetBtn">Reset</button>
+
+<div class="status" id="status">
+    Enter the board and words, then click Start Algorithm.
+</div>
+</section>
+
+
+<section>
+<h2>3. Word List</h2>
+
+<div class="words-list" id="wordsDisplay">
+    No words loaded.
+</div>
+</section>
+
+
+<section>
+<h2>4. Algorithm Dashboard</h2>
+
+<div class="dashboard">
+
+<div class="card">
+<span>Rows</span>
+<strong id="rowCount">0</strong>
+</div>
+
+<div class="card">
+<span>Columns</span>
+<strong id="colCount">0</strong>
+</div>
+
+<div class="card">
+<span>Words</span>
+<strong id="totalWords">0</strong>
+</div>
+
+<div class="card">
+<span>Found</span>
+<strong id="foundCount">0</strong>
+</div>
+
+<div class="card">
+<span>Current Word</span>
+<strong id="currentWord">-</strong>
+</div>
+
+</div>
+</section>
+
+
+<section>
+<h2>5. Board Visualization</h2>
+
+<div class="board-wrapper">
+    <div class="board" id="board"></div>
+</div>
+
+<div class="legend">
+    <span class="l-current">Current Cell</span>
+    <span class="l-path">Current DFS Path</span>
+    <span class="l-found">Found Word</span>
+    <span class="l-neighbor">Candidate Neighbor</span>
+</div>
+</section>
+
+
+<section>
+<h2>6. Trie Visualization</h2>
+
+<p>
+A <b>Trie</b> stores all dictionary words so that DFS can stop early
+when the current character sequence is not a prefix of any word.
+</p>
+
+<div class="trie-box" id="trieDisplay">
+    Trie not created.
+</div>
+</section>
+
+
+<section>
+<h2>7. How the Algorithm Works</h2>
+
+<ol>
+<li>Insert every dictionary word into a Trie.</li>
+
+<li>Start DFS from every cell of the board.</li>
+
+<li>Follow adjacent cells while the current sequence is a Trie prefix.</li>
+
+<li>When a Trie node marks the end of a word, add that word to the result.</li>
+
+<li>Mark the current board cell as visited.</li>
+
+<li>Explore its four neighbors.</li>
+
+<li>Backtrack and make the cell available again.</li>
+
+<li>Continue until all possible paths have been explored.</li>
+
+<li>Return all discovered words.</li>
+</ol>
+
+<div class="important">
+<b>Why use a Trie?</b>
+<br><br>
+Without a Trie, we may repeatedly construct strings that cannot possibly
+be dictionary words. The Trie allows us to immediately stop DFS whenever
+the current sequence is not a valid prefix.
+</div>
+</section>
+
+
+<section>
+<h2>8. Pseudocode</h2>
+
+<pre><code>WordSearch(board, words):
+
+    Build a Trie using all words
+
+    result = empty set
+
+    for every cell (r, c):
+
+        DFS(r, c, trieRoot, "")
+
+    return result
+
+
+DFS(r, c, node, currentWord):
+
+    if cell is outside board:
+        return
+
+    if cell is already visited:
+        return
+
+    character = board[r][c]
+
+    if character is not a child of node:
+        return
+
+    nextNode = node.children[character]
+
+    currentWord += character
+
+    if nextNode represents a complete word:
+        add currentWord to result
+
+    mark board[r][c] as visited
+
+    DFS(r+1, c, nextNode, currentWord)
+    DFS(r-1, c, nextNode, currentWord)
+    DFS(r, c+1, nextNode, currentWord)
+    DFS(r, c-1, nextNode, currentWord)
+
+    unmark board[r][c]</code></pre>
+</section>
+
+
+<section>
+<h2>9. Python Implementation</h2>
+
+<pre><code>class TrieNode:
+
+    def __init__(self):
+        self.children = {}
+        self.word = None
+
+
+def find_words(board, words):
+
+    root = TrieNode()
+
+    # Build Trie
+    for word in words:
+
+        node = root
+
+        for ch in word:
+            if ch not in node.children:
+                node.children[ch] = TrieNode()
+
+            node = node.children[ch]
+
+        node.word = word
+
+    rows = len(board)
+    cols = len(board[0])
+
+    result = []
+
+    def dfs(r, c, node):
+
+        if r < 0 or r >= rows or c < 0 or c >= cols:
+            return
+
+        ch = board[r][c]
+
+        if ch == "#":
+            return
+
+        if ch not in node.children:
+            return
+
+        next_node = node.children[ch]
+
+        # Complete word found
+        if next_node.word is not None:
+            result.append(next_node.word)
+
+            # Prevent duplicate output
+            next_node.word = None
+
+        board[r][c] = "#"
+
+        dfs(r + 1, c, next_node)
+        dfs(r - 1, c, next_node)
+        dfs(r, c + 1, next_node)
+        dfs(r, c - 1, next_node)
+
+        board[r][c] = ch
+
+    for r in range(rows):
+        for c in range(cols):
+            dfs(r, c, root)
+
+    return result
+
+
+# Example
+board = [
+    ["o","a","a","n"],
+    ["e","t","a","e"],
+    ["i","h","k","r"],
+    ["i","f","l","v"]
+]
+
+words = ["oath", "pea", "eat", "rain"]
+
+print(find_words(board, words))</code></pre>
+
+<h3>Output</h3>
+
+<pre><code>['oath', 'eat']</code></pre>
+</section>
+
+
+<section>
+<h2>10. Example Walkthrough</h2>
+
+<div class="example">
+
+<b>Starting word: "oath"</b>
+
+<br><br>
+
+The DFS starts at <b>o</b>:
+
+<br><br>
+
+<code>
+o → a → t → h
+</code>
+
+<br><br>
+
+All four letters are adjacent:
+
+<pre><code>o → a
+    ↓
+    t
+    ↓
+    h</code></pre>
+
+Therefore <b>"oath"</b> is found.
+
+<br><br>
+
+The algorithm then continues searching for the remaining dictionary words.
+
+<br><br>
+
+<b>"eat"</b> is also found.
+
+<br><br>
+
+<b>"pea"</b> cannot be constructed from the board.
+
+<br><br>
+
+<b>"rain"</b> cannot be constructed from the board.
+
+<br><br>
+
+Final result:
+
+<b>["oath", "eat"]</b>
+
+</div>
+</section>
+
+
+<section>
+<h2>11. DFS Backtracking</h2>
+
+<p>
+Suppose the current path is:
+</p>
+
+<pre><code>o → a → t</code></pre>
+
+<p>
+The algorithm temporarily marks these cells as visited.
+After exploring the neighbors of <code>t</code>, it returns to
+<code>a</code> and then <code>o</code>.
+</p>
+
+<p>
+This process is called <b>backtracking</b>.
+It allows the same board cell to be reused for a different word,
+but never twice in the same path.
+</p>
+</section>
+
+
+<section>
+<h2>12. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div>
+<h3>Trie Construction</h3>
+<p>
+<b>O(L)</b>
+</p>
+<p>
+L = total number of characters in all dictionary words.
+</p>
+</div>
+
+<div>
+<h3>DFS Search</h3>
+<p>
+Worst case can be large because many board paths may be explored.
+The Trie significantly prunes paths that are not dictionary prefixes.
+</p>
+</div>
+
+<div>
+<h3>Space Complexity</h3>
+<p>
+<b>O(L)</b> for the Trie plus DFS/backtracking space.
+</p>
+</div>
+
+<div>
+<h3>Practical Advantage</h3>
+<p>
+The Trie avoids exploring paths that cannot form any dictionary word.
+</p>
+</div>
+
+</div>
+</section>
+
+
+<section>
+<h2>13. Important Observations</h2>
+
+<ul>
+<li>Movement is only <b>up, down, left, right</b>.</li>
+
+<li>Diagonal movement is not allowed.</li>
+
+<li>A board cell cannot be reused within the same word.</li>
+
+<li>The Trie stores prefixes as well as complete words.</li>
+
+<li>DFS explores possible paths.</li>
+
+<li>Backtracking restores each cell after exploration.</li>
+
+<li>Using a set or clearing the Trie word prevents duplicate results.</li>
+
+<li>The output order does not necessarily need to match the input word order.</li>
+</ul>
+</section>
+
+
+<section>
+<h2>14. Why Trie + DFS?</h2>
+
+<table style="width:100%; border-collapse:collapse;">
+<tr>
+<th style="border:1px solid #cbd5e1;padding:10px;">Approach</th>
+<th style="border:1px solid #cbd5e1;padding:10px;">Idea</th>
+<th style="border:1px solid #cbd5e1;padding:10px;">Main Issue</th>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+DFS for every word
+</td>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+Search the board separately for every dictionary word.
+</td>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+Repeated board traversal.
+</td>
+</tr>
+
+<tr>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+Trie + DFS
+</td>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+Search all words simultaneously using shared prefixes.
+</td>
+<td style="border:1px solid #cbd5e1;padding:10px;">
+Trie requires additional memory.
+</td>
+</tr>
+</table>
+</section>
+
+</div>
+
+
+<script>
+"use strict";
+
+/* ==========================================
+   Global State
+   ========================================== */
+
+let board = [];
+let words = [];
+let rows = 0;
+let cols = 0;
+
+let trieRoot = null;
+let foundWords = new Set();
+
+let initialized = false;
+let finished = false;
+
+let currentWordIndex = 0;
+let currentWord = "";
+
+let path = [];
+let visited = [];
+let searchStack = [];
+
+let autoTimer = null;
+
+
+/* ==========================================
+   DOM Elements
+   ========================================== */
+
+const boardInput =
+    document.getElementById("boardInput");
+
+const wordsInput =
+    document.getElementById("wordsInput");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const autoBtn =
+    document.getElementById("autoBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+const statusBox =
+    document.getElementById("status");
+
+const boardElement =
+    document.getElementById("board");
+
+const wordsDisplay =
+    document.getElementById("wordsDisplay");
+
+const trieDisplay =
+    document.getElementById("trieDisplay");
+
+const rowCount =
+    document.getElementById("rowCount");
+
+const colCount =
+    document.getElementById("colCount");
+
+const totalWords =
+    document.getElementById("totalWords");
+
+const foundCount =
+    document.getElementById("foundCount");
+
+const currentWordBox =
+    document.getElementById("currentWord");
+
+
+/* ==========================================
+   Trie Node
+   ========================================== */
+
+class TrieNode {
+
+    constructor() {
+        this.children = {};
+        this.word = null;
+    }
+}
+
+
+/* ==========================================
+   Parse Input
+   ========================================== */
+
+function parseInput() {
+
+    board = JSON.parse(boardInput.value);
+    words = JSON.parse(wordsInput.value);
+
+    if (!Array.isArray(board) || board.length === 0) {
+        throw new Error("Board must be a non-empty 2D array.");
+    }
+
+    if (!Array.isArray(words)) {
+        throw new Error("Words must be an array of strings.");
+    }
+
+    cols = board[0].length;
+
+    if (cols === 0) {
+        throw new Error("Board must contain at least one column.");
+    }
+
+    for (const row of board) {
+
+        if (!Array.isArray(row) || row.length !== cols) {
+            throw new Error(
+                "Every board row must have the same number of columns."
+            );
+        }
+
+        for (const ch of row) {
+
+            if (
+                typeof ch !== "string" ||
+                ch.length !== 1
+            ) {
+                throw new Error(
+                    "Every board cell must contain one character."
+                );
+            }
+        }
+    }
+
+    for (const word of words) {
+
+        if (
+            typeof word !== "string" ||
+            word.length === 0
+        ) {
+            throw new Error(
+                "Every word must be a non-empty string."
+            );
+        }
+    }
+
+    rows = board.length;
+}
+
+
+/* ==========================================
+   Build Trie
+   ========================================== */
+
+function buildTrie() {
+
+    trieRoot = new TrieNode();
+
+    for (const word of words) {
+
+        let node = trieRoot;
+
+        for (const ch of word.toLowerCase()) {
+
+            if (!node.children[ch]) {
+                node.children[ch] = new TrieNode();
+            }
+
+            node = node.children[ch];
+        }
+
+        node.word = word;
+    }
+}
+
+
+/* ==========================================
+   Display Trie
+   ========================================== */
+
+function renderTrie() {
+
+    trieDisplay.innerHTML = "";
+
+    const title = document.createElement("b");
+    title.textContent = "Trie prefixes:";
+    trieDisplay.appendChild(title);
+
+    const level = document.createElement("div");
+    level.className = "trie-level";
+
+    words.forEach(word => {
+
+        let prefix = "";
+
+        for (let i = 0; i < word.length; i++) {
+
+            prefix += word[i];
+
+            const node =
+                document.createElement("span");
+
+            node.className = "trie-node";
+
+            if (i === word.length - 1) {
+                node.classList.add("end");
+            }
+
+            node.textContent =
+                prefix +
+                (i === word.length - 1 ? " ✓" : "");
+
+            level.appendChild(node);
+        }
+    });
+
+    trieDisplay.appendChild(level);
+}
+
+
+/* ==========================================
+   Render Words
+   ========================================== */
+
+function renderWords() {
+
+    wordsDisplay.innerHTML = "";
+
+    words.forEach((word, index) => {
+
+        const tag =
+            document.createElement("span");
+
+        tag.className = "word-tag";
+
+        if (
+            currentWordIndex === index &&
+            !foundWords.has(word)
+        ) {
+            tag.classList.add("current");
+        }
+
+        if (foundWords.has(word)) {
+            tag.classList.add("found");
+        }
+
+        tag.textContent = word;
+
+        wordsDisplay.appendChild(tag);
+    });
+}
+
+
+/* ==========================================
+   Render Board
+   ========================================== */
+
+function renderBoard() {
+
+    boardElement.innerHTML = "";
+
+    boardElement.style.gridTemplateColumns =
+        `repeat(${cols}, 58px)`;
+
+    const pathSet = new Set(
+        path.map(
+            position =>
+                position[0] + "," + position[1]
+        )
+    );
+
+    const current =
+        path.length > 0
+            ? path[path.length - 1]
+            : null;
+
+    for (let r = 0; r < rows; r++) {
+
+        for (let c = 0; c < cols; c++) {
+
+            const cell =
+                document.createElement("div");
+
+            cell.className = "cell";
+
+            cell.textContent =
+                board[r][c];
+
+            const key = r + "," + c;
+
+            if (pathSet.has(key)) {
+                cell.classList.add("path");
+            }
+
+            if (
+                current &&
+                current[0] === r &&
+                current[1] === c
+            ) {
+                cell.classList.add("current");
+            }
+
+            if (
+                currentWord &&
+                foundWords.has(currentWord) &&
+                pathSet.has(key)
+            ) {
+                cell.classList.add("found");
+            }
+
+            boardElement.appendChild(cell);
+        }
+    }
+}
+
+
+/* ==========================================
+   Initialize DFS
+   ========================================== */
+
+function initializeSearch() {
+
+    foundWords = new Set();
+
+    currentWordIndex = 0;
+
+    currentWord =
+        words.length > 0
+            ? words[0]
+            : "";
+
+    path = [];
+
+    visited =
+        Array.from(
+            { length: rows },
+            () => Array(cols).fill(false)
+        );
+
+    searchStack = [];
+
+    /*
+       Instead of searching one word independently,
+       the visualizer performs Trie-guided DFS.
+
+       All board cells are starting points.
+    */
+
+    for (let r = rows - 1; r >= 0; r--) {
+
+        for (let c = cols - 1; c >= 0; c--) {
+
+            searchStack.push({
+                r: r,
+                c: c,
+                node: trieRoot,
+                word: "",
+                path: [],
+                visited: new Set(),
+                direction: 0,
+                entered: false
+            });
+        }
+    }
+}
+
+
+/* ==========================================
+   One DFS Step
+   ========================================== */
+
+function nextDFS() {
+
+    while (searchStack.length > 0) {
+
+        const state =
+            searchStack[searchStack.length - 1];
+
+        const r = state.r;
+        const c = state.c;
+
+        const key = r + "," + c;
+
+        if (!state.entered) {
+
+            state.entered = true;
+
+            if (state.visited.has(key)) {
+
+                searchStack.pop();
+                continue;
+            }
+
+            const ch =
+                board[r][c].toLowerCase();
+
+            if (!state.node.children[ch]) {
+
+                searchStack.pop();
+                continue;
+            }
+
+            const nextNode =
+                state.node.children[ch];
+
+            const newWord =
+                state.word + ch;
+
+            const newVisited =
+                new Set(state.visited);
+
+            newVisited.add(key);
+
+            const newPath =
+                state.path.concat([[r, c]]);
+
+            state.node = nextNode;
+            state.word = newWord;
+            state.visited = newVisited;
+            state.path = newPath;
+
+            path = newPath;
+            currentWord = newWord;
+
+            if (
+                nextNode.word !== null &&
+                !foundWords.has(nextNode.word)
+            ) {
+
+                foundWords.add(nextNode.word);
+
+                statusBox.textContent =
+                    "Found word: " +
+                    nextNode.word;
+
+                renderWords();
+                renderBoard();
+
+                updateDashboard();
+
+                return;
+            }
+
+            renderWords();
+            renderBoard();
+
+            statusBox.textContent =
+                "DFS path: " +
+                newWord;
+
+            updateDashboard();
+
+            /*
+               Add neighbors.
+            */
+
+            const directions = [
+                [1, 0],
+                [-1, 0],
+                [0, 1],
+                [0, -1]
+            ];
+
+            /*
+               Push in reverse so exploration appears
+               in normal order.
+            */
+
+            for (
+                let d = directions.length - 1;
+                d >= 0;
+                d--
+            ) {
+
+                const nr =
+                    r + directions[d][0];
+
+                const nc =
+                    c + directions[d][1];
+
+                if (
+                    nr >= 0 &&
+                    nr < rows &&
+                    nc >= 0 &&
+                    nc < cols
+                ) {
+
+                    const neighborKey =
+                        nr + "," + nc;
+
+                    if (!newVisited.has(neighborKey)) {
+
+                        searchStack.push({
+                            r: nr,
+                            c: nc,
+                            node: nextNode,
+                            word: newWord,
+                            path: newPath,
+                            visited: newVisited,
+                            direction: 0,
+                            entered: false
+                        });
+                    }
+                }
+            }
+
+            return;
+        }
+
+        /*
+           Backtrack.
+        */
+
+        searchStack.pop();
+
+        if (searchStack.length > 0) {
+
+            const parent =
+                searchStack[searchStack.length - 1];
+
+            path = parent.path;
+            currentWord = parent.word;
+
+        } else {
+
+            path = [];
+            currentWord = "";
+        }
+
+        renderBoard();
+    }
+
+    finishAlgorithm();
+}
+
+
+/* ==========================================
+   Finish
+   ========================================== */
+
+function finishAlgorithm() {
+
+    finished = true;
+
+    stopAuto();
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    path = [];
+    currentWord = "";
+
+    renderBoard();
+    renderWords();
+    updateDashboard();
+
+    if (foundWords.size > 0) {
+
+        statusBox.textContent =
+            "Search complete. Found " +
+            foundWords.size +
+            " word(s): " +
+            Array.from(foundWords).join(", ");
+
+    } else {
+
+        statusBox.textContent =
+            "Search complete. No dictionary words were found.";
+    }
+}
+
+
+/* ==========================================
+   Dashboard
+   ========================================== */
+
+function updateDashboard() {
+
+    rowCount.textContent = rows;
+    colCount.textContent = cols;
+    totalWords.textContent = words.length;
+    foundCount.textContent = foundWords.size;
+
+    currentWordBox.textContent =
+        currentWord || "-";
+}
+
+
+/* ==========================================
+   Start
+   ========================================== */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    try {
+
+        parseInput();
+
+        buildTrie();
+
+        initializeSearch();
+
+        initialized = true;
+        finished = false;
+
+        nextBtn.disabled = false;
+        autoBtn.disabled = false;
+
+        renderWords();
+        renderBoard();
+        renderTrie();
+        updateDashboard();
+
+        statusBox.textContent =
+            "Trie created. DFS search is ready. Click Next Step.";
+
+    } catch (error) {
+
+        initialized = false;
+
+        nextBtn.disabled = true;
+        autoBtn.disabled = true;
+
+        statusBox.textContent =
+            "Input Error: " +
+            error.message;
+    }
+}
+
+
+/* ==========================================
+   Next Step
+   ========================================== */
+
+function nextStep() {
+
+    if (!initialized || finished) {
+        return;
+    }
+
+    nextDFS();
+}
+
+
+/* ==========================================
+   Auto Run
+   ========================================== */
+
+function autoRun() {
+
+    if (!initialized || finished) {
+        return;
+    }
+
+    stopAuto();
+
+    autoTimer = setInterval(() => {
+
+        if (finished) {
+
+            stopAuto();
+            return;
+        }
+
+        nextStep();
+
+    }, 550);
+}
+
+
+/* ==========================================
+   Stop Auto
+   ========================================== */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+}
+
+
+/* ==========================================
+   Reset
+   ========================================== */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    board = [];
+    words = [];
+
+    rows = 0;
+    cols = 0;
+
+    trieRoot = null;
+    foundWords = new Set();
+
+    initialized = false;
+    finished = false;
+
+    currentWordIndex = 0;
+    currentWord = "";
+
+    path = [];
+    visited = [];
+    searchStack = [];
+
+    nextBtn.disabled = true;
+    autoBtn.disabled = true;
+
+    rowCount.textContent = "0";
+    colCount.textContent = "0";
+    totalWords.textContent = "0";
+    foundCount.textContent = "0";
+    currentWordBox.textContent = "-";
+
+    wordsDisplay.innerHTML =
+        "No words loaded.";
+
+    trieDisplay.innerHTML =
+        "Trie not created.";
+
+    boardElement.innerHTML = "";
+
+    statusBox.textContent =
+        "Enter the board and words, then click Start Algorithm.";
+}
+
+
+/* ==========================================
+   Event Listeners
+   ========================================== */
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+</script>
+
+</body>
+</html>

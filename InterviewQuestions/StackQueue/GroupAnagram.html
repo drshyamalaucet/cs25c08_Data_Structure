@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Group Anagrams - Interactive Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 28px;
+        text-align: center;
+    }
+
+    header h1 {
+        margin: 0 0 8px;
+        font-size: 32px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 16px;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 1200px;
+        margin: 25px auto;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    .card h2 {
+        margin-top: 0;
+        color: #1e3a8a;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    input {
+        flex: 1;
+        min-width: 300px;
+        padding: 12px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+
+    button {
+        border: none;
+        border-radius: 8px;
+        padding: 12px 20px;
+        font-size: 15px;
+        cursor: pointer;
+        font-weight: bold;
+        background: #2563eb;
+        color: white;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+    }
+
+    button.reset {
+        background: #64748b;
+    }
+
+    button.reset:hover {
+        background: #475569;
+    }
+
+    .array {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 15px;
+    }
+
+    .word {
+        min-width: 85px;
+        text-align: center;
+        padding: 14px 12px;
+        background: #eff6ff;
+        border: 2px solid #93c5fd;
+        border-radius: 10px;
+        font-weight: bold;
+        position: relative;
+        transition: 0.3s;
+    }
+
+    .word.active {
+        background: #fef3c7;
+        border-color: #f59e0b;
+        transform: scale(1.08);
+    }
+
+    .word.processed {
+        background: #dcfce7;
+        border-color: #22c55e;
+    }
+
+    .index {
+        position: absolute;
+        top: -10px;
+        left: -8px;
+        background: #1e3a8a;
+        color: white;
+        border-radius: 50%;
+        width: 25px;
+        height: 25px;
+        line-height: 25px;
+        font-size: 12px;
+    }
+
+    .key-box {
+        margin-top: 20px;
+        padding: 16px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 2px dashed #94a3b8;
+    }
+
+    .key {
+        display: inline-block;
+        padding: 10px 18px;
+        margin-left: 8px;
+        background: #ede9fe;
+        border: 2px solid #8b5cf6;
+        border-radius: 8px;
+        font-weight: bold;
+        color: #5b21b6;
+    }
+
+    .groups {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 16px;
+        margin-top: 18px;
+    }
+
+    .group {
+        border: 2px solid #cbd5e1;
+        border-radius: 12px;
+        padding: 15px;
+        background: #f8fafc;
+        transition: 0.3s;
+    }
+
+    .group.highlight {
+        border-color: #f59e0b;
+        background: #fffbeb;
+        transform: scale(1.03);
+    }
+
+    .group h3 {
+        margin: 0 0 10px;
+        color: #7c3aed;
+    }
+
+    .group-items {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .item {
+        background: #dbeafe;
+        border: 1px solid #60a5fa;
+        border-radius: 6px;
+        padding: 7px 10px;
+        font-weight: bold;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 14px;
+        border-radius: 8px;
+        background: #eff6ff;
+        border-left: 5px solid #2563eb;
+        font-size: 16px;
+    }
+
+    .controls {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .progress-container {
+        height: 12px;
+        background: #e2e8f0;
+        border-radius: 10px;
+        margin-top: 18px;
+        overflow: hidden;
+    }
+
+    .progress {
+        height: 100%;
+        width: 0%;
+        background: #2563eb;
+        transition: width 0.3s;
+    }
+
+    pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, "Courier New", monospace;
+    }
+
+    .explanation {
+        line-height: 1.7;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity-box {
+        padding: 18px;
+        border-radius: 10px;
+        background: #f1f5f9;
+        border-left: 5px solid #2563eb;
+    }
+
+    .complexity-box strong {
+        display: block;
+        color: #1e3a8a;
+        margin-bottom: 8px;
+    }
+
+    .footer {
+        text-align: center;
+        padding: 25px;
+        color: #64748b;
+    }
+
+    @media(max-width: 600px) {
+        header h1 {
+            font-size: 24px;
+        }
+
+        input {
+            min-width: 100%;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Group Anagrams</h1>
+    <p>Interactive Data Structure & Algorithm Visualizer</p>
+</header>
+
+<div class="container">
+
+    <!-- Problem -->
+    <section class="card">
+        <h2>1. Problem Statement</h2>
+
+        <div class="explanation">
+            <p>
+                Given an array of strings, group all the strings that are
+                <strong>anagrams</strong> of each other.
+            </p>
+
+            <p>
+                Two strings are anagrams if they contain the same characters
+                with the same frequencies, but possibly in a different order.
+            </p>
+
+            <p><strong>Example:</strong></p>
+
+            <pre>
+Input:
+["eat", "tea", "tan", "ate", "nat", "bat"]
+
+Output:
+[
+    ["eat", "tea", "ate"],
+    ["tan", "nat"],
+    ["bat"]
+]
+            </pre>
+        </div>
+    </section>
+
+    <!-- Input -->
+    <section class="card">
+        <h2>2. Input Array</h2>
+
+        <div class="input-area">
+            <input
+                id="inputArray"
+                value="eat, tea, tan, ate, nat, bat"
+                placeholder="Enter words separated by commas"
+            >
+
+            <button id="loadButton">Load Array</button>
+        </div>
+
+        <div id="arrayDisplay" class="array"></div>
+    </section>
+
+    <!-- Visualization -->
+    <section class="card">
+        <h2>3. Step-by-Step Visualization</h2>
+
+        <div id="status" class="status">
+            Click <strong>Start</strong> to begin the algorithm.
+        </div>
+
+        <div class="key-box">
+            <strong>Current Word:</strong>
+            <span id="currentWord">-</span>
+
+            <br><br>
+
+            <strong>Sorted Key:</strong>
+            <span id="currentKey" class="key">-</span>
+        </div>
+
+        <div class="progress-container">
+            <div id="progress" class="progress"></div>
+        </div>
+
+        <div class="controls">
+            <button id="startButton">Start</button>
+            <button id="nextButton">Next Step</button>
+            <button id="autoButton">Auto Run</button>
+            <button id="resetButton" class="reset">Reset</button>
+        </div>
+
+        <h3>Hash Map / Groups</h3>
+
+        <div id="groupsDisplay" class="groups"></div>
+    </section>
+
+    <!-- Concept -->
+    <section class="card">
+        <h2>4. Key Idea</h2>
+
+        <div class="explanation">
+
+            <p>
+                We use a <strong>hash map</strong> to store groups of anagrams.
+            </p>
+
+            <p>
+                For every word, we sort its characters. The sorted version
+                becomes the key.
+            </p>
+
+            <pre>
+"eat" → "aet"
+"tea" → "aet"
+"ate" → "aet"
+
+"tan" → "ant"
+"nat" → "ant"
+
+"bat" → "abt"
+            </pre>
+
+            <p>
+                Therefore, words with the same sorted key belong to the same
+                anagram group.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- Pseudocode -->
+    <section class="card">
+        <h2>5. Pseudocode</h2>
+
+        <pre><code>function groupAnagrams(strs):
+
+    create empty hash map groups
+
+    for each word in strs:
+
+        key = sort(word)
+
+        add word to groups[key]
+
+    return all values of groups</code></pre>
+    </section>
+
+    <!-- Python -->
+    <section class="card">
+        <h2>6. Python Implementation</h2>
+
+        <pre><code>from collections import defaultdict
+
+def group_anagrams(strs):
+
+    groups = defaultdict(list)
+
+    for word in strs:
+
+        # Sort characters to create the key
+        key = ''.join(sorted(word))
+
+        # Add word to the corresponding group
+        groups[key].append(word)
+
+    return list(groups.values())
+
+
+# Example
+words = [
+    "eat",
+    "tea",
+    "tan",
+    "ate",
+    "nat",
+    "bat"
+]
+
+result = group_anagrams(words)
+
+print(result)</code></pre>
+
+        <p><strong>Possible Output:</strong></p>
+
+        <pre><code>[
+    ['eat', 'tea', 'ate'],
+    ['tan', 'nat'],
+    ['bat']
+]</code></pre>
+    </section>
+
+    <!-- Python Explanation -->
+    <section class="card">
+        <h2>7. Python Code Explanation</h2>
+
+        <div class="explanation">
+
+            <p>
+                <strong>Step 1:</strong>
+                Create a dictionary using <code>defaultdict(list)</code>.
+            </p>
+
+            <p>
+                <strong>Step 2:</strong>
+                Process each word in the input array.
+            </p>
+
+            <p>
+                <strong>Step 3:</strong>
+                Sort the characters of the word.
+            </p>
+
+            <p>
+                For example:
+            </p>
+
+            <pre><code>eat → aet
+tea → aet
+ate → aet</code></pre>
+
+            <p>
+                Since all three words produce the same key
+                <strong>"aet"</strong>, they are placed in the same group.
+            </p>
+
+            <p>
+                Similarly:
+            </p>
+
+            <pre><code>tan → ant
+nat → ant</code></pre>
+
+            <p>
+                Therefore, <code>tan</code> and <code>nat</code> are placed
+                together.
+            </p>
+
+        </div>
+    </section>
+
+    <!-- Complexity -->
+    <section class="card">
+        <h2>8. Complexity Analysis</h2>
+
+        <div class="complexity">
+
+            <div class="complexity-box">
+                <strong>Time Complexity</strong>
+                O(N × K log K)
+                <br>
+                Each of N strings is sorted.
+            </div>
+
+            <div class="complexity-box">
+                <strong>Space Complexity</strong>
+                O(N × K)
+                <br>
+                Hash map stores all strings and keys.
+            </div>
+
+            <div class="complexity-box">
+                <strong>N</strong>
+                Number of strings in the array.
+            </div>
+
+            <div class="complexity-box">
+                <strong>K</strong>
+                Maximum length of a string.
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Alternative -->
+    <section class="card">
+        <h2>9. Alternative Approach — Character Frequency</h2>
+
+        <div class="explanation">
+
+            <p>
+                Instead of sorting every word, we can count the frequency
+                of each character.
+            </p>
+
+            <pre><code>"eat"
+
+a → 1
+b → 0
+c → 0
+...
+e → 1
+...
+t → 1</code></pre>
+
+            <p>
+                The 26-character frequency array can be used as the hash-map
+                key.
+            </p>
+
+            <pre><code>from collections import defaultdict
+
+def group_anagrams(strs):
+
+    groups = defaultdict(list)
+
+    for word in strs:
+
+        count = [0] * 26
+
+        for ch in word:
+            count[ord(ch) - ord('a')] += 1
+
+        key = tuple(count)
+
+        groups[key].append(word)
+
+    return list(groups.values())</code></pre>
+
+            <p>
+                For lowercase English letters, this approach can achieve
+                approximately <strong>O(N × K)</strong> time.
+            </p>
+
+        </div>
+    </section>
+
+</div>
+
+<div class="footer">
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</div>
+
+<script>
+"use strict";
+
+/* ---------------------------------------------------
+   Global State
+--------------------------------------------------- */
+
+let words = [];
+let currentIndex = -1;
+let groups = {};
+let running = false;
+let timer = null;
+
+
+/* ---------------------------------------------------
+   DOM Elements
+--------------------------------------------------- */
+
+const inputArray = document.getElementById("inputArray");
+const arrayDisplay = document.getElementById("arrayDisplay");
+const status = document.getElementById("status");
+const currentWord = document.getElementById("currentWord");
+const currentKey = document.getElementById("currentKey");
+const groupsDisplay = document.getElementById("groupsDisplay");
+const progress = document.getElementById("progress");
+
+const loadButton = document.getElementById("loadButton");
+const startButton = document.getElementById("startButton");
+const nextButton = document.getElementById("nextButton");
+const autoButton = document.getElementById("autoButton");
+const resetButton = document.getElementById("resetButton");
+
+
+/* ---------------------------------------------------
+   Load Input
+--------------------------------------------------- */
+
+function loadArray() {
+
+    const input = inputArray.value.trim();
+
+    if (!input) {
+        words = [];
+        renderArray();
+
+        status.innerHTML =
+            "Please enter at least one word.";
+
+        return;
+    }
+
+    words = input
+        .split(",")
+        .map(word => word.trim())
+        .filter(word => word.length > 0);
+
+    resetVisualization();
+
+    renderArray();
+
+    status.innerHTML =
+        "Array loaded. Click <strong>Start</strong> to begin.";
+}
+
+
+/* ---------------------------------------------------
+   Render Input Array
+--------------------------------------------------- */
+
+function renderArray() {
+
+    arrayDisplay.innerHTML = "";
+
+    words.forEach((word, index) => {
+
+        const div = document.createElement("div");
+
+        div.className = "word";
+        div.id = "word-" + index;
+
+        const indexLabel = document.createElement("span");
+
+        indexLabel.className = "index";
+        indexLabel.textContent = index;
+
+        div.appendChild(indexLabel);
+
+        const text = document.createTextNode(word);
+
+        div.appendChild(text);
+
+        arrayDisplay.appendChild(div);
+    });
+}
+
+
+/* ---------------------------------------------------
+   Start Algorithm
+--------------------------------------------------- */
+
+function startAlgorithm() {
+
+    if (words.length === 0) {
+
+        status.innerHTML =
+            "Please load an input array first.";
+
+        return;
+    }
+
+    currentIndex = -1;
+    groups = {};
+
+    currentWord.textContent = "-";
+    currentKey.textContent = "-";
+
+    clearHighlights();
+
+    renderGroups();
+
+    progress.style.width = "0%";
+
+    status.innerHTML =
+        "Algorithm initialized. Click <strong>Next Step</strong>.";
+
+    running = false;
+}
+
+
+/* ---------------------------------------------------
+   Process Next Word
+--------------------------------------------------- */
+
+function nextStep() {
+
+    if (words.length === 0) {
+
+        status.innerHTML =
+            "Please load an input array first.";
+
+        return;
+    }
+
+    if (currentIndex >= words.length - 1) {
+
+        status.innerHTML =
+            "<strong>Algorithm completed!</strong> All anagrams have been grouped.";
+
+        running = false;
+
+        if (timer !== null) {
+            clearInterval(timer);
+            timer = null;
+        }
+
+        return;
+    }
+
+    clearHighlights();
+
+    currentIndex++;
+
+    const word = words[currentIndex];
+
+    const key = word
+        .split("")
+        .sort()
+        .join("");
+
+    currentWord.textContent = word;
+    currentKey.textContent = key;
+
+    const wordElement =
+        document.getElementById("word-" + currentIndex);
+
+    if (wordElement) {
+        wordElement.classList.add("active");
+    }
+
+    if (!groups[key]) {
+        groups[key] = [];
+    }
+
+    groups[key].push(word);
+
+    renderGroups(key);
+
+    const percentage =
+        ((currentIndex + 1) / words.length) * 100;
+
+    progress.style.width = percentage + "%";
+
+    status.innerHTML =
+        "Processing <strong>" +
+        word +
+        "</strong> → sorted key <strong>" +
+        key +
+        "</strong>. " +
+        "The word is added to the group with this key.";
+
+    if (currentIndex === words.length - 1) {
+
+        setTimeout(() => {
+
+            status.innerHTML =
+                "<strong>Algorithm completed!</strong> " +
+                "All anagrams have been grouped.";
+
+            markProcessedWords();
+
+        }, 500);
+    }
+}
+
+
+/* ---------------------------------------------------
+   Render Groups
+--------------------------------------------------- */
+
+function renderGroups(highlightKey = "") {
+
+    groupsDisplay.innerHTML = "";
+
+    const keys = Object.keys(groups);
+
+    if (keys.length === 0) {
+
+        groupsDisplay.innerHTML =
+            "<p>No groups created yet.</p>";
+
+        return;
+    }
+
+    keys.forEach((key, index) => {
+
+        const group = document.createElement("div");
+
+        group.className = "group";
+
+        if (key === highlightKey) {
+            group.classList.add("highlight");
+        }
+
+        const heading = document.createElement("h3");
+
+        heading.textContent =
+            "Group " + (index + 1) +
+            "  |  Key: " + key;
+
+        group.appendChild(heading);
+
+        const items =
+            document.createElement("div");
+
+        items.className = "group-items";
+
+        groups[key].forEach(word => {
+
+            const item =
+                document.createElement("div");
+
+            item.className = "item";
+            item.textContent = word;
+
+            items.appendChild(item);
+        });
+
+        group.appendChild(items);
+
+        groupsDisplay.appendChild(group);
+    });
+}
+
+
+/* ---------------------------------------------------
+   Clear Highlights
+--------------------------------------------------- */
+
+function clearHighlights() {
+
+    document.querySelectorAll(".word")
+        .forEach(element => {
+
+            element.classList.remove("active");
+        });
+
+    document.querySelectorAll(".group")
+        .forEach(element => {
+
+            element.classList.remove("highlight");
+        });
+}
+
+
+/* ---------------------------------------------------
+   Mark Processed Words
+--------------------------------------------------- */
+
+function markProcessedWords() {
+
+    document.querySelectorAll(".word")
+        .forEach(element => {
+
+            element.classList.remove("active");
+            element.classList.add("processed");
+        });
+}
+
+
+/* ---------------------------------------------------
+   Auto Run
+--------------------------------------------------- */
+
+function autoRun() {
+
+    if (words.length === 0) {
+
+        status.innerHTML =
+            "Please load an input array first.";
+
+        return;
+    }
+
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+        running = false;
+
+        autoButton.textContent = "Auto Run";
+
+        return;
+    }
+
+    if (currentIndex >= words.length - 1) {
+        startAlgorithm();
+    }
+
+    running = true;
+
+    autoButton.textContent = "Stop";
+
+    timer = setInterval(() => {
+
+        if (currentIndex >= words.length - 1) {
+
+            clearInterval(timer);
+            timer = null;
+            running = false;
+
+            autoButton.textContent = "Auto Run";
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1200);
+}
+
+
+/* ---------------------------------------------------
+   Reset Visualization
+--------------------------------------------------- */
+
+function resetVisualization() {
+
+    if (timer !== null) {
+        clearInterval(timer);
+        timer = null;
+    }
+
+    running = false;
+
+    currentIndex = -1;
+
+    groups = {};
+
+    currentWord.textContent = "-";
+    currentKey.textContent = "-";
+
+    progress.style.width = "0%";
+
+    autoButton.textContent = "Auto Run";
+
+    clearHighlights();
+
+    renderGroups();
+
+    status.innerHTML =
+        "Visualization reset. Click <strong>Start</strong>.";
+}
+
+
+/* ---------------------------------------------------
+   Event Listeners
+--------------------------------------------------- */
+
+loadButton.addEventListener("click", loadArray);
+
+startButton.addEventListener("click", startAlgorithm);
+
+nextButton.addEventListener("click", nextStep);
+
+autoButton.addEventListener("click", autoRun);
+
+resetButton.addEventListener("click", resetVisualization);
+
+
+/* ---------------------------------------------------
+   Initial Display
+--------------------------------------------------- */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

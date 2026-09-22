@@ -1,0 +1,1690 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Largest Rectangle in Histogram</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+header {
+    background: linear-gradient(135deg, #7c2d12, #ea580c);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+}
+
+header h1 {
+    margin: 0 0 10px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+    font-size: 17px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 14px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+h2 {
+    color: #9a3412;
+    border-bottom: 2px solid #fed7aa;
+    padding-bottom: 10px;
+}
+
+h3 {
+    color: #c2410c;
+}
+
+.problem {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+input {
+    width: 350px;
+    padding: 12px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    background: #ea580c;
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #c2410c;
+}
+
+.controls {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+/* Histogram */
+
+.histogram-wrapper {
+    width: 100%;
+    min-height: 400px;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+    background: #f8fafc;
+    padding: 30px 20px 50px;
+
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    overflow-x: auto;
+}
+
+.histogram {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    min-height: 300px;
+}
+
+.bar-wrapper {
+    width: 55px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.bar-value {
+    font-weight: bold;
+    margin-bottom: 5px;
+    height: 22px;
+}
+
+.bar {
+    width: 50px;
+    background: #f97316;
+    border-radius: 5px 5px 0 0;
+    border: 2px solid #c2410c;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.bar-index {
+    margin-top: 8px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+.current .bar {
+    background: #facc15;
+    border-color: #ca8a04;
+}
+
+.popped .bar {
+    background: #ef4444;
+    border-color: #b91c1c;
+}
+
+.rectangle-bar .bar {
+    background: #22c55e;
+    border-color: #15803d;
+}
+
+.max-bar .bar {
+    background: #8b5cf6;
+    border-color: #6d28d9;
+}
+
+/* Rectangle overlay */
+
+.rectangle-info {
+    margin-top: 20px;
+    background: #f0fdf4;
+    border-left: 5px solid #22c55e;
+    padding: 18px;
+    border-radius: 8px;
+    font-size: 17px;
+}
+
+/* Stack */
+
+.stack-title {
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.stack-container {
+    min-height: 180px;
+    border: 3px dashed #94a3b8;
+    border-radius: 12px;
+    background: #f8fafc;
+
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+
+    gap: 8px;
+    padding: 15px;
+}
+
+.stack-item {
+    width: 150px;
+    padding: 11px;
+    background: #2563eb;
+    color: white;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+/* Status */
+
+.status {
+    background: #f1f5f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+/* Table */
+
+.result-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.result-table th,
+.result-table td {
+    border: 1px solid #cbd5e1;
+    padding: 12px;
+    text-align: center;
+}
+
+.result-table th {
+    background: #9a3412;
+    color: white;
+}
+
+.result-table tr:nth-child(even) {
+    background: #fff7ed;
+}
+
+/* Code */
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.6;
+    font-size: 14px;
+}
+
+/* Complexity */
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    border-radius: 10px;
+    padding: 18px;
+}
+
+/* Legend */
+
+.legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 15px 0;
+}
+
+.legend span {
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-current {
+    background: #fef3c7;
+}
+
+.legend-popped {
+    background: #fee2e2;
+}
+
+.legend-rectangle {
+    background: #dcfce7;
+}
+
+.legend-max {
+    background: #ede9fe;
+}
+
+@media(max-width: 650px) {
+
+    input {
+        width: 100%;
+    }
+
+    .bar-wrapper {
+        width: 40px;
+    }
+
+    .bar {
+        width: 36px;
+    }
+
+    .histogram {
+        gap: 5px;
+    }
+
+    header h1 {
+        font-size: 25px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Largest Rectangle in Histogram</h1>
+    <p>Interactive Monotonic Stack Visualizer</p>
+</header>
+
+
+<!-- Problem -->
+
+<div class="card">
+
+<h2>1. Problem Statement</h2>
+
+<div class="problem">
+
+Given an array of non-negative integers representing the heights of
+histogram bars, find the area of the largest rectangle that can be
+formed within the histogram.
+
+<br><br>
+
+<strong>Example:</strong>
+
+<br><br>
+
+Input:
+
+<strong>[2, 1, 5, 6, 2, 3]</strong>
+
+<br><br>
+
+The largest rectangle has:
+
+<br>
+
+Height = <strong>5</strong>
+
+<br>
+
+Width = <strong>2</strong>
+
+<br>
+
+Area = <strong>5 × 2 = 10</strong>
+
+<br><br>
+
+<strong>Answer = 10</strong>
+
+</div>
+
+</div>
+
+
+<!-- Visualization -->
+
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<div class="input-area">
+
+<label for="arrayInput">
+<strong>Histogram Heights:</strong>
+</label>
+
+<input
+    id="arrayInput"
+    value="2,1,5,6,2,3"
+    placeholder="Example: 2,1,5,6,2,3"
+>
+
+<button id="loadBtn">Load Histogram</button>
+
+</div>
+
+
+<div class="controls">
+
+<button id="startBtn">Start</button>
+
+<button id="nextBtn">Next Step</button>
+
+<button id="autoBtn">Auto Run</button>
+
+<button id="resetBtn">Reset</button>
+
+</div>
+
+
+<div class="legend">
+
+<span class="legend-current">
+Current Bar
+</span>
+
+<span class="legend-popped">
+Popped Bar
+</span>
+
+<span class="legend-rectangle">
+Current Rectangle
+</span>
+
+<span class="legend-max">
+Largest Rectangle
+</span>
+
+</div>
+
+
+<div class="histogram-wrapper">
+
+<div
+    class="histogram"
+    id="histogram">
+</div>
+
+</div>
+
+
+<div
+    class="rectangle-info"
+    id="rectangleInfo">
+
+Largest Area:
+<strong>0</strong>
+
+</div>
+
+
+<h3>Monotonic Stack</h3>
+
+<div class="stack-title">
+
+Stack stores indices of bars in increasing height order.
+
+</div>
+
+<div
+    class="stack-container"
+    id="stackView">
+</div>
+
+
+<div
+    class="status"
+    id="status">
+
+Click <strong>Start</strong> to begin.
+
+</div>
+
+
+<div id="resultArea"></div>
+
+</div>
+
+
+<!-- Algorithm -->
+
+<div class="card">
+
+<h2>3. Algorithm</h2>
+
+<ol>
+
+<li>
+Traverse the histogram from left to right.
+</li>
+
+<li>
+Maintain a stack containing indices of bars whose left boundary
+has not yet been determined.
+</li>
+
+<li>
+The heights corresponding to stack indices are maintained in
+<strong>increasing order</strong>.
+</li>
+
+<li>
+When the current bar is shorter than the stack-top bar, the
+rectangle represented by the stack-top bar can no longer extend
+to the right.
+</li>
+
+<li>
+Pop that index from the stack.
+</li>
+
+<li>
+Calculate the rectangle width using the current index and the
+new stack top.
+</li>
+
+<li>
+Calculate:
+<br><br>
+<strong>Area = Height × Width</strong>
+</li>
+
+<li>
+Update the maximum area.
+</li>
+
+<li>
+Push the current index onto the stack.
+</li>
+
+<li>
+After processing all bars, process the remaining stack using a
+virtual bar of height 0.
+</li>
+
+</ol>
+
+</div>
+
+
+<!-- Pseudocode -->
+
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>FUNCTION largestRectangleArea(heights):
+
+    stack = empty stack
+    maxArea = 0
+
+    FOR i FROM 0 TO n:
+
+        currentHeight =
+            heights[i] if i < n else 0
+
+        WHILE stack is not empty
+              AND currentHeight < heights[stack.top]:
+
+            height = heights[stack.pop()]
+
+            IF stack is empty:
+                width = i
+            ELSE:
+                width = i - stack.top - 1
+
+            area = height * width
+
+            maxArea = max(maxArea, area)
+
+        PUSH i onto stack
+
+    RETURN maxArea</code></pre>
+
+</div>
+
+
+<!-- Python -->
+
+<div class="card">
+
+<h2>5. Python Implementation</h2>
+
+<pre><code>def largest_rectangle_area(heights):
+
+    stack = []
+    max_area = 0
+
+    # Add a virtual bar of height 0
+    heights.append(0)
+
+    for i in range(len(heights)):
+
+        while stack and heights[i] < heights[stack[-1]]:
+
+            height = heights[stack.pop()]
+
+            if not stack:
+                width = i
+            else:
+                width = i - stack[-1] - 1
+
+            area = height * width
+
+            max_area = max(max_area, area)
+
+        stack.append(i)
+
+    heights.pop()
+
+    return max_area
+
+
+# Example
+heights = [2, 1, 5, 6, 2, 3]
+
+answer = largest_rectangle_area(heights)
+
+print("Histogram:", heights)
+print("Largest Rectangle Area:", answer)</code></pre>
+
+
+<h3>Output</h3>
+
+<pre><code>Histogram: [2, 1, 5, 6, 2, 3]
+Largest Rectangle Area: 10</code></pre>
+
+</div>
+
+
+<!-- Example -->
+
+<div class="card">
+
+<h2>6. Step-by-Step Example</h2>
+
+<table class="result-table">
+
+<thead>
+
+<tr>
+<th>Index</th>
+<th>Height</th>
+<th>Action</th>
+<th>Area Calculated</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>0</td>
+<td>2</td>
+<td>Push 0</td>
+<td>-</td>
+</tr>
+
+<tr>
+<td>1</td>
+<td>1</td>
+<td>Pop height 2</td>
+<td>2 × 1 = 2</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>5</td>
+<td>Push 2</td>
+<td>-</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>6</td>
+<td>Push 3</td>
+<td>-</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>2</td>
+<td>Pop height 6</td>
+<td>6 × 1 = 6</td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>2</td>
+<td>Pop height 5</td>
+<td>5 × 2 = 10</td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>3</td>
+<td>Push 5</td>
+<td>-</td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>0</td>
+<td>Process remaining bars</td>
+<td>Maximum = 10</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+
+<!-- Width Formula -->
+
+<div class="card">
+
+<h2>7. Width Calculation</h2>
+
+<p>
+When a bar of height <strong>h</strong> is popped, we know that
+the current index is the first position to the right where a
+shorter bar occurs.
+</p>
+
+<p>
+The new stack top gives the first smaller bar on the left.
+</p>
+
+<pre><code>If stack is empty:
+
+    width = current_index
+
+Otherwise:
+
+    width = current_index - stack_top - 1</code></pre>
+
+<p>
+Therefore:
+</p>
+
+<pre><code>Area = height × width</code></pre>
+
+</div>
+
+
+<!-- Complexity -->
+
+<div class="card">
+
+<h2>8. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<h3>Time Complexity</h3>
+
+<p>
+<strong>O(n)</strong>
+</p>
+
+<p>
+Every histogram bar is pushed onto the stack once and popped
+at most once.
+</p>
+
+</div>
+
+
+<div class="complexity-box">
+
+<h3>Space Complexity</h3>
+
+<p>
+<strong>O(n)</strong>
+</p>
+
+<p>
+The monotonic stack can contain up to n indices.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Why Stack -->
+
+<div class="card">
+
+<h2>9. Why Use a Monotonic Stack?</h2>
+
+<p>
+A brute-force solution would consider every possible rectangle.
+That can require <strong>O(n²)</strong> or worse depending on the
+implementation.
+</p>
+
+<p>
+The monotonic stack efficiently identifies the nearest smaller
+bar on both sides of each histogram bar.
+</p>
+
+<p>
+For the example:
+</p>
+
+<pre><code>Heights:
+
+2  1  5  6  2  3
+
+             ┌───┐
+          ┌──┤ 6 │
+          │  └───┘
+       ┌──┤ 5
+       │  └───────┐
+       │           │
+───────┴───────────┴────
+  0    1   2  3   4  5
+
+Largest rectangle:
+
+Height = 5
+Width  = 2
+
+Area = 5 × 2 = 10</code></pre>
+
+</div>
+
+
+<!-- Applications -->
+
+<div class="card">
+
+<h2>10. Applications</h2>
+
+<ul>
+
+<li>Histogram analysis</li>
+
+<li>Largest rectangle problems</li>
+
+<li>Image processing</li>
+
+<li>Binary matrix rectangle problems</li>
+
+<li>Computer vision</li>
+
+<li>Layout optimization</li>
+
+<li>Stock and time-series analysis</li>
+
+<li>Monotonic stack algorithm practice</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<script>
+
+let heights = [];
+
+let stack = [];
+
+let currentIndex = 0;
+
+let maxArea = 0;
+
+let phase = "idle";
+
+let autoTimer = null;
+
+
+/* DOM */
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const histogram =
+    document.getElementById("histogram");
+
+const stackView =
+    document.getElementById("stackView");
+
+const status =
+    document.getElementById("status");
+
+const rectangleInfo =
+    document.getElementById("rectangleInfo");
+
+const resultArea =
+    document.getElementById("resultArea");
+
+const loadBtn =
+    document.getElementById("loadBtn");
+
+const startBtn =
+    document.getElementById("startBtn");
+
+const nextBtn =
+    document.getElementById("nextBtn");
+
+const autoBtn =
+    document.getElementById("autoBtn");
+
+const resetBtn =
+    document.getElementById("resetBtn");
+
+
+/* Load histogram */
+
+function loadArray() {
+
+    const values =
+        arrayInput.value
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x =>
+            Number.isFinite(x) && x >= 0
+        );
+
+    if (values.length === 0) {
+
+        alert(
+            "Please enter valid non-negative heights."
+        );
+
+        return;
+    }
+
+    heights = values;
+
+    resetAlgorithm();
+
+    renderHistogram();
+
+    status.innerHTML =
+        "Histogram loaded. Click <strong>Start</strong>.";
+}
+
+
+/* Render histogram */
+
+function renderHistogram() {
+
+    histogram.innerHTML = "";
+
+    const maxHeight =
+        Math.max(...heights, 1);
+
+    heights.forEach((height, index) => {
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className = "bar-wrapper";
+
+        wrapper.id = "bar-wrapper-" + index;
+
+
+        const value =
+            document.createElement("div");
+
+        value.className = "bar-value";
+
+        value.textContent = height;
+
+
+        const bar =
+            document.createElement("div");
+
+        bar.className = "bar";
+
+        /*
+            Scale bars so that very large values
+            still fit visually.
+        */
+
+        bar.style.height =
+            Math.max(
+                10,
+                (height / maxHeight) * 260
+            ) + "px";
+
+
+        const indexLabel =
+            document.createElement("div");
+
+        indexLabel.className = "bar-index";
+
+        indexLabel.textContent =
+            "index " + index;
+
+
+        wrapper.appendChild(value);
+
+        wrapper.appendChild(bar);
+
+        wrapper.appendChild(indexLabel);
+
+        histogram.appendChild(wrapper);
+    });
+}
+
+
+/* Highlight helpers */
+
+function clearHighlights() {
+
+    document
+        .querySelectorAll(".bar-wrapper")
+        .forEach(item => {
+
+            item.classList.remove(
+                "current",
+                "popped",
+                "rectangle-bar",
+                "max-bar"
+            );
+        });
+}
+
+
+/* Render stack */
+
+function renderStack() {
+
+    stackView.innerHTML = "";
+
+    stack.forEach(index => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "stack-item";
+
+        item.textContent =
+            "Index " +
+            index +
+            " : Height " +
+            heights[index];
+
+        stackView.appendChild(item);
+    });
+}
+
+
+/* Start */
+
+function startAlgorithm() {
+
+    if (heights.length === 0) {
+
+        loadArray();
+    }
+
+    stack = [];
+
+    currentIndex = 0;
+
+    maxArea = 0;
+
+    phase = "process";
+
+    clearHighlights();
+
+    renderStack();
+
+    updateResult();
+
+    status.innerHTML =
+        "<strong>Algorithm started.</strong> " +
+        "Scanning histogram from left to right.";
+
+    rectangleInfo.innerHTML =
+        "Largest Area: <strong>0</strong>";
+}
+
+
+/* Next step */
+
+function nextStep() {
+
+    if (phase === "idle") {
+
+        startAlgorithm();
+
+        return;
+    }
+
+
+    if (phase === "finished") {
+
+        return;
+    }
+
+
+    /*
+        After all real bars have been processed,
+        use a virtual zero-height bar.
+    */
+
+    const currentHeight =
+        currentIndex < heights.length
+        ? heights[currentIndex]
+        : 0;
+
+
+    clearHighlights();
+
+
+    /*
+        If the stack top is taller than the current bar,
+        calculate the rectangle represented by it.
+    */
+
+    if (
+        stack.length > 0 &&
+        currentHeight <
+        heights[stack[stack.length - 1]]
+    ) {
+
+        const poppedIndex =
+            stack.pop();
+
+        const height =
+            heights[poppedIndex];
+
+
+        let width;
+
+        if (stack.length === 0) {
+
+            width = currentIndex;
+
+        } else {
+
+            width =
+                currentIndex -
+                stack[stack.length - 1] -
+                1;
+        }
+
+
+        const area =
+            height * width;
+
+
+        if (area > maxArea) {
+
+            maxArea = area;
+
+            /*
+                Highlight the bars forming
+                this rectangle.
+            */
+
+            const left =
+                stack.length === 0
+                ? 0
+                : stack[stack.length - 1] + 1;
+
+            const right =
+                currentIndex - 1;
+
+
+            for (
+                let i = left;
+                i <= right;
+                i++
+            ) {
+
+                const bar =
+                    document.getElementById(
+                        "bar-wrapper-" + i
+                    );
+
+                if (bar) {
+
+                    bar.classList.add(
+                        "max-bar"
+                    );
+                }
+            }
+        }
+
+
+        const poppedBar =
+            document.getElementById(
+                "bar-wrapper-" + poppedIndex
+            );
+
+        if (poppedBar) {
+
+            poppedBar.classList.add(
+                "popped"
+            );
+        }
+
+
+        if (
+            currentIndex <
+            heights.length
+        ) {
+
+            const currentBar =
+                document.getElementById(
+                    "bar-wrapper-" +
+                    currentIndex
+                );
+
+            if (currentBar) {
+
+                currentBar.classList.add(
+                    "current"
+                );
+            }
+        }
+
+
+        status.innerHTML = `
+
+            <strong>Bar ${poppedIndex}</strong>
+            with height
+            <strong>${height}</strong>
+            is popped.
+
+            <br><br>
+
+            Width =
+            <strong>${width}</strong>
+
+            <br>
+
+            Area =
+            ${height} × ${width}
+            =
+            <strong>${area}</strong>
+
+            <br><br>
+
+            Current maximum =
+            <strong>${maxArea}</strong>
+        `;
+
+
+        rectangleInfo.innerHTML = `
+
+            Largest Area:
+            <strong>${maxArea}</strong>
+
+            <br>
+
+            Current Rectangle:
+            Height = <strong>${height}</strong>,
+            Width = <strong>${width}</strong>,
+            Area = <strong>${area}</strong>
+
+        `;
+
+
+        renderStack();
+
+        updateResult();
+
+        return;
+    }
+
+
+    /*
+        Push the current bar.
+    */
+
+    if (currentIndex < heights.length) {
+
+        stack.push(currentIndex);
+
+
+        const currentBar =
+            document.getElementById(
+                "bar-wrapper-" +
+                currentIndex
+            );
+
+        if (currentBar) {
+
+            currentBar.classList.add(
+                "current"
+            );
+        }
+
+
+        status.innerHTML = `
+
+            Processing index
+            <strong>${currentIndex}</strong>.
+
+            <br>
+
+            Height =
+            <strong>${currentHeight}</strong>.
+
+            <br><br>
+
+            No shorter bar requires a pop,
+            so index ${currentIndex}
+            is pushed onto the stack.
+
+        `;
+
+
+        renderStack();
+
+        currentIndex++;
+
+        updateResult();
+
+        return;
+    }
+
+
+    /*
+        All real bars are processed.
+        Continue popping the remaining stack.
+    */
+
+    if (stack.length > 0) {
+
+        return;
+    }
+
+
+    /*
+        Finished
+    */
+
+    phase = "finished";
+
+    clearHighlights();
+
+    /*
+        Highlight final largest rectangle.
+    */
+
+    const finalInfo =
+        findLargestRectangle(heights);
+
+    for (
+        let i = finalInfo.left;
+        i <= finalInfo.right;
+        i++
+    ) {
+
+        const bar =
+            document.getElementById(
+                "bar-wrapper-" + i
+            );
+
+        if (bar) {
+
+            bar.classList.add(
+                "max-bar"
+            );
+        }
+    }
+
+
+    status.innerHTML = `
+
+        <strong>Algorithm completed!</strong>
+
+        <br><br>
+
+        Largest Rectangle Area =
+        <strong>${maxArea}</strong>
+
+        <br>
+
+        Height =
+        <strong>${finalInfo.height}</strong>
+
+        <br>
+
+        Width =
+        <strong>${finalInfo.width}</strong>
+
+    `;
+
+
+    rectangleInfo.innerHTML = `
+
+        Largest Rectangle:
+
+        Height = <strong>${finalInfo.height}</strong>
+
+        ×
+
+        Width = <strong>${finalInfo.width}</strong>
+
+        =
+
+        <strong>${maxArea}</strong>
+
+    `;
+
+
+    renderStack();
+
+    updateResult();
+
+
+    if (autoTimer) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+        autoBtn.textContent =
+            "Auto Run";
+    }
+}
+
+
+/* Find final rectangle for highlighting */
+
+function findLargestRectangle(arr) {
+
+    const s = [];
+
+    let bestArea = 0;
+
+    let bestLeft = 0;
+
+    let bestRight = 0;
+
+    let bestHeight = 0;
+
+
+    const a = [...arr, 0];
+
+
+    for (let i = 0; i < a.length; i++) {
+
+        while (
+            s.length > 0 &&
+            a[i] < a[s[s.length - 1]]
+        ) {
+
+            const index = s.pop();
+
+            const height = a[index];
+
+            const width =
+                s.length === 0
+                ? i
+                : i - s[s.length - 1] - 1;
+
+            const area =
+                height * width;
+
+
+            if (area > bestArea) {
+
+                bestArea = area;
+
+                bestHeight = height;
+
+                bestLeft =
+                    s.length === 0
+                    ? 0
+                    : s[s.length - 1] + 1;
+
+                bestRight =
+                    i - 1;
+            }
+        }
+
+        s.push(i);
+    }
+
+
+    return {
+        area: bestArea,
+        height: bestHeight,
+        width: bestRight - bestLeft + 1,
+        left: bestLeft,
+        right: bestRight
+    };
+}
+
+
+/* Result */
+
+function updateResult() {
+
+    let html = `
+
+    <h3>Current Maximum Area</h3>
+
+    <table class="result-table">
+
+    <thead>
+
+    <tr>
+        <th>Property</th>
+        <th>Value</th>
+    </tr>
+
+    </thead>
+
+    <tbody>
+
+    <tr>
+        <td>Maximum Area</td>
+        <td><strong>${maxArea}</strong></td>
+    </tr>
+
+    <tr>
+        <td>Bars in Stack</td>
+        <td>${stack.length}</td>
+    </tr>
+
+    <tr>
+        <td>Current Index</td>
+        <td>${currentIndex}</td>
+    </tr>
+
+    </tbody>
+
+    </table>
+
+    `;
+
+    resultArea.innerHTML = html;
+}
+
+
+/* Reset */
+
+function resetAlgorithm() {
+
+    if (autoTimer) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+        autoBtn.textContent =
+            "Auto Run";
+    }
+
+    stack = [];
+
+    currentIndex = 0;
+
+    maxArea = 0;
+
+    phase = "idle";
+
+    clearHighlights();
+
+    renderStack();
+
+    rectangleInfo.innerHTML =
+        "Largest Area: <strong>0</strong>";
+
+    resultArea.innerHTML = "";
+
+    status.innerHTML =
+        "Click <strong>Start</strong> to begin.";
+}
+
+
+/* Auto Run */
+
+function autoRun() {
+
+    if (autoTimer) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+        autoBtn.textContent =
+            "Auto Run";
+
+        return;
+    }
+
+
+    if (phase === "idle") {
+
+        startAlgorithm();
+    }
+
+
+    autoBtn.textContent = "Pause";
+
+
+    autoTimer =
+        setInterval(() => {
+
+            if (phase === "finished") {
+
+                clearInterval(autoTimer);
+
+                autoTimer = null;
+
+                autoBtn.textContent =
+                    "Auto Run";
+
+                return;
+            }
+
+            nextStep();
+
+        }, 900);
+}
+
+
+/* Event listeners */
+
+loadBtn.addEventListener(
+    "click",
+    loadArray
+);
+
+startBtn.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextBtn.addEventListener(
+    "click",
+    nextStep
+);
+
+autoBtn.addEventListener(
+    "click",
+    autoRun
+);
+
+resetBtn.addEventListener(
+    "click",
+    resetAlgorithm
+);
+
+
+/* Initial data */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Linked List Cycle Detection Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+        text-align: center;
+        color: #1f3c88;
+        margin-bottom: 8px;
+    }
+
+    h2 {
+        color: #1f3c88;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 8px;
+        margin-top: 35px;
+    }
+
+    h3 {
+        color: #333;
+    }
+
+    .problem {
+        background: #eef4ff;
+        border-left: 5px solid #1f3c88;
+        padding: 18px;
+        border-radius: 8px;
+        margin: 20px 0;
+    }
+
+    .controls {
+        text-align: center;
+        margin: 25px 0;
+    }
+
+    button {
+        padding: 12px 22px;
+        margin: 5px;
+        border: none;
+        border-radius: 7px;
+        background: #1f3c88;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    button:hover {
+        background: #162d68;
+    }
+
+    button.secondary {
+        background: #198754;
+    }
+
+    button.warning {
+        background: #d97706;
+    }
+
+    button.reset {
+        background: #6c757d;
+    }
+
+    .example-selector {
+        text-align: center;
+        margin: 20px 0;
+        padding: 15px;
+        background: #f8f9fa;
+        border-radius: 10px;
+    }
+
+    select {
+        padding: 10px 15px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        font-size: 15px;
+        margin-left: 10px;
+    }
+
+    .visual-area {
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        padding: 25px;
+        background: #fafafa;
+        margin-top: 20px;
+    }
+
+    .step-title {
+        text-align: center;
+        font-size: 23px;
+        font-weight: bold;
+        color: #b22222;
+        margin-bottom: 10px;
+    }
+
+    .description {
+        text-align: center;
+        font-size: 17px;
+        margin-bottom: 25px;
+    }
+
+    .linked-list-area {
+        position: relative;
+        overflow-x: auto;
+        padding: 25px 10px 100px;
+        min-height: 300px;
+    }
+
+    .linked-list {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 700px;
+        gap: 0;
+    }
+
+    .node-wrapper {
+        display: flex;
+        align-items: center;
+    }
+
+    .node {
+        width: 75px;
+        height: 60px;
+        border: 3px solid #1f3c88;
+        border-radius: 10px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 21px;
+        font-weight: bold;
+        position: relative;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        transition: all 0.4s ease;
+    }
+
+    .node.slow-node {
+        border-color: #198754;
+        background: #d1e7dd;
+        transform: translateY(-5px);
+    }
+
+    .node.fast-node {
+        border-color: #dc3545;
+        background: #f8d7da;
+        transform: translateY(-5px);
+    }
+
+    .node.both-node {
+        border-color: #8b5cf6;
+        background: #e8ddff;
+        transform: translateY(-8px);
+        box-shadow: 0 0 15px rgba(139,92,246,0.5);
+    }
+
+    .arrow {
+        font-size: 30px;
+        font-weight: bold;
+        margin: 0 9px;
+        color: #555;
+    }
+
+    .null {
+        font-weight: bold;
+        color: #777;
+        margin-left: 10px;
+        white-space: nowrap;
+    }
+
+    .pointer-labels {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 15px;
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        flex-wrap: wrap;
+    }
+
+    .pointer-label {
+        padding: 7px 15px;
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 14px;
+    }
+
+    .slow-label {
+        background: #d1e7dd;
+        color: #0f5132;
+    }
+
+    .fast-label {
+        background: #f8d7da;
+        color: #842029;
+    }
+
+    .both-label {
+        background: #e8ddff;
+        color: #5b21b6;
+    }
+
+    .status {
+        text-align: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 20px 0 5px;
+        min-height: 30px;
+    }
+
+    .success {
+        color: #198754;
+    }
+
+    .danger {
+        color: #dc3545;
+    }
+
+    .info {
+        color: #1f3c88;
+    }
+
+    .cycle-info {
+        background: #fff3cd;
+        border-left: 5px solid #d97706;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+        text-align: center;
+    }
+
+    .explanation-box {
+        background: #f0f4f8;
+        border-left: 5px solid #1f3c88;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 15px 0;
+    }
+
+    .algorithm {
+        background: #fff8e7;
+        border-left: 5px solid #f0ad4e;
+        padding: 20px;
+        border-radius: 10px;
+    }
+
+    pre {
+        background: #1e1e1e;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.5;
+        font-family: Consolas, monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity-card {
+        background: #eef4ff;
+        padding: 20px;
+        text-align: center;
+        border-radius: 10px;
+        border: 1px solid #d8e2f2;
+    }
+
+    .complexity-card strong {
+        font-size: 20px;
+        color: #1f3c88;
+    }
+
+    .trace-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 15px;
+    }
+
+    .trace-table th,
+    .trace-table td {
+        border: 1px solid #ccc;
+        padding: 10px;
+        text-align: center;
+    }
+
+    .trace-table th {
+        background: #1f3c88;
+        color: white;
+    }
+
+    .trace-table tr:nth-child(even) {
+        background: #f7f7f7;
+    }
+
+    .highlight {
+        font-weight: bold;
+    }
+
+    .note {
+        background: #e7f5ff;
+        border-left: 5px solid #0d6efd;
+        padding: 15px;
+        border-radius: 8px;
+        margin-top: 20px;
+    }
+
+    @media(max-width: 700px) {
+        body {
+            padding: 10px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .node {
+            width: 60px;
+            height: 52px;
+        }
+
+        .arrow {
+            margin: 0 4px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Linked List Cycle Detection</h1>
+
+<div class="problem">
+    <strong>Problem:</strong><br>
+    Determine whether a singly linked list contains an internal loop,
+    where a node points back to a previously visited node.
+    <br><br>
+    We use <strong>Floyd's Cycle Detection Algorithm</strong>,
+    also called the <strong>Tortoise and Hare Algorithm</strong>.
+</div>
+
+
+<!-- ========================================================= -->
+<!-- EXAMPLE SELECTOR -->
+<!-- ========================================================= -->
+
+<h2>1. Select Linked List Example</h2>
+
+<div class="example-selector">
+
+    <label for="exampleSelect">
+        <strong>Choose Example:</strong>
+    </label>
+
+    <select id="exampleSelect" onchange="changeExample()">
+        <option value="cycle">List With Cycle</option>
+        <option value="nocycle">List Without Cycle</option>
+    </select>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- CONTROLS -->
+<!-- ========================================================= -->
+
+<div class="controls">
+
+    <button onclick="nextStep()">
+        Next Step
+    </button>
+
+    <button class="secondary" onclick="runAnimation()">
+        ▶ Run Animation
+    </button>
+
+    <button class="warning" onclick="showFullTrace()">
+        Show Complete Trace
+    </button>
+
+    <button class="reset" onclick="resetVisualization()">
+        Reset
+    </button>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- VISUALIZATION -->
+<!-- ========================================================= -->
+
+<h2>2. Interactive Visual Representation</h2>
+
+<div class="visual-area">
+
+    <div class="step-title" id="stepTitle">
+        Step 0: Start
+    </div>
+
+    <div class="description" id="stepDescription">
+        Slow and fast pointers both start at the head.
+    </div>
+
+    <div class="linked-list-area">
+
+        <div id="listVisualization"></div>
+
+        <div class="pointer-labels">
+
+            <div class="pointer-label slow-label">
+                🟢 Slow = moves 1 step
+            </div>
+
+            <div class="pointer-label fast-label">
+                🔴 Fast = moves 2 steps
+            </div>
+
+            <div class="pointer-label both-label">
+                🟣 Both meet = Cycle detected
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="status info" id="status">
+        Click "Next Step" to begin.
+    </div>
+
+    <div id="cycleInfo"></div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- ALGORITHM -->
+<!-- ========================================================= -->
+
+<h2>3. Algorithm Explanation</h2>
+
+<div class="algorithm">
+
+    <ol>
+        <li>Initialize <strong>slow</strong> and <strong>fast</strong> to the head.</li>
+
+        <li>
+            Move <strong>slow</strong> one node at a time.
+        </li>
+
+        <li>
+            Move <strong>fast</strong> two nodes at a time.
+        </li>
+
+        <li>
+            If <strong>slow == fast</strong>, a cycle exists.
+        </li>
+
+        <li>
+            If <strong>fast</strong> reaches NULL, the linked list has no cycle.
+        </li>
+    </ol>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- PSEUDOCODE -->
+<!-- ========================================================= -->
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>HAS_CYCLE(head)
+
+1. slow ← head
+2. fast ← head
+
+3. WHILE fast ≠ NULL AND fast.next ≠ NULL
+
+       slow ← slow.next
+
+       fast ← fast.next.next
+
+       IF slow = fast
+           RETURN TRUE
+
+4. RETURN FALSE</code></pre>
+
+
+<!-- ========================================================= -->
+<!-- POINTER MOVEMENT -->
+<!-- ========================================================= -->
+
+<h2>5. How Slow and Fast Pointers Work</h2>
+
+<div class="explanation-box">
+
+    <h3>Slow Pointer</h3>
+
+    <p>
+        The slow pointer moves exactly <strong>one node</strong>
+        during every iteration.
+    </p>
+
+    <p>
+        Example:
+        <strong>1 → 2 → 3 → 4</strong>
+    </p>
+
+</div>
+
+<div class="explanation-box">
+
+    <h3>Fast Pointer</h3>
+
+    <p>
+        The fast pointer moves <strong>two nodes</strong>
+        during every iteration.
+    </p>
+
+    <p>
+        Example:
+        <strong>1 → 3 → 5 → ...</strong>
+    </p>
+
+</div>
+
+<div class="explanation-box">
+
+    <h3>Why Does It Detect a Cycle?</h3>
+
+    <p>
+        If there is a cycle, the fast pointer eventually catches
+        the slow pointer inside the loop.
+    </p>
+
+    <p>
+        If there is no cycle, fast eventually reaches
+        <strong>NULL</strong>.
+    </p>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- TRACE TABLE -->
+<!-- ========================================================= -->
+
+<h2>6. Pointer Movement Trace</h2>
+
+<table class="trace-table">
+
+<thead>
+<tr>
+    <th>Iteration</th>
+    <th>Slow</th>
+    <th>Fast</th>
+    <th>Result</th>
+</tr>
+</thead>
+
+<tbody id="traceBody">
+</tbody>
+
+</table>
+
+
+<!-- ========================================================= -->
+<!-- PYTHON -->
+<!-- ========================================================= -->
+
+<h2>7. Python Implementation</h2>
+
+<pre><code>class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def has_cycle(head):
+
+    slow = head
+    fast = head
+
+    while fast is not None and fast.next is not None:
+
+        # Slow moves one step
+        slow = slow.next
+
+        # Fast moves two steps
+        fast = fast.next.next
+
+        # They meet inside the cycle
+        if slow == fast:
+            return True
+
+    # Fast reached the end
+    return False
+
+
+# Example:
+#
+# 1 → 2 → 3 → 4 → 5
+#         ↑         |
+#         |_________|
+#
+# has_cycle(head)
+# Output: True
+</code></pre>
+
+
+<!-- ========================================================= -->
+<!-- EXAMPLE -->
+<!-- ========================================================= -->
+
+<h2>8. Example: List With a Cycle</h2>
+
+<div class="explanation-box">
+
+    <p>
+        Consider:
+    </p>
+
+    <p style="font-size:22px;text-align:center;">
+        1 → 2 → 3 → 4 → 5
+    </p>
+
+    <p>
+        Suppose node <strong>5</strong> points back to node
+        <strong>3</strong>.
+    </p>
+
+    <p style="font-size:22px;text-align:center;">
+        3 → 4 → 5
+        <br>
+        ↑_____↓
+    </p>
+
+    <p>
+        The sequence becomes:
+    </p>
+
+    <p style="text-align:center;font-weight:bold;">
+        3 → 4 → 5 → 3 → 4 → 5 → ...
+    </p>
+
+    <p>
+        Therefore, the list contains a cycle.
+    </p>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- NO CYCLE EXAMPLE -->
+<!-- ========================================================= -->
+
+<h2>9. Example: List Without a Cycle</h2>
+
+<div class="explanation-box">
+
+    <p style="font-size:22px;text-align:center;">
+        1 → 2 → 3 → 4 → 5 → NULL
+    </p>
+
+    <p>
+        Here, there is no pointer back to an earlier node.
+        Eventually the fast pointer reaches NULL.
+    </p>
+
+    <p style="text-align:center;font-weight:bold;">
+        Therefore: No Cycle
+    </p>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- COMPLEXITY -->
+<!-- ========================================================= -->
+
+<h2>10. Complexity Analysis</h2>
+
+<div class="complexity">
+
+    <div class="complexity-card">
+
+        <strong>Time</strong>
+
+        <br><br>
+
+        O(n)
+
+        <p>
+            Each node is visited a constant number of times.
+        </p>
+
+    </div>
+
+    <div class="complexity-card">
+
+        <strong>Space</strong>
+
+        <br><br>
+
+        O(1)
+
+        <p>
+            Only slow and fast pointers are used.
+        </p>
+
+    </div>
+
+    <div class="complexity-card">
+
+        <strong>Technique</strong>
+
+        <br><br>
+
+        Floyd's Algorithm
+
+        <p>
+            Tortoise and Hare
+        </p>
+
+    </div>
+
+</div>
+
+
+<!-- ========================================================= -->
+<!-- KEY POINTS -->
+<!-- ========================================================= -->
+
+<h2>11. Key Points</h2>
+
+<div class="note">
+
+    <ul>
+
+        <li>
+            <strong>slow</strong> moves one node.
+        </li>
+
+        <li>
+            <strong>fast</strong> moves two nodes.
+        </li>
+
+        <li>
+            If slow and fast meet, a cycle exists.
+        </li>
+
+        <li>
+            If fast reaches NULL, there is no cycle.
+        </li>
+
+        <li>
+            The algorithm uses <strong>O(1) extra space</strong>.
+        </li>
+
+        <li>
+            It does not modify the linked list.
+        </li>
+
+    </ul>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DATA
+========================================================= */
+
+/*
+    cycle example:
+
+    1 → 2 → 3 → 4 → 5
+            ↑         |
+            └─────────┘
+
+    Node 5 points back to Node 3.
+
+    For visualization we represent the traversal path
+    as:
+
+    1 → 2 → 3 → 4 → 5 → 3 → 4 → 5 ...
+*/
+
+const cyclePath = [1, 2, 3, 4, 5];
+
+const noCyclePath = [1, 2, 3, 4, 5];
+
+let exampleType = "cycle";
+
+let step = 0;
+
+let timer = null;
+
+let running = false;
+
+
+/* =========================================================
+   POINTER POSITIONS
+========================================================= */
+
+const cycleSlowPositions = [
+    0,  // Start
+    1,
+    2,
+    3,
+    4,
+    2,  // slow enters cycle
+    3,
+    4,
+    2
+];
+
+const cycleFastPositions = [
+    0,  // Start
+    2,
+    4,
+    3,
+    2,
+    4,
+    3,
+    2,
+    4
+];
+
+
+/*
+    For a list without a cycle:
+
+    slow:
+    0 → 1 → 2 → 3 → 4
+
+    fast:
+    0 → 2 → 4 → NULL
+*/
+
+const noCycleSlowPositions = [
+    0,
+    1,
+    2
+];
+
+const noCycleFastPositions = [
+    0,
+    2,
+    4
+];
+
+
+/* =========================================================
+   CREATE NODE HTML
+========================================================= */
+
+function createNode(value, index, slowIndex, fastIndex) {
+
+    let classes = "node";
+
+    let slowHere = (index === slowIndex);
+
+    let fastHere = (index === fastIndex);
+
+    if (slowHere && fastHere) {
+
+        classes += " both-node";
+
+    }
+    else if (slowHere) {
+
+        classes += " slow-node";
+
+    }
+    else if (fastHere) {
+
+        classes += " fast-node";
+
+    }
+
+    return `
+        <div class="${classes}">
+            ${value}
+        </div>
+    `;
+}
+
+
+/* =========================================================
+   DISPLAY LIST
+========================================================= */
+
+function displayList(slowIndex, fastIndex) {
+
+    let html = "";
+
+    html += '<div class="linked-list">';
+
+    for (let i = 0; i < cyclePath.length; i++) {
+
+        html += createNode(
+            cyclePath[i],
+            i,
+            slowIndex,
+            fastIndex
+        );
+
+        if (i < cyclePath.length - 1) {
+
+            html += `
+                <div class="arrow">→</div>
+            `;
+
+        }
+
+    }
+
+    if (exampleType === "cycle") {
+
+        html += `
+            <div class="arrow">↩</div>
+            <div class="null">Node 5 → Node 3</div>
+        `;
+
+    }
+    else {
+
+        html += `
+            <div class="null">→ NULL</div>
+        `;
+
+    }
+
+    html += "</div>";
+
+    document.getElementById("listVisualization").innerHTML = html;
+
+}
+
+
+/* =========================================================
+   STEP 0
+========================================================= */
+
+function showStep0() {
+
+    displayList(0, 0);
+
+    document.getElementById("stepTitle").innerText =
+        "Step 0: Initialize Pointers";
+
+    document.getElementById("stepDescription").innerHTML =
+        "Both <strong>slow</strong> and <strong>fast</strong> start at the head node.";
+
+    document.getElementById("status").className =
+        "status info";
+
+    document.getElementById("status").innerText =
+        "slow = 1, fast = 1";
+
+    document.getElementById("cycleInfo").innerHTML = "";
+
+}
+
+
+/* =========================================================
+   CYCLE STEPS
+========================================================= */
+
+function showCycleStep(currentStep) {
+
+    let slowIndex =
+        cycleSlowPositions[currentStep];
+
+    let fastIndex =
+        cycleFastPositions[currentStep];
+
+    displayList(slowIndex, fastIndex);
+
+    if (currentStep === 0) {
+
+        showStep0();
+
+        return;
+    }
+
+
+    if (currentStep === 1) {
+
+        document.getElementById("stepTitle").innerText =
+            "Step 1: Move Pointers";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Slow moves one step to node 2. Fast moves two steps to node 3.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 2, fast = 3";
+
+    }
+
+
+    else if (currentStep === 2) {
+
+        document.getElementById("stepTitle").innerText =
+            "Step 2: Move Again";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Slow moves to node 3. Fast moves to node 5.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 3, fast = 5";
+
+    }
+
+
+    else if (currentStep === 3) {
+
+        document.getElementById("stepTitle").innerText =
+            "Step 3: Fast Enters the Cycle";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Fast continues around the loop while slow continues normally.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 4, fast = 4";
+
+    }
+
+
+    else if (currentStep === 4) {
+
+        document.getElementById("stepTitle").innerText =
+            "Step 4: Pointers Move Inside the Loop";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Both pointers continue moving through the cycle.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 5, fast = 3";
+
+    }
+
+
+    else {
+
+        document.getElementById("stepTitle").innerText =
+            "Step 5: Cycle Detected!";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Slow and fast have reached the same node.";
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerText =
+            "✓ CYCLE DETECTED";
+
+        document.getElementById("cycleInfo").innerHTML = `
+            <div class="cycle-info">
+
+                <strong>Cycle detected!</strong>
+
+                <br><br>
+
+                The pointers met inside the linked list.
+
+                <br>
+
+                This proves that a node points back to a
+                previously visited node.
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   NO-CYCLE STEPS
+========================================================= */
+
+function showNoCycleStep(currentStep) {
+
+    if (currentStep === 0) {
+
+        displayList(0, 0);
+
+        document.getElementById("stepTitle").innerText =
+            "Step 0: Initialize Pointers";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Both slow and fast start at node 1.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 1, fast = 1";
+
+        return;
+    }
+
+
+    if (currentStep === 1) {
+
+        displayList(1, 2);
+
+        document.getElementById("stepTitle").innerText =
+            "Step 1: Move Pointers";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Slow moves to node 2. Fast moves to node 3.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 2, fast = 3";
+
+    }
+
+
+    else if (currentStep === 2) {
+
+        displayList(2, 4);
+
+        document.getElementById("stepTitle").innerText =
+            "Step 2: Move Again";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Slow moves to node 3. Fast moves to node 5.";
+
+        document.getElementById("status").className =
+            "status info";
+
+        document.getElementById("status").innerText =
+            "slow = 3, fast = 5";
+
+    }
+
+
+    else {
+
+        displayList(3, -1);
+
+        document.getElementById("stepTitle").innerText =
+            "Step 3: Fast Reaches NULL";
+
+        document.getElementById("stepDescription").innerHTML =
+            "Fast cannot move two more nodes because the list ends.";
+
+        document.getElementById("status").className =
+            "status success";
+
+        document.getElementById("status").innerText =
+            "✓ NO CYCLE DETECTED";
+
+        document.getElementById("cycleInfo").innerHTML = `
+            <div class="cycle-info">
+
+                <strong>No cycle exists.</strong>
+
+                <br><br>
+
+                The fast pointer reached NULL,
+                so the linked list is linear.
+
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   NEXT STEP
+========================================================= */
+
+function nextStep() {
+
+    if (running) {
+        return;
+    }
+
+    if (exampleType === "cycle") {
+
+        if (step < 5) {
+
+            step++;
+
+        }
+        else {
+
+            step = 0;
+
+        }
+
+        showCycleStep(step);
+
+    }
+    else {
+
+        if (step < 3) {
+
+            step++;
+
+        }
+        else {
+
+            step = 0;
+
+        }
+
+        showNoCycleStep(step);
+
+    }
+
+}
+
+
+/* =========================================================
+   RUN ANIMATION
+========================================================= */
+
+function runAnimation() {
+
+    if (running) {
+        return;
+    }
+
+    running = true;
+
+    step = 0;
+
+    if (exampleType === "cycle") {
+
+        showCycleStep(0);
+
+        timer = setInterval(function() {
+
+            step++;
+
+            showCycleStep(step);
+
+            if (step >= 5) {
+
+                clearInterval(timer);
+
+                timer = null;
+
+                running = false;
+
+            }
+
+        }, 1500);
+
+    }
+    else {
+
+        showNoCycleStep(0);
+
+        timer = setInterval(function() {
+
+            step++;
+
+            showNoCycleStep(step);
+
+            if (step >= 3) {
+
+                clearInterval(timer);
+
+                timer = null;
+
+                running = false;
+
+            }
+
+        }, 1500);
+
+    }
+
+}
+
+
+/* =========================================================
+   TRACE TABLE
+========================================================= */
+
+function showFullTrace() {
+
+    let body =
+        document.getElementById("traceBody");
+
+    body.innerHTML = "";
+
+    if (exampleType === "cycle") {
+
+        const rows = [
+            ["0", "1", "1", "Start"],
+            ["1", "2", "3", "Continue"],
+            ["2", "3", "5", "Continue"],
+            ["3", "4", "4", "Pointers meet"],
+            ["4", "5", "3", "Cycle continues"],
+            ["5", "3", "5", "Cycle detected"]
+        ];
+
+        rows.forEach(function(row) {
+
+            body.innerHTML += `
+                <tr>
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[2]}</td>
+                    <td>${row[3]}</td>
+                </tr>
+            `;
+
+        });
+
+    }
+    else {
+
+        const rows = [
+            ["0", "1", "1", "Start"],
+            ["1", "2", "3", "Continue"],
+            ["2", "3", "5", "Continue"],
+            ["3", "4", "NULL", "No cycle"]
+        ];
+
+        rows.forEach(function(row) {
+
+            body.innerHTML += `
+                <tr>
+                    <td>${row[0]}</td>
+                    <td>${row[1]}</td>
+                    <td>${row[2]}</td>
+                    <td>${row[3]}</td>
+                </tr>
+            `;
+
+        });
+
+    }
+
+}
+
+
+/* =========================================================
+   CHANGE EXAMPLE
+========================================================= */
+
+function changeExample() {
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+
+    }
+
+    running = false;
+
+    exampleType =
+        document.getElementById("exampleSelect").value;
+
+    step = 0;
+
+    document.getElementById("traceBody").innerHTML = "";
+
+    document.getElementById("cycleInfo").innerHTML = "";
+
+    if (exampleType === "cycle") {
+
+        showCycleStep(0);
+
+    }
+    else {
+
+        showNoCycleStep(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetVisualization() {
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+
+    }
+
+    running = false;
+
+    step = 0;
+
+    document.getElementById("traceBody").innerHTML = "";
+
+    document.getElementById("cycleInfo").innerHTML = "";
+
+    if (exampleType === "cycle") {
+
+        showCycleStep(0);
+
+    }
+    else {
+
+        showNoCycleStep(0);
+
+    }
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+showCycleStep(0);
+
+</script>
+
+</body>
+</html>

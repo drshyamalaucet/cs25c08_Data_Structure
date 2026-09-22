@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reorder Singly Linked List - Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        color: #222;
+        line-height: 1.6;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0,0,0,0.12);
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 10px;
+        color: #1f3c88;
+    }
+
+    h2 {
+        color: #1f3c88;
+        border-bottom: 2px solid #ddd;
+        padding-bottom: 8px;
+        margin-top: 35px;
+    }
+
+    h3 {
+        color: #333;
+    }
+
+    .problem {
+        background: #eef4ff;
+        border-left: 5px solid #1f3c88;
+        padding: 15px;
+        margin: 20px 0;
+        border-radius: 8px;
+    }
+
+    .controls {
+        text-align: center;
+        margin: 25px 0;
+    }
+
+    button {
+        padding: 12px 22px;
+        margin: 5px;
+        border: none;
+        border-radius: 7px;
+        background: #1f3c88;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+    }
+
+    button:hover {
+        background: #162d68;
+    }
+
+    button.reset {
+        background: #777;
+    }
+
+    .step-title {
+        text-align: center;
+        font-size: 22px;
+        font-weight: bold;
+        margin: 20px 0;
+        color: #b22222;
+    }
+
+    .description {
+        text-align: center;
+        font-size: 17px;
+        margin-bottom: 20px;
+    }
+
+    /* Linked List Visualization */
+
+    .visual-area {
+        border: 2px solid #ddd;
+        border-radius: 12px;
+        padding: 25px;
+        margin-top: 20px;
+        background: #fafafa;
+    }
+
+    .list-title {
+        font-size: 19px;
+        font-weight: bold;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+
+    .linked-list {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0;
+        min-height: 90px;
+        margin: 15px 0 30px;
+    }
+
+    .node {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 65px;
+        height: 55px;
+        border: 3px solid #1f3c88;
+        border-radius: 10px;
+        background: white;
+        font-size: 21px;
+        font-weight: bold;
+        box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        position: relative;
+        animation: appear 0.5s ease;
+    }
+
+    .node.first {
+        border-color: #198754;
+        background: #e9f8ef;
+    }
+
+    .node.second {
+        border-color: #d97706;
+        background: #fff5df;
+    }
+
+    .node.reversed {
+        border-color: #8b5cf6;
+        background: #f1eaff;
+    }
+
+    .node.final {
+        border-color: #008b8b;
+        background: #e4ffff;
+    }
+
+    .arrow {
+        font-size: 28px;
+        font-weight: bold;
+        margin: 0 8px;
+        color: #555;
+    }
+
+    .null {
+        font-weight: bold;
+        color: #888;
+        margin-left: 8px;
+    }
+
+    .split-line {
+        border-top: 3px dashed #aaa;
+        margin: 25px 0;
+    }
+
+    .phase-box {
+        margin-top: 20px;
+        padding: 15px;
+        border-radius: 10px;
+        background: #f0f4f8;
+        border-left: 5px solid #1f3c88;
+    }
+
+    .phase-box strong {
+        color: #1f3c88;
+    }
+
+    .pointer-info {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 15px 0;
+    }
+
+    .pointer {
+        padding: 8px 15px;
+        border-radius: 6px;
+        background: #e9ecef;
+        font-weight: bold;
+    }
+
+    .pointer.slow {
+        background: #d1e7dd;
+    }
+
+    .pointer.fast {
+        background: #f8d7da;
+    }
+
+    .pointer.firstptr {
+        background: #cfe2ff;
+    }
+
+    .pointer.secondptr {
+        background: #ffe5b4;
+    }
+
+    .status {
+        text-align: center;
+        font-size: 17px;
+        font-weight: bold;
+        margin: 15px;
+        min-height: 28px;
+    }
+
+    pre {
+        background: #1e1e1e;
+        color: #f8f8f2;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .algorithm {
+        background: #fff8e7;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 5px solid #f0ad4e;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 15px;
+    }
+
+    .complexity div {
+        padding: 18px;
+        border-radius: 10px;
+        background: #eef4ff;
+        text-align: center;
+    }
+
+    .example {
+        background: #f7f7f7;
+        padding: 18px;
+        border-radius: 10px;
+        margin: 15px 0;
+        font-size: 17px;
+    }
+
+    @keyframes appear {
+        from {
+            opacity: 0;
+            transform: translateY(-15px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media(max-width:700px) {
+        body {
+            padding: 10px;
+        }
+
+        .container {
+            padding: 15px;
+        }
+
+        .node {
+            width: 55px;
+            height: 48px;
+        }
+
+        .arrow {
+            margin: 0 4px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Reorder a Singly Linked List</h1>
+
+<div class="problem">
+    <strong>Problem:</strong><br>
+    Given a singly linked list
+    <b>L₀ → L₁ → ... → Lₙ₋₁ → Lₙ</b>,
+    reorder it as:
+    <b>L₀ → Lₙ → L₁ → Lₙ₋₁ → L₂ → ...</b>
+</div>
+
+<h2>1. Original Linked List</h2>
+
+<div class="visual-area">
+
+    <div class="list-title">Original List</div>
+
+    <div class="linked-list" id="originalList"></div>
+
+    <div class="status" id="status">
+        Click "Next Step" to start the visualization.
+    </div>
+
+</div>
+
+<div class="controls">
+    <button onclick="nextStep()">Next Step</button>
+    <button onclick="runAnimation()">▶ Run Animation</button>
+    <button class="reset" onclick="resetVisualization()">Reset</button>
+</div>
+
+
+<h2>2. Step-by-Step Visual Representation</h2>
+
+<div class="visual-area">
+
+    <div class="step-title" id="stepTitle">
+        Step 0: Original List
+    </div>
+
+    <div class="description" id="stepDescription">
+        Start with the linked list.
+    </div>
+
+    <div id="visualization"></div>
+
+</div>
+
+
+<h2>3. Algorithm</h2>
+
+<div class="algorithm">
+
+    <ol>
+        <li>Use slow and fast pointers to find the middle of the list.</li>
+        <li>Split the list into two halves.</li>
+        <li>Reverse the second half.</li>
+        <li>Merge the first and reversed second halves alternately.</li>
+    </ol>
+
+</div>
+
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>REORDER_LIST(head)
+
+1. if head is NULL or head.next is NULL
+       return
+
+2. Find middle using slow and fast pointers
+
+3. second = slow.next
+   slow.next = NULL
+
+4. Reverse second half
+
+5. first = head
+
+6. while second is not NULL
+       temp1 = first.next
+       temp2 = second.next
+
+       first.next = second
+       second.next = temp1
+
+       first = temp1
+       second = temp2
+
+7. return head</code></pre>
+
+
+<h2>5. Python Implementation</h2>
+
+<pre><code>class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def reorder_list(head):
+
+    if head is None or head.next is None:
+        return
+
+    # Step 1: Find middle
+    slow = head
+    fast = head
+
+    while fast.next is not None and fast.next.next is not None:
+        slow = slow.next
+        fast = fast.next.next
+
+    # Step 2: Split into two halves
+    second = slow.next
+    slow.next = None
+
+    # Step 3: Reverse second half
+    prev = None
+
+    while second is not None:
+        next_node = second.next
+        second.next = prev
+        prev = second
+        second = next_node
+
+    second = prev
+
+    # Step 4: Merge alternately
+    first = head
+
+    while second is not None:
+
+        temp1 = first.next
+        temp2 = second.next
+
+        first.next = second
+        second.next = temp1
+
+        first = temp1
+        second = temp2
+
+
+# Example:
+# 1 → 2 → 3 → 4 → 5 → 6
+#
+# Result:
+# 1 → 6 → 2 → 5 → 3 → 4
+</code></pre>
+
+
+<h2>6. Detailed Visual Process</h2>
+
+<div class="example">
+
+    <b>Original:</b>
+    1 → 2 → 3 → 4 → 5 → 6
+
+</div>
+
+<div class="example">
+
+    <b>First Half:</b>
+    1 → 2 → 3
+
+    <br><br>
+
+    <b>Second Half:</b>
+    4 → 5 → 6
+
+</div>
+
+<div class="example">
+
+    <b>Reverse Second Half:</b>
+    6 → 5 → 4
+
+</div>
+
+<div class="example">
+
+    <b>Merge Alternately:</b>
+
+    <br><br>
+
+    1 → 6 → 2 → 5 → 3 → 4
+
+</div>
+
+
+<h2>7. Complexity</h2>
+
+<div class="complexity">
+
+    <div>
+        <strong>Time Complexity</strong>
+        <br><br>
+        O(n)
+    </div>
+
+    <div>
+        <strong>Extra Space</strong>
+        <br><br>
+        O(1)
+    </div>
+
+    <div>
+        <strong>Technique</strong>
+        <br><br>
+        Slow/Fast + Reverse + Merge
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+const values = [1, 2, 3, 4, 5, 6];
+
+let currentStep = 0;
+let animationRunning = false;
+
+
+/* -----------------------------------
+   Create a linked-list visualization
+----------------------------------- */
+
+function createList(values, className = "") {
+
+    let html = '<div class="linked-list">';
+
+    values.forEach((value, index) => {
+
+        html += `
+            <div class="node ${className}">
+                ${value}
+            </div>
+        `;
+
+        if (index < values.length - 1) {
+            html += `<div class="arrow">→</div>`;
+        }
+
+    });
+
+    html += `<div class="null">→ NULL</div>`;
+
+    html += '</div>';
+
+    return html;
+}
+
+
+/* -----------------------------------
+   Original list
+----------------------------------- */
+
+function showOriginalList() {
+
+    document.getElementById("originalList").innerHTML =
+        createList(values, "first");
+
+}
+
+
+/* -----------------------------------
+   STEP 0
+----------------------------------- */
+
+function step0() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 0: Original List";
+
+    document.getElementById("stepDescription").innerHTML =
+        "We start with the original singly linked list.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="phase-box">
+
+            <strong>Original Linked List</strong>
+
+            ${createList(values, "first")}
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "Original list: 1 → 2 → 3 → 4 → 5 → 6";
+
+}
+
+
+/* -----------------------------------
+   STEP 1
+----------------------------------- */
+
+function step1() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 1: Find the Middle";
+
+    document.getElementById("stepDescription").innerHTML =
+        "The slow pointer moves one step and the fast pointer moves two steps.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="pointer-info">
+
+            <div class="pointer slow">
+                Slow → 3
+            </div>
+
+            <div class="pointer fast">
+                Fast → 5
+            </div>
+
+        </div>
+
+        <div class="phase-box">
+
+            <strong>First Half</strong>
+
+            ${createList([1,2,3], "first")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <strong>Second Half</strong>
+
+            ${createList([4,5,6], "second")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <strong>Split Point</strong>
+
+            <p>
+                The list is split after node <b>3</b>.
+            </p>
+
+            <p style="text-align:center;font-size:22px;">
+                1 → 2 → 3 &nbsp;&nbsp; | &nbsp;&nbsp; 4 → 5 → 6
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "Middle found at node 3. List split into two halves.";
+
+}
+
+
+/* -----------------------------------
+   STEP 2
+----------------------------------- */
+
+function step2() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 2: Split the List";
+
+    document.getElementById("stepDescription").innerHTML =
+        "The original list is divided into two independent linked lists.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="phase-box">
+
+            <strong>First Half</strong>
+
+            ${createList([1,2,3], "first")}
+
+        </div>
+
+        <div class="split-line"></div>
+
+        <div class="phase-box">
+
+            <strong>Second Half</strong>
+
+            ${createList([4,5,6], "second")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <p style="text-align:center;font-size:20px;">
+
+                First half:
+                <b>1 → 2 → 3</b>
+
+                <br><br>
+
+                Second half:
+                <b>4 → 5 → 6</b>
+
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "The list has been split into 1→2→3 and 4→5→6.";
+
+}
+
+
+/* -----------------------------------
+   STEP 3
+----------------------------------- */
+
+function step3() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 3: Reverse the Second Half";
+
+    document.getElementById("stepDescription").innerHTML =
+        "Reverse the second linked list by changing the next pointers.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="phase-box">
+
+            <strong>Before Reversal</strong>
+
+            ${createList([4,5,6], "second")}
+
+        </div>
+
+        <div style="
+            text-align:center;
+            font-size:35px;
+            margin:10px;
+        ">
+            ↓
+        </div>
+
+        <div class="phase-box">
+
+            <strong>After Reversal</strong>
+
+            ${createList([6,5,4], "reversed")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <p style="text-align:center;font-size:21px;">
+
+                4 → 5 → 6
+
+                &nbsp;&nbsp; ⟶ &nbsp;&nbsp;
+
+                <b>6 → 5 → 4</b>
+
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "Second half reversed: 4→5→6 becomes 6→5→4.";
+
+}
+
+
+/* -----------------------------------
+   STEP 4
+----------------------------------- */
+
+function step4() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 4: Merge the Two Halves";
+
+    document.getElementById("stepDescription").innerHTML =
+        "Take one node from the first half, then one node from the reversed second half.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="phase-box">
+
+            <strong>First Half</strong>
+
+            ${createList([1,2,3], "first")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <strong>Reversed Second Half</strong>
+
+            ${createList([6,5,4], "reversed")}
+
+        </div>
+
+        <div style="
+            text-align:center;
+            font-size:32px;
+            margin:15px;
+        ">
+            ↓
+        </div>
+
+        <div class="phase-box">
+
+            <strong>Merge Order</strong>
+
+            <p style="text-align:center;font-size:21px;">
+
+                1 → 6 → 2 → 5 → 3 → 4
+
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "Nodes are merged alternately from both halves.";
+
+}
+
+
+/* -----------------------------------
+   STEP 5 - FINAL
+----------------------------------- */
+
+function step5() {
+
+    document.getElementById("stepTitle").innerText =
+        "Step 5: Final Reordered List";
+
+    document.getElementById("stepDescription").innerHTML =
+        "The linked list has been successfully reordered.";
+
+    document.getElementById("visualization").innerHTML = `
+
+        <div class="phase-box">
+
+            <strong>Final Result</strong>
+
+            ${createList([1,6,2,5,3,4], "final")}
+
+        </div>
+
+        <div class="phase-box">
+
+            <p style="
+                text-align:center;
+                font-size:24px;
+                font-weight:bold;
+            ">
+
+                1 → 6 → 2 → 5 → 3 → 4
+
+            </p>
+
+        </div>
+
+        <div class="phase-box">
+
+            <p style="text-align:center;font-size:18px;">
+
+                L₀ → Lₙ → L₁ → Lₙ₋₁ → L₂ → ...
+
+            </p>
+
+        </div>
+
+    `;
+
+    document.getElementById("status").innerText =
+        "Completed! Final list: 1 → 6 → 2 → 5 → 3 → 4";
+
+}
+
+
+/* -----------------------------------
+   Next Step
+----------------------------------- */
+
+function nextStep() {
+
+    if (currentStep < 5) {
+
+        currentStep++;
+
+    } else {
+
+        currentStep = 0;
+
+    }
+
+    switch(currentStep) {
+
+        case 0:
+            step0();
+            break;
+
+        case 1:
+            step1();
+            break;
+
+        case 2:
+            step2();
+            break;
+
+        case 3:
+            step3();
+            break;
+
+        case 4:
+            step4();
+            break;
+
+        case 5:
+            step5();
+            break;
+
+    }
+
+}
+
+
+/* -----------------------------------
+   Run Animation
+----------------------------------- */
+
+function runAnimation() {
+
+    if (animationRunning) {
+        return;
+    }
+
+    animationRunning = true;
+
+    currentStep = 0;
+
+    step0();
+
+    let step = 1;
+
+    const timer = setInterval(function() {
+
+        currentStep = step;
+
+        switch(currentStep) {
+
+            case 1:
+                step1();
+                break;
+
+            case 2:
+                step2();
+                break;
+
+            case 3:
+                step3();
+                break;
+
+            case 4:
+                step4();
+                break;
+
+            case 5:
+                step5();
+                break;
+
+        }
+
+        step++;
+
+        if (step > 5) {
+
+            clearInterval(timer);
+
+            animationRunning = false;
+
+        }
+
+    }, 1800);
+
+}
+
+
+/* -----------------------------------
+   Reset
+----------------------------------- */
+
+function resetVisualization() {
+
+    currentStep = 0;
+    animationRunning = false;
+
+    step0();
+
+}
+
+
+/* -----------------------------------
+   Start
+----------------------------------- */
+
+showOriginalList();
+step0();
+
+</script>
+
+</body>
+</html>

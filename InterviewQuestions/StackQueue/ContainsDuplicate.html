@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Contains Duplicate - Interactive Visualizer</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f7fb;
+    color: #1f2937;
+}
+
+header {
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    color: white;
+    text-align: center;
+    padding: 30px 20px;
+}
+
+header h1 {
+    margin: 0 0 8px;
+    font-size: 32px;
+}
+
+header p {
+    margin: 0;
+}
+
+.container {
+    width: 94%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin-bottom: 22px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #1e3a8a;
+    border-bottom: 2px solid #dbeafe;
+    padding-bottom: 10px;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+input {
+    flex: 1;
+    min-width: 300px;
+    padding: 13px;
+    border: 2px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    background: #2563eb;
+    color: white;
+}
+
+button:hover {
+    background: #1d4ed8;
+}
+
+button.success {
+    background: #16a34a;
+}
+
+button.success:hover {
+    background: #15803d;
+}
+
+button.secondary {
+    background: #64748b;
+}
+
+button.secondary:hover {
+    background: #475569;
+}
+
+.array {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 28px 0;
+}
+
+.number-box {
+    width: 70px;
+    height: 70px;
+    border: 2px solid #93c5fd;
+    background: #eff6ff;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    font-size: 22px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.number-box .index {
+    position: absolute;
+    top: -11px;
+    left: -8px;
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    border-radius: 50%;
+    background: #1e3a8a;
+    color: white;
+    text-align: center;
+    font-size: 11px;
+}
+
+.number-box.current {
+    background: #fef3c7;
+    border-color: #f59e0b;
+    transform: scale(1.12);
+}
+
+.number-box.unique {
+    background: #dcfce7;
+    border-color: #22c55e;
+}
+
+.number-box.duplicate {
+    background: #fee2e2;
+    border-color: #ef4444;
+    transform: scale(1.15);
+    box-shadow: 0 0 15px rgba(239,68,68,0.45);
+}
+
+.status {
+    padding: 15px;
+    background: #eff6ff;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+    line-height: 1.6;
+}
+
+.progress-container {
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.progress {
+    height: 100%;
+    width: 0%;
+    background: #2563eb;
+    transition: width 0.4s;
+}
+
+.controls {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.set-container {
+    margin-top: 22px;
+    padding: 18px;
+    background: #f8fafc;
+    border: 2px dashed #94a3b8;
+    border-radius: 10px;
+}
+
+.set-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.set-item {
+    padding: 10px 16px;
+    background: #e0e7ff;
+    border: 2px solid #818cf8;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.set-item.found {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.result {
+    margin-top: 22px;
+    text-align: center;
+    padding: 25px;
+    background: #f8fafc;
+    border: 2px solid #cbd5e1;
+    border-radius: 12px;
+}
+
+.result-value {
+    font-size: 42px;
+    font-weight: bold;
+    margin: 12px;
+}
+
+.true-result {
+    color: #dc2626;
+}
+
+.false-result {
+    color: #16a34a;
+}
+
+.explanation {
+    line-height: 1.8;
+}
+
+.steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 15px;
+}
+
+.step {
+    padding: 18px;
+    background: #f8fafc;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+}
+
+.step strong {
+    display: block;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+pre {
+    background: #0f172a;
+    color: #e2e8f0;
+    padding: 20px;
+    border-radius: 10px;
+    overflow-x: auto;
+    line-height: 1.6;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    padding: 18px;
+    background: #f1f5f9;
+    border-left: 5px solid #2563eb;
+    border-radius: 8px;
+}
+
+.complexity-box strong {
+    display: block;
+    color: #1e3a8a;
+    margin-bottom: 8px;
+}
+
+.footer {
+    text-align: center;
+    padding: 25px;
+    color: #64748b;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 24px;
+    }
+
+    input {
+        min-width: 100%;
+    }
+
+    .number-box {
+        width: 58px;
+        height: 58px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Contains Duplicate</h1>
+    <p>Interactive Array & Hash Set Visualizer</p>
+</header>
+
+<div class="container">
+
+<!-- Problem Statement -->
+<section class="card">
+
+    <h2>1. Problem Statement</h2>
+
+    <div class="explanation">
+
+        <p>
+            Given an array of integers, return
+            <strong>true</strong> if any value appears at least twice.
+        </p>
+
+        <p>
+            Return <strong>false</strong> if every element in the array
+            is distinct.
+        </p>
+
+        <p><strong>Example 1:</strong></p>
+
+        <pre>
+Input:
+[1, 2, 3, 1]
+
+Output:
+true
+
+Explanation:
+The value 1 appears twice.
+        </pre>
+
+        <p><strong>Example 2:</strong></p>
+
+        <pre>
+Input:
+[1, 2, 3, 4]
+
+Output:
+false
+
+Explanation:
+Every value appears exactly once.
+        </pre>
+
+    </div>
+
+</section>
+
+
+<!-- Input -->
+<section class="card">
+
+    <h2>2. Enter Array</h2>
+
+    <div class="input-area">
+
+        <input
+            id="inputArray"
+            value="1, 2, 3, 1"
+            placeholder="Enter integers separated by commas"
+        >
+
+        <button id="loadButton">
+            Load Array
+        </button>
+
+    </div>
+
+    <div id="arrayDisplay" class="array"></div>
+
+</section>
+
+
+<!-- Visualization -->
+<section class="card">
+
+    <h2>3. Step-by-Step Visualization</h2>
+
+    <div id="status" class="status">
+        Click <strong>Start</strong> to begin.
+    </div>
+
+    <div class="progress-container">
+        <div id="progress" class="progress"></div>
+    </div>
+
+    <div class="controls">
+
+        <button id="startButton">
+            Start
+        </button>
+
+        <button id="nextButton">
+            Next Step
+        </button>
+
+        <button id="autoButton" class="success">
+            Auto Run
+        </button>
+
+        <button id="resetButton" class="secondary">
+            Reset
+        </button>
+
+    </div>
+
+    <div class="set-container">
+
+        <strong>Hash Set:</strong>
+
+        <div id="setItems" class="set-items">
+            <span>No elements yet.</span>
+        </div>
+
+    </div>
+
+    <div class="result">
+
+        <div>
+            Does the array contain a duplicate?
+        </div>
+
+        <div
+            id="resultValue"
+            class="result-value">
+            -
+        </div>
+
+        <div id="duplicateInfo">
+            Duplicate value: -
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Algorithm -->
+<section class="card">
+
+    <h2>4. Algorithm</h2>
+
+    <div class="steps">
+
+        <div class="step">
+            <strong>Step 1</strong>
+            Create an empty hash set.
+        </div>
+
+        <div class="step">
+            <strong>Step 2</strong>
+            Traverse the array from left to right.
+        </div>
+
+        <div class="step">
+            <strong>Step 3</strong>
+            Check whether the current value is already in the set.
+        </div>
+
+        <div class="step">
+            <strong>Step 4</strong>
+            If it exists, a duplicate has been found.
+        </div>
+
+        <div class="step">
+            <strong>Step 5</strong>
+            Otherwise, add the value to the set.
+        </div>
+
+        <div class="step">
+            <strong>Step 6</strong>
+            If traversal finishes without finding a duplicate, return false.
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Walkthrough -->
+<section class="card">
+
+    <h2>5. Example Walkthrough</h2>
+
+    <pre>
+Input:
+[1, 2, 3, 1]
+
+Hash Set initially:
+{}
+
+Step 1:
+1 is not in set
+Add 1
+Set = {1}
+
+Step 2:
+2 is not in set
+Add 2
+Set = {1, 2}
+
+Step 3:
+3 is not in set
+Add 3
+Set = {1, 2, 3}
+
+Step 4:
+1 is already in set
+
+Duplicate found!
+
+Result = true
+    </pre>
+
+</section>
+
+
+<!-- Pseudocode -->
+<section class="card">
+
+    <h2>6. Pseudocode</h2>
+
+    <pre><code>function containsDuplicate(nums):
+
+    create empty hash set
+
+    for each num in nums:
+
+        if num is already in set:
+            return true
+
+        add num to set
+
+    return false</code></pre>
+
+</section>
+
+
+<!-- Python -->
+<section class="card">
+
+    <h2>7. Python Implementation</h2>
+
+    <pre><code>def contains_duplicate(nums):
+
+    seen = set()
+
+    for num in nums:
+
+        if num in seen:
+            return True
+
+        seen.add(num)
+
+    return False
+
+
+# Example
+nums = [1, 2, 3, 1]
+
+result = contains_duplicate(nums)
+
+print(result)</code></pre>
+
+    <p><strong>Output:</strong></p>
+
+    <pre><code>True</code></pre>
+
+</section>
+
+
+<!-- Short Python Solution -->
+<section class="card">
+
+    <h2>8. Short Python Solution</h2>
+
+    <pre><code>def contains_duplicate(nums):
+    return len(nums) != len(set(nums))</code></pre>
+
+    <div class="explanation">
+
+        <p>
+            A Python set stores only unique values.
+        </p>
+
+        <p>
+            Therefore, if:
+        </p>
+
+        <pre><code>len(nums) != len(set(nums))</code></pre>
+
+        <p>
+            then at least one duplicate exists.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- Explanation -->
+<section class="card">
+
+    <h2>9. Python Code Explanation</h2>
+
+    <div class="explanation">
+
+        <p>
+            The main solution uses a set called
+            <code>seen</code>.
+        </p>
+
+        <p>
+            For every element, we first ask:
+        </p>
+
+        <pre><code>if num in seen:</code></pre>
+
+        <p>
+            If the answer is <strong>True</strong>, we have already seen
+            the number before, so it is a duplicate.
+        </p>
+
+        <p>
+            Otherwise, we insert the number:
+        </p>
+
+        <pre><code>seen.add(num)</code></pre>
+
+        <p>
+            For the input:
+        </p>
+
+        <pre><code>[1, 2, 3, 1]</code></pre>
+
+        <p>
+            the fourth element is <strong>1</strong>, which already exists
+            in the set. Therefore the algorithm immediately returns
+            <strong>True</strong>.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- Complexity -->
+<section class="card">
+
+    <h2>10. Complexity Analysis</h2>
+
+    <div class="complexity">
+
+        <div class="complexity-box">
+
+            <strong>Time Complexity</strong>
+
+            O(n)
+
+            <br><br>
+
+            Each element is checked in the hash set once on average.
+
+        </div>
+
+        <div class="complexity-box">
+
+            <strong>Space Complexity</strong>
+
+            O(n)
+
+            <br><br>
+
+            In the worst case, all elements are distinct and stored
+            in the set.
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Alternative -->
+<section class="card">
+
+    <h2>11. Alternative Approach — Sorting</h2>
+
+    <div class="explanation">
+
+        <p>
+            Another solution is to sort the array and compare adjacent
+            elements.
+        </p>
+
+        <pre><code>def contains_duplicate(nums):
+
+    nums.sort()
+
+    for i in range(1, len(nums)):
+
+        if nums[i] == nums[i - 1]:
+            return True
+
+    return False</code></pre>
+
+        <p>
+            However, sorting requires
+            <strong>O(n log n)</strong> time.
+        </p>
+
+        <p>
+            The hash-set solution provides approximately
+            <strong>O(n)</strong> average time.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- Important Observation -->
+<section class="card">
+
+    <h2>12. Important Observation</h2>
+
+    <div class="explanation">
+
+        <p>
+            The key operation is:
+        </p>
+
+        <pre><code>if num in seen:</code></pre>
+
+        <p>
+            A hash set allows average
+            <strong>O(1)</strong> membership checking.
+        </p>
+
+        <p>
+            This allows us to detect duplicates efficiently without
+            comparing every pair of elements.
+        </p>
+
+        <p>
+            Once a duplicate is found, we can immediately return
+            <strong>True</strong>.
+        </p>
+
+    </div>
+
+</section>
+
+</div>
+
+
+<div class="footer">
+     <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</div>
+
+
+<script>
+"use strict";
+
+/* ============================================
+   GLOBAL STATE
+============================================ */
+
+let numbers = [];
+let seen = new Set();
+
+let currentIndex = -1;
+let duplicateFound = false;
+
+let phase = 0;
+let timer = null;
+
+
+/* ============================================
+   DOM ELEMENTS
+============================================ */
+
+const inputArray =
+    document.getElementById("inputArray");
+
+const arrayDisplay =
+    document.getElementById("arrayDisplay");
+
+const setItems =
+    document.getElementById("setItems");
+
+const status =
+    document.getElementById("status");
+
+const progress =
+    document.getElementById("progress");
+
+const resultValue =
+    document.getElementById("resultValue");
+
+const duplicateInfo =
+    document.getElementById("duplicateInfo");
+
+const loadButton =
+    document.getElementById("loadButton");
+
+const startButton =
+    document.getElementById("startButton");
+
+const nextButton =
+    document.getElementById("nextButton");
+
+const autoButton =
+    document.getElementById("autoButton");
+
+const resetButton =
+    document.getElementById("resetButton");
+
+
+/* ============================================
+   LOAD ARRAY
+============================================ */
+
+function loadArray() {
+
+    stopTimer();
+
+    const input =
+        inputArray.value.trim();
+
+    if (!input) {
+
+        numbers = [];
+
+        renderArray();
+
+        status.innerHTML =
+            "Please enter some integers.";
+
+        return;
+    }
+
+    numbers =
+        input.split(",")
+        .map(value => Number(value.trim()))
+        .filter(value => !Number.isNaN(value));
+
+    resetState();
+
+    renderArray();
+
+    status.innerHTML =
+        "Array loaded. Click <strong>Start</strong>.";
+
+}
+
+
+/* ============================================
+   RENDER ARRAY
+============================================ */
+
+function renderArray() {
+
+    arrayDisplay.innerHTML = "";
+
+    numbers.forEach((number, index) => {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "number-box";
+        box.id = "number-" + index;
+
+        const indexLabel =
+            document.createElement("span");
+
+        indexLabel.className = "index";
+        indexLabel.textContent = index;
+
+        box.appendChild(indexLabel);
+
+        box.appendChild(
+            document.createTextNode(number)
+        );
+
+        arrayDisplay.appendChild(box);
+
+    });
+
+}
+
+
+/* ============================================
+   START ALGORITHM
+============================================ */
+
+function startAlgorithm() {
+
+    if (numbers.length === 0) {
+
+        status.innerHTML =
+            "Please load an array first.";
+
+        return;
+    }
+
+    stopTimer();
+
+    seen = new Set();
+
+    currentIndex = -1;
+
+    duplicateFound = false;
+
+    phase = 1;
+
+    resultValue.textContent = "-";
+    resultValue.className = "result-value";
+
+    duplicateInfo.textContent =
+        "Duplicate value: -";
+
+    progress.style.width = "0%";
+
+    clearHighlights();
+
+    renderSet();
+
+    status.innerHTML =
+        "<strong>Hash Set initialized.</strong> " +
+        "Click Next Step to examine each value.";
+
+}
+
+
+/* ============================================
+   NEXT STEP
+============================================ */
+
+function nextStep() {
+
+    if (phase === 0) {
+
+        startAlgorithm();
+        return;
+    }
+
+    if (phase === 2) {
+
+        return;
+    }
+
+    currentIndex++;
+
+    if (currentIndex >= numbers.length) {
+
+        finishWithoutDuplicate();
+
+        return;
+    }
+
+    clearHighlights();
+
+    const number =
+        numbers[currentIndex];
+
+    const box =
+        document.getElementById(
+            "number-" + currentIndex
+        );
+
+    if (box) {
+        box.classList.add("current");
+    }
+
+    const percentage =
+        ((currentIndex + 1) /
+        numbers.length) * 100;
+
+    progress.style.width =
+        percentage + "%";
+
+
+    /* -----------------------------------------
+       CHECK DUPLICATE
+    ----------------------------------------- */
+
+    if (seen.has(number)) {
+
+        duplicateFound = true;
+
+        if (box) {
+
+            box.classList.remove("current");
+            box.classList.add("duplicate");
+
+        }
+
+        markPreviousOccurrence(number);
+
+        resultValue.textContent =
+            "true";
+
+        resultValue.className =
+            "result-value true-result";
+
+        duplicateInfo.textContent =
+            "Duplicate value: " + number;
+
+        renderSet(number);
+
+        status.innerHTML =
+            "<strong>Duplicate found!</strong> " +
+            "The value <strong>" +
+            number +
+            "</strong> already exists in the hash set.";
+
+        phase = 2;
+
+        return;
+    }
+
+
+    /* -----------------------------------------
+       UNIQUE VALUE
+    ----------------------------------------- */
+
+    seen.add(number);
+
+    if (box) {
+
+        box.classList.remove("current");
+        box.classList.add("unique");
+
+    }
+
+    renderSet();
+
+    status.innerHTML =
+        "Value <strong>" +
+        number +
+        "</strong> is not in the set. " +
+        "Add it to the hash set.";
+
+}
+
+
+/* ============================================
+   MARK PREVIOUS OCCURRENCE
+============================================ */
+
+function markPreviousOccurrence(number) {
+
+    for (let i = 0; i < currentIndex; i++) {
+
+        if (numbers[i] === number) {
+
+            const box =
+                document.getElementById(
+                    "number-" + i
+                );
+
+            if (box) {
+                box.classList.add("duplicate");
+            }
+
+        }
+
+    }
+
+}
+
+
+/* ============================================
+   FINISH WITHOUT DUPLICATE
+============================================ */
+
+function finishWithoutDuplicate() {
+
+    phase = 2;
+
+    progress.style.width = "100%";
+
+    resultValue.textContent =
+        "false";
+
+    resultValue.className =
+        "result-value false-result";
+
+    duplicateInfo.textContent =
+        "No duplicate value found.";
+
+    clearHighlights();
+
+    document.querySelectorAll(".number-box")
+        .forEach(box => {
+            box.classList.add("unique");
+        });
+
+    status.innerHTML =
+        "<strong>No duplicates found!</strong> " +
+        "Every element in the array is distinct.";
+
+}
+
+
+/* ============================================
+   RENDER HASH SET
+============================================ */
+
+function renderSet(foundValue = null) {
+
+    setItems.innerHTML = "";
+
+    if (seen.size === 0) {
+
+        setItems.innerHTML =
+            "<span>No elements yet.</span>";
+
+        return;
+    }
+
+    [...seen].forEach(number => {
+
+        const item =
+            document.createElement("span");
+
+        item.className = "set-item";
+
+        if (number === foundValue) {
+            item.classList.add("found");
+        }
+
+        item.textContent =
+            number;
+
+        setItems.appendChild(item);
+
+    });
+
+}
+
+
+/* ============================================
+   CLEAR HIGHLIGHTS
+============================================ */
+
+function clearHighlights() {
+
+    document.querySelectorAll(".number-box")
+        .forEach(box => {
+
+            box.classList.remove("current");
+            box.classList.remove("duplicate");
+
+        });
+
+}
+
+
+/* ============================================
+   AUTO RUN
+============================================ */
+
+function autoRun() {
+
+    if (numbers.length === 0) {
+
+        status.innerHTML =
+            "Please load an array first.";
+
+        return;
+    }
+
+    if (timer !== null) {
+
+        stopTimer();
+
+        return;
+    }
+
+    if (phase === 0) {
+        startAlgorithm();
+    }
+
+    autoButton.textContent =
+        "Stop";
+
+    timer = setInterval(() => {
+
+        if (phase === 2) {
+
+            stopTimer();
+
+            return;
+        }
+
+        nextStep();
+
+    }, 1000);
+
+}
+
+
+/* ============================================
+   STOP TIMER
+============================================ */
+
+function stopTimer() {
+
+    if (timer !== null) {
+
+        clearInterval(timer);
+
+        timer = null;
+    }
+
+    autoButton.textContent =
+        "Auto Run";
+}
+
+
+/* ============================================
+   RESET STATE
+============================================ */
+
+function resetState() {
+
+    stopTimer();
+
+    seen = new Set();
+
+    currentIndex = -1;
+
+    duplicateFound = false;
+
+    phase = 0;
+
+    resultValue.textContent = "-";
+    resultValue.className = "result-value";
+
+    duplicateInfo.textContent =
+        "Duplicate value: -";
+
+    progress.style.width = "0%";
+
+    setItems.innerHTML = "";
+
+    clearHighlights();
+
+}
+
+
+/* ============================================
+   RESET VISUALIZATION
+============================================ */
+
+function resetVisualization() {
+
+    resetState();
+
+    renderArray();
+
+    status.innerHTML =
+        "Visualization reset. Click <strong>Start</strong>.";
+
+}
+
+
+/* ============================================
+   EVENT LISTENERS
+============================================ */
+
+loadButton.addEventListener(
+    "click",
+    loadArray
+);
+
+startButton.addEventListener(
+    "click",
+    startAlgorithm
+);
+
+nextButton.addEventListener(
+    "click",
+    nextStep
+);
+
+autoButton.addEventListener(
+    "click",
+    autoRun
+);
+
+resetButton.addEventListener(
+    "click",
+    resetVisualization
+);
+
+
+/* ============================================
+   INITIALIZE
+============================================ */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

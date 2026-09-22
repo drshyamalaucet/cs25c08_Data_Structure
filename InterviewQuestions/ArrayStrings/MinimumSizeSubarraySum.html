@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Minimum Size Subarray Sum - Sliding Window</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f7fb;
+    color: #222;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 30px auto;
+}
+
+h1 {
+    text-align: center;
+    color: #1f3c88;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #1f3c88;
+    border-bottom: 2px solid #1f3c88;
+    padding-bottom: 8px;
+}
+
+.card {
+    background: white;
+    padding: 22px;
+    margin: 20px 0;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+}
+
+.problem {
+    line-height: 1.7;
+    font-size: 17px;
+}
+
+.input-area {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+}
+
+input {
+    padding: 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+    border-radius: 7px;
+}
+
+#arrayInput {
+    flex: 1;
+    min-width: 300px;
+}
+
+#targetInput {
+    width: 150px;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+#startBtn {
+    background: #2563eb;
+    color: white;
+}
+
+#nextBtn {
+    background: #16a34a;
+    color: white;
+}
+
+#autoBtn {
+    background: #9333ea;
+    color: white;
+}
+
+#resetBtn {
+    background: #dc2626;
+    color: white;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+.array-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin: 35px 0 25px;
+}
+
+.box {
+    width: 65px;
+    height: 70px;
+    border: 2px solid #aaa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 21px;
+    font-weight: bold;
+    background: white;
+    position: relative;
+}
+
+.window {
+    background: #dbeafe;
+    border: 3px solid #2563eb;
+}
+
+.best {
+    background: #dcfce7;
+    border: 3px solid #16a34a;
+}
+
+.shrinking {
+    background: #fef3c7;
+    border: 3px solid #f59e0b;
+}
+
+.index {
+    position: absolute;
+    bottom: -20px;
+    font-size: 11px;
+    color: #555;
+    font-weight: normal;
+}
+
+.pointer {
+    position: absolute;
+    top: -25px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.left-pointer {
+    color: #2563eb;
+}
+
+.right-pointer {
+    color: #9333ea;
+}
+
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.info-box {
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.info-box h3 {
+    margin: 5px 0;
+    color: #1f3c88;
+}
+
+.info-value {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.status {
+    text-align: center;
+    padding: 15px;
+    margin-top: 20px;
+    border-radius: 8px;
+    background: #f1f5f9;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.failure {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.step {
+    background: #f8fafc;
+    border-left: 5px solid #2563eb;
+    padding: 12px;
+    margin-top: 10px;
+    line-height: 1.5;
+}
+
+.result {
+    text-align: center;
+    padding: 20px;
+    margin-top: 20px;
+    background: #ecfdf5;
+    border-radius: 10px;
+    font-size: 22px;
+    font-weight: bold;
+    color: #166534;
+}
+
+.example {
+    background: #fff7ed;
+    border-left: 5px solid #f97316;
+    padding: 15px;
+    margin: 12px 0;
+    line-height: 1.6;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 20px;
+}
+
+.legend span {
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+pre {
+    background: #111827;
+    color: #f9fafb;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+code {
+    font-family: Consolas, monospace;
+}
+
+.complexity {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.complexity-box {
+    padding: 18px;
+    background: #eef4ff;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.complexity-box h3 {
+    color: #1f3c88;
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>Minimum Size Subarray Sum</h1>
+
+<!-- Problem Statement -->
+<div class="card problem">
+
+<h2>1. Problem Statement</h2>
+
+<p>
+Given an array of <b>positive integers</b> and a target value,
+find the minimum length of a contiguous subarray whose sum is
+<b>greater than or equal to the target</b>.
+</p>
+
+<p>
+If no such subarray exists, return <b>0</b>.
+</p>
+
+<div class="example">
+<b>Example:</b><br>
+Target = <code>7</code><br>
+Array = <code>[2, 3, 1, 2, 4, 3]</code><br><br>
+
+The subarray <code>[4, 3]</code> has sum <code>7</code>.<br>
+Minimum length = <b>2</b>
+</div>
+
+</div>
+
+
+<!-- Interactive Visualization -->
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<div class="input-area">
+
+<input
+    type="text"
+    id="arrayInput"
+    value="2,3,1,2,4,3"
+    placeholder="Enter positive integers"
+>
+
+<input
+    type="number"
+    id="targetInput"
+    value="7"
+    placeholder="Target"
+>
+
+<button id="startBtn">Start</button>
+<button id="nextBtn">Next Step</button>
+<button id="autoBtn">Auto Run</button>
+<button id="resetBtn">Reset</button>
+
+</div>
+
+<div id="arrayContainer" class="array-container"></div>
+
+<div class="legend">
+<span style="background:#dbeafe;">
+Current Window
+</span>
+
+<span style="background:#fef3c7;">
+Shrinking Window
+</span>
+
+<span style="background:#dcfce7;">
+Best Subarray
+</span>
+</div>
+
+<div class="info-grid">
+
+<div class="info-box">
+<h3>Left</h3>
+<div id="leftValue" class="info-value">-</div>
+</div>
+
+<div class="info-box">
+<h3>Right</h3>
+<div id="rightValue" class="info-value">-</div>
+</div>
+
+<div class="info-box">
+<h3>Current Sum</h3>
+<div id="sumValue" class="info-value">0</div>
+</div>
+
+<div class="info-box">
+<h3>Current Length</h3>
+<div id="lengthValue" class="info-value">0</div>
+</div>
+
+<div class="info-box">
+<h3>Minimum Length</h3>
+<div id="minValue" class="info-value">∞</div>
+</div>
+
+</div>
+
+<div id="status" class="status">
+Click <b>Start</b> to begin.
+</div>
+
+<div id="stepLog"></div>
+
+<div
+    id="result"
+    class="result"
+    style="display:none;">
+</div>
+
+</div>
+
+
+<!-- Algorithm -->
+<div class="card">
+
+<h2>3. Sliding Window Algorithm</h2>
+
+<ol>
+
+<li>
+Initialize <b>left = 0</b>, <b>current_sum = 0</b>,
+and <b>minimum_length = ∞</b>.
+</li>
+
+<li>
+Move the <b>right pointer</b> through the array.
+</li>
+
+<li>
+Add each element to <b>current_sum</b>.
+</li>
+
+<li>
+When <b>current_sum ≥ target</b>, the current window is valid.
+</li>
+
+<li>
+Record its length if it is smaller than the current minimum.
+</li>
+
+<li>
+Move the <b>left pointer</b> forward to make the window smaller.
+</li>
+
+<li>
+Continue until the right pointer reaches the end.
+</li>
+
+<li>
+If no valid subarray was found, return <b>0</b>.
+</li>
+
+</ol>
+
+</div>
+
+
+<!-- Pseudocode -->
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>MIN_SUBARRAY_LENGTH(target, nums)
+
+    left = 0
+    currentSum = 0
+    minLength = infinity
+
+    for right = 0 to length(nums) - 1
+
+        currentSum = currentSum + nums[right]
+
+        while currentSum >= target
+
+            currentLength = right - left + 1
+
+            minLength =
+                minimum(minLength, currentLength)
+
+            currentSum =
+                currentSum - nums[left]
+
+            left = left + 1
+
+    if minLength == infinity
+        return 0
+    else
+        return minLength</code></pre>
+
+</div>
+
+
+<!-- Python -->
+<div class="card">
+
+<h2>5. Python Implementation</h2>
+
+<pre><code>def min_subarray_length(target, nums):
+
+    left = 0
+    current_sum = 0
+    min_length = float('inf')
+
+    for right in range(len(nums)):
+
+        current_sum += nums[right]
+
+        while current_sum >= target:
+
+            current_length = right - left + 1
+
+            min_length = min(
+                min_length,
+                current_length
+            )
+
+            current_sum -= nums[left]
+
+            left += 1
+
+    if min_length == float('inf'):
+        return 0
+
+    return min_length
+
+
+# Example
+target = 7
+nums = [2, 3, 1, 2, 4, 3]
+
+answer = min_subarray_length(target, nums)
+
+print("Minimum length:", answer)</code></pre>
+
+<div class="example">
+<b>Output:</b>
+<code>Minimum length: 2</code>
+</div>
+
+</div>
+
+
+<!-- Example Walkthrough -->
+<div class="card">
+
+<h2>6. Example Walkthrough</h2>
+
+<div class="example">
+<b>Target = 7</b><br>
+<b>Array = [2, 3, 1, 2, 4, 3]</b>
+</div>
+
+<table style="width:100%; border-collapse:collapse; text-align:center;">
+
+<tr style="background:#eef4ff;">
+<th style="padding:10px;border:1px solid #ccc;">
+Window
+</th>
+
+<th style="padding:10px;border:1px solid #ccc;">
+Sum
+</th>
+
+<th style="padding:10px;border:1px solid #ccc;">
+Length
+</th>
+
+<th style="padding:10px;border:1px solid #ccc;">
+Minimum
+</th>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[2, 3, 1, 2]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+8
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+4
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+4
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[3, 1, 2, 4]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+10
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+4
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+4
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[1, 2, 4]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+7
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+3
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+3
+</td>
+</tr>
+
+<tr>
+<td style="padding:10px;border:1px solid #ccc;">
+[4, 3]
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+7
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+2
+</td>
+
+<td style="padding:10px;border:1px solid #ccc;">
+<b>2</b>
+</td>
+</tr>
+
+</table>
+
+<p style="margin-top:20px;">
+Therefore:
+</p>
+
+<div class="example">
+<b>Minimum Length = 2</b><br>
+<b>Subarray = [4, 3]</b><br>
+<b>Sum = 7</b>
+</div>
+
+</div>
+
+
+<!-- Complexity -->
+<div class="card">
+
+<h2>7. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+<h3>Time Complexity</h3>
+<p style="font-size:26px;"><b>O(n)</b></p>
+<p>
+Each element enters and leaves the sliding window
+at most once.
+</p>
+</div>
+
+<div class="complexity-box">
+<h3>Space Complexity</h3>
+<p style="font-size:26px;"><b>O(1)</b></p>
+<p>
+Only a few variables are required.
+</p>
+</div>
+
+</div>
+
+</div>
+
+
+<!-- Important Concepts -->
+<div class="card">
+
+<h2>8. Important Concepts</h2>
+
+<ul>
+
+<li>
+<b>Contiguous Subarray:</b>
+Elements must appear consecutively in the original array.
+</li>
+
+<li>
+<b>Positive Integers:</b>
+The sliding-window technique works because increasing the
+window increases the sum and removing elements decreases it.
+</li>
+
+<li>
+<b>Sliding Window:</b>
+The range between the left and right pointers.
+</li>
+
+<li>
+<b>Expand:</b>
+Move the right pointer to increase the window and sum.
+</li>
+
+<li>
+<b>Shrink:</b>
+Move the left pointer to find a shorter valid window.
+</li>
+
+<li>
+<b>Minimum:</b>
+Keep updating the answer whenever a shorter valid window is found.
+</li>
+
+</ul>
+
+</div>
+
+
+<!-- Applications -->
+<div class="card">
+
+<h2>9. Applications</h2>
+
+<ul>
+
+<li>Network traffic analysis</li>
+<li>Financial data analysis</li>
+<li>Sensor data processing</li>
+<li>Real-time monitoring</li>
+<li>Log analysis</li>
+<li>Resource utilization analysis</li>
+
+</ul>
+
+</div>
+
+</div>
+
+<footer>
+ <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+
+let nums = [];
+let target = 0;
+
+let left = 0;
+let right = -1;
+
+let currentSum = 0;
+let minLength = Infinity;
+
+let bestStart = -1;
+let bestEnd = -1;
+
+let running = false;
+let autoTimer = null;
+let step = 0;
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const targetInput =
+    document.getElementById("targetInput");
+
+const arrayContainer =
+    document.getElementById("arrayContainer");
+
+const status =
+    document.getElementById("status");
+
+const stepLog =
+    document.getElementById("stepLog");
+
+const result =
+    document.getElementById("result");
+
+
+function parseInput() {
+
+    nums = arrayInput.value
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => !Number.isNaN(x));
+
+    target = Number(targetInput.value);
+
+}
+
+
+function renderArray() {
+
+    arrayContainer.innerHTML = "";
+
+    nums.forEach((value, index) => {
+
+        const box =
+            document.createElement("div");
+
+        box.className = "box";
+
+        box.textContent = value;
+
+        const indexLabel =
+            document.createElement("span");
+
+        indexLabel.className = "index";
+
+        indexLabel.textContent = index;
+
+        box.appendChild(indexLabel);
+
+
+        /*
+         * Highlight current window
+         */
+        if (
+            running &&
+            index >= left &&
+            index <= right
+        ) {
+            box.classList.add("window");
+        }
+
+
+        /*
+         * Highlight best subarray
+         */
+        if (
+            index >= bestStart &&
+            index <= bestEnd
+        ) {
+            box.classList.remove("window");
+            box.classList.add("best");
+        }
+
+
+        /*
+         * Show left pointer
+         */
+        if (index === left && running) {
+
+            const pointer =
+                document.createElement("span");
+
+            pointer.className =
+                "pointer left-pointer";
+
+            pointer.textContent = "L";
+
+            box.appendChild(pointer);
+        }
+
+
+        /*
+         * Show right pointer
+         */
+        if (index === right && running) {
+
+            const pointer =
+                document.createElement("span");
+
+            pointer.className =
+                "pointer right-pointer";
+
+            pointer.textContent = "R";
+
+            box.appendChild(pointer);
+        }
+
+
+        arrayContainer.appendChild(box);
+
+    });
+
+}
+
+
+function updateInfo() {
+
+    document.getElementById("leftValue")
+        .textContent =
+        nums.length ? left : "-";
+
+    document.getElementById("rightValue")
+        .textContent =
+        right >= 0 ? right : "-";
+
+    document.getElementById("sumValue")
+        .textContent =
+        currentSum;
+
+    document.getElementById("lengthValue")
+        .textContent =
+        right >= left && right >= 0
+        ? right - left + 1
+        : 0;
+
+    document.getElementById("minValue")
+        .textContent =
+        minLength === Infinity
+        ? "∞"
+        : minLength;
+
+}
+
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    parseInput();
+
+    if (nums.length === 0) {
+
+        status.className = "status failure";
+
+        status.textContent =
+            "Please enter a valid array.";
+
+        return;
+    }
+
+    if (target <= 0) {
+
+        status.className = "status failure";
+
+        status.textContent =
+            "Target must be greater than 0.";
+
+        return;
+    }
+
+
+    /*
+     * Verify positive integers
+     */
+    if (nums.some(x => x <= 0 || !Number.isInteger(x))) {
+
+        status.className = "status failure";
+
+        status.textContent =
+            "Please enter only positive integers.";
+
+        return;
+    }
+
+
+    left = 0;
+    right = -1;
+
+    currentSum = 0;
+
+    minLength = Infinity;
+
+    bestStart = -1;
+    bestEnd = -1;
+
+    step = 0;
+
+    running = true;
+
+    stepLog.innerHTML = "";
+
+    result.style.display = "none";
+
+    updateInfo();
+
+    renderArray();
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Target = <b>" +
+        target +
+        "</b>. Click <b>Next Step</b>.";
+
+}
+
+
+function nextStep() {
+
+    if (!running) {
+
+        status.className = "status warning";
+
+        status.innerHTML =
+            "Click <b>Start</b> before running.";
+
+        return;
+    }
+
+
+    /*
+     * Expand window
+     */
+    if (right < nums.length - 1) {
+
+        right++;
+
+        currentSum += nums[right];
+
+        step++;
+
+        addStep(
+            "Step " +
+            step +
+            ": Add " +
+            nums[right] +
+            " at index " +
+            right +
+            ". Current sum = " +
+            currentSum
+        );
+
+        status.className = "status";
+
+        status.innerHTML =
+            "Added <b>" +
+            nums[right] +
+            "</b>. Current sum = <b>" +
+            currentSum +
+            "</b>.";
+
+    }
+
+
+    /*
+     * Shrink while valid
+     */
+    if (currentSum >= target) {
+
+        const length =
+            right - left + 1;
+
+
+        if (length < minLength) {
+
+            minLength = length;
+
+            bestStart = left;
+            bestEnd = right;
+
+            addStep(
+                "New minimum found: length " +
+                minLength +
+                " [" +
+                nums.slice(bestStart, bestEnd + 1)
+                    .join(", ") +
+                "]"
+            );
+
+        }
+
+
+        /*
+         * Remove left element
+         */
+        const removed = nums[left];
+
+        currentSum -= removed;
+
+        addStep(
+            "Shrink window: remove " +
+            removed +
+            " from index " +
+            left +
+            ". New sum = " +
+            currentSum
+        );
+
+        left++;
+
+        status.className = "status success";
+
+        status.innerHTML =
+            "Valid window found. Shrinking to find a smaller one.";
+
+    }
+
+
+    updateInfo();
+
+    renderArray();
+
+
+    /*
+     * Finish
+     */
+    if (right >= nums.length - 1 &&
+        currentSum < target) {
+
+        running = false;
+
+        showResult();
+    }
+
+}
+
+
+function showResult() {
+
+    running = false;
+
+    renderArray();
+
+    if (minLength === Infinity) {
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            "No contiguous subarray has a sum ≥ " +
+            target +
+            ".<br><br>Minimum Length = 0";
+
+        status.className = "status failure";
+
+        status.textContent =
+            "No valid subarray found.";
+
+    } else {
+
+        const best =
+            nums.slice(
+                bestStart,
+                bestEnd + 1
+            );
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            "✓ Minimum Length = " +
+            minLength +
+            "<br><br>" +
+            "Best Subarray = [" +
+            best.join(", ") +
+            "]" +
+            "<br><br>" +
+            "Sum = " +
+            best.reduce(
+                (a, b) => a + b,
+                0
+            );
+
+        status.className = "status success";
+
+        status.innerHTML =
+            "Algorithm completed successfully.";
+    }
+
+    updateInfo();
+
+}
+
+
+function addStep(text) {
+
+    const div =
+        document.createElement("div");
+
+    div.className = "step";
+
+    div.textContent = text;
+
+    stepLog.appendChild(div);
+
+    div.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest"
+    });
+
+}
+
+
+function autoRun() {
+
+    if (!running) {
+
+        startAlgorithm();
+
+    }
+
+    stopAuto();
+
+    autoTimer =
+        setInterval(() => {
+
+            if (!running) {
+
+                stopAuto();
+
+                return;
+            }
+
+            nextStep();
+
+        }, 900);
+
+}
+
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+    }
+
+}
+
+
+function resetVisualizer() {
+
+    stopAuto();
+
+    nums = [];
+
+    target = 0;
+
+    left = 0;
+    right = -1;
+
+    currentSum = 0;
+
+    minLength = Infinity;
+
+    bestStart = -1;
+    bestEnd = -1;
+
+    running = false;
+
+    step = 0;
+
+    arrayContainer.innerHTML = "";
+
+    stepLog.innerHTML = "";
+
+    result.style.display = "none";
+
+    document.getElementById("leftValue")
+        .textContent = "-";
+
+    document.getElementById("rightValue")
+        .textContent = "-";
+
+    document.getElementById("sumValue")
+        .textContent = "0";
+
+    document.getElementById("lengthValue")
+        .textContent = "0";
+
+    document.getElementById("minValue")
+        .textContent = "∞";
+
+    status.className = "status";
+
+    status.innerHTML =
+        "Click <b>Start</b> to begin.";
+
+}
+
+
+/*
+ * Event listeners
+ *
+ * Using event listeners instead of inline onclick
+ * prevents "function is not defined" errors.
+ */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetVisualizer
+    );
+
+</script>
+
+</body>
+</html>

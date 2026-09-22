@@ -1,0 +1,1070 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Next Greater Element Visualizer</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #f4f7fb;
+        color: #1f2937;
+    }
+
+    .container {
+        width: 94%;
+        max-width: 1200px;
+        margin: 25px auto;
+    }
+
+    header {
+        background: linear-gradient(135deg, #1e3a8a, #2563eb);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+    }
+
+    header h1 {
+        margin: 0 0 10px;
+        font-size: 32px;
+    }
+
+    header p {
+        margin: 0;
+        font-size: 17px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 14px;
+        padding: 25px;
+        margin-bottom: 25px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        color: #1e3a8a;
+        margin-top: 0;
+        border-bottom: 2px solid #dbeafe;
+        padding-bottom: 10px;
+    }
+
+    h3 {
+        color: #2563eb;
+    }
+
+    .problem {
+        font-size: 17px;
+        line-height: 1.7;
+        background: #eff6ff;
+        padding: 18px;
+        border-left: 5px solid #2563eb;
+        border-radius: 8px;
+    }
+
+    .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 20px 0;
+    }
+
+    button {
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    button:disabled {
+        background: #9ca3af;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .input-area {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    input {
+        padding: 12px;
+        border: 2px solid #cbd5e1;
+        border-radius: 8px;
+        font-size: 16px;
+        width: 350px;
+    }
+
+    .array-container {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin: 25px 0;
+    }
+
+    .array-item {
+        width: 75px;
+        text-align: center;
+    }
+
+    .box {
+        width: 70px;
+        height: 70px;
+        border: 3px solid #64748b;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 23px;
+        font-weight: bold;
+        background: #f8fafc;
+        transition: all 0.3s;
+    }
+
+    .index {
+        margin-top: 5px;
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .current .box {
+        background: #fef3c7;
+        border-color: #f59e0b;
+        transform: translateY(-8px);
+    }
+
+    .compare .box {
+        background: #fee2e2;
+        border-color: #ef4444;
+    }
+
+    .greater .box {
+        background: #dcfce7;
+        border-color: #22c55e;
+    }
+
+    .result .box {
+        background: #dbeafe;
+        border-color: #2563eb;
+    }
+
+    .stack-container {
+        min-height: 160px;
+        border: 3px dashed #94a3b8;
+        border-radius: 12px;
+        padding: 15px;
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 8px;
+        background: #f8fafc;
+    }
+
+    .stack-item {
+        width: 100px;
+        padding: 12px;
+        text-align: center;
+        border-radius: 8px;
+        background: #8b5cf6;
+        color: white;
+        font-weight: bold;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+
+    .stack-label {
+        text-align: center;
+        font-weight: bold;
+        color: #475569;
+        margin-bottom: 10px;
+    }
+
+    .status {
+        padding: 15px;
+        background: #f1f5f9;
+        border-radius: 8px;
+        margin-top: 20px;
+        font-size: 16px;
+        line-height: 1.6;
+    }
+
+    .step-counter {
+        font-weight: bold;
+        color: #2563eb;
+    }
+
+    .result-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .result-table th,
+    .result-table td {
+        border: 1px solid #cbd5e1;
+        padding: 12px;
+        text-align: center;
+    }
+
+    .result-table th {
+        background: #1e3a8a;
+        color: white;
+    }
+
+    .result-table tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 20px;
+        border-radius: 10px;
+        overflow-x: auto;
+        line-height: 1.6;
+        font-size: 14px;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .complexity {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .complexity-box {
+        background: #eff6ff;
+        padding: 18px;
+        border-radius: 10px;
+        border-left: 5px solid #2563eb;
+    }
+
+    .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-top: 15px;
+    }
+
+    .legend span {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        font-weight: bold;
+    }
+
+    .legend-current {
+        background: #fef3c7;
+    }
+
+    .legend-compare {
+        background: #fee2e2;
+    }
+
+    .legend-greater {
+        background: #dcfce7;
+    }
+
+    .legend-result {
+        background: #dbeafe;
+    }
+
+    @media (max-width: 600px) {
+        input {
+            width: 100%;
+        }
+
+        .box {
+            width: 55px;
+            height: 55px;
+        }
+
+        .array-item {
+            width: 60px;
+        }
+
+        header h1 {
+            font-size: 25px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header>
+    <h1>Next Greater Element</h1>
+    <p>Interactive Monotonic Stack Visualizer</p>
+</header>
+
+<div class="card">
+
+    <h2>1. Problem Statement</h2>
+
+    <div class="problem">
+        Given an array of integers, find the <strong>first greater element to the
+        right</strong> of each element. If no greater element exists, return
+        <strong>-1</strong>.
+        <br><br>
+
+        <strong>Example:</strong>
+        <br>
+        Input: <strong>[4, 5, 2, 10, 8]</strong>
+        <br>
+        Output: <strong>[5, 10, 10, -1, -1]</strong>
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>2. Interactive Visualization</h2>
+
+    <div class="input-area">
+        <label for="arrayInput"><strong>Enter Array:</strong></label>
+        <input
+            type="text"
+            id="arrayInput"
+            value="4,5,2,10,8"
+            placeholder="Example: 4,5,2,10,8"
+        >
+        <button id="loadBtn">Load Array</button>
+    </div>
+
+    <div class="controls">
+        <button id="startBtn">Start</button>
+        <button id="nextBtn">Next Step</button>
+        <button id="autoBtn">Auto Run</button>
+        <button id="resetBtn">Reset</button>
+    </div>
+
+    <div class="array-container" id="arrayView"></div>
+
+    <div class="legend">
+        <span class="legend-current">Current Element</span>
+        <span class="legend-compare">Compared / Removed</span>
+        <span class="legend-greater">Next Greater Element</span>
+        <span class="legend-result">Final Result</span>
+    </div>
+
+    <h3>Stack</h3>
+
+    <div class="stack-label">
+        Stack stores indices whose next greater element has not yet been found.
+    </div>
+
+    <div class="stack-container" id="stackView"></div>
+
+    <div class="status" id="status">
+        Click <strong>Start</strong> to begin the algorithm.
+    </div>
+
+    <div id="resultArea"></div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>3. Algorithm Idea</h2>
+
+    <p>
+        We use a <strong>monotonic decreasing stack</strong>.
+        We scan the array from <strong>right to left</strong>.
+    </p>
+
+    <ol>
+        <li>Take the current element.</li>
+        <li>Remove all elements from the stack that are smaller than or equal to it.</li>
+        <li>If the stack is empty, the answer is <strong>-1</strong>.</li>
+        <li>Otherwise, the top of the stack is the next greater element.</li>
+        <li>Push the current element onto the stack.</li>
+    </ol>
+
+    <p>
+        The stack allows us to avoid repeatedly scanning all elements to the
+        right.
+    </p>
+
+</div>
+
+
+<div class="card">
+
+    <h2>4. Pseudocode</h2>
+
+<pre><code>FUNCTION nextGreaterElement(array):
+
+    n = length(array)
+
+    result = array of size n filled with -1
+
+    stack = empty stack
+
+    FOR i = n - 1 DOWNTO 0:
+
+        WHILE stack is not empty
+              AND stack.top <= array[i]:
+
+            pop stack
+
+        IF stack is not empty:
+            result[i] = stack.top
+
+        push array[i] into stack
+
+    RETURN result</code></pre>
+
+</div>
+
+
+<div class="card">
+
+    <h2>5. Python Implementation</h2>
+
+<pre><code>def next_greater_element(arr):
+    n = len(arr)
+
+    result = [-1] * n
+
+    stack = []
+
+    # Traverse from right to left
+    for i in range(n - 1, -1, -1):
+
+        # Remove elements that cannot be the answer
+        while stack and stack[-1] <= arr[i]:
+            stack.pop()
+
+        # Top of stack is the next greater element
+        if stack:
+            result[i] = stack[-1]
+
+        # Push current element
+        stack.append(arr[i])
+
+    return result
+
+
+# Example
+arr = [4, 5, 2, 10, 8]
+
+print("Input :", arr)
+print("Output:", next_greater_element(arr))</code></pre>
+
+    <h3>Output</h3>
+
+<pre><code>Input : [4, 5, 2, 10, 8]
+Output: [5, 10, 10, -1, -1]</code></pre>
+
+</div>
+
+
+<div class="card">
+
+    <h2>6. Step-by-Step Example</h2>
+
+    <table class="result-table">
+        <thead>
+            <tr>
+                <th>Element</th>
+                <th>Elements to Right</th>
+                <th>Next Greater</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr>
+                <td>4</td>
+                <td>5, 2, 10, 8</td>
+                <td>5</td>
+            </tr>
+
+            <tr>
+                <td>5</td>
+                <td>2, 10, 8</td>
+                <td>10</td>
+            </tr>
+
+            <tr>
+                <td>2</td>
+                <td>10, 8</td>
+                <td>10</td>
+            </tr>
+
+            <tr>
+                <td>10</td>
+                <td>8</td>
+                <td>-1</td>
+            </tr>
+
+            <tr>
+                <td>8</td>
+                <td>None</td>
+                <td>-1</td>
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+
+<div class="card">
+
+    <h2>7. Why Use a Stack?</h2>
+
+    <p>
+        A simple approach would compare every element with all elements to its
+        right. This can take <strong>O(n²)</strong> time.
+    </p>
+
+    <p>
+        The stack-based approach ensures that each element is pushed onto the
+        stack once and popped at most once.
+    </p>
+
+    <div class="complexity">
+
+        <div class="complexity-box">
+            <h3>Time Complexity</h3>
+            <p><strong>O(n)</strong></p>
+            <p>
+                Each element is pushed and popped at most once.
+            </p>
+        </div>
+
+        <div class="complexity-box">
+            <h3>Space Complexity</h3>
+            <p><strong>O(n)</strong></p>
+            <p>
+                The stack and result array can contain up to n elements.
+            </p>
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card">
+
+    <h2>8. Important Concept: Monotonic Stack</h2>
+
+    <p>
+        A <strong>monotonic stack</strong> is a stack maintained in increasing
+        or decreasing order.
+    </p>
+
+    <p>
+        For the Next Greater Element problem, we maintain a stack such that
+        useful candidates for the next greater element remain available.
+    </p>
+
+    <p>
+        When processing an element such as <strong>10</strong>, smaller values
+        such as <strong>8</strong> can be removed because they cannot be the
+        next greater element for 10.
+    </p>
+
+    <pre><code>Example:
+
+Array: 4  5  2  10  8
+
+Process from right to left:
+
+8
+↓
+10 removes 8
+↓
+2 keeps 10
+↓
+5 removes 2 and keeps 10
+↓
+4 keeps 5
+
+Result:
+
+5  10  10  -1  -1</code></pre>
+
+</div>
+
+
+<div class="card">
+
+    <h2>9. Applications</h2>
+
+    <ul>
+        <li>Stock price analysis</li>
+        <li>Temperature prediction problems</li>
+        <li>Finding the next larger value</li>
+        <li>Histogram problems</li>
+        <li>Array range queries</li>
+        <li>Competitive programming</li>
+        <li>Real-time event processing</li>
+    </ul>
+
+</div>
+
+</div>
+
+
+<script>
+
+let arr = [];
+let result = [];
+let stack = [];
+
+let currentIndex = -1;
+let phase = "idle";
+let autoTimer = null;
+
+const arrayInput = document.getElementById("arrayInput");
+const arrayView = document.getElementById("arrayView");
+const stackView = document.getElementById("stackView");
+const status = document.getElementById("status");
+const resultArea = document.getElementById("resultArea");
+
+const loadBtn = document.getElementById("loadBtn");
+const startBtn = document.getElementById("startBtn");
+const nextBtn = document.getElementById("nextBtn");
+const autoBtn = document.getElementById("autoBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+
+function loadArray() {
+
+    const values = arrayInput.value
+        .split(",")
+        .map(x => Number(x.trim()))
+        .filter(x => !Number.isNaN(x));
+
+    if (values.length === 0) {
+        alert("Please enter a valid array.");
+        return;
+    }
+
+    arr = values;
+
+    resetAlgorithm();
+
+    renderArray();
+
+    status.innerHTML =
+        "Array loaded. Click <strong>Start</strong> to begin.";
+}
+
+
+function renderArray() {
+
+    arrayView.innerHTML = "";
+
+    arr.forEach((value, index) => {
+
+        const item = document.createElement("div");
+
+        item.className = "array-item";
+        item.id = "item-" + index;
+
+        const box = document.createElement("div");
+
+        box.className = "box";
+        box.textContent = value;
+
+        const indexLabel = document.createElement("div");
+
+        indexLabel.className = "index";
+        indexLabel.textContent = "index " + index;
+
+        item.appendChild(box);
+        item.appendChild(indexLabel);
+
+        arrayView.appendChild(item);
+    });
+}
+
+
+function renderStack() {
+
+    stackView.innerHTML = "";
+
+    stack.forEach(index => {
+
+        const element = document.createElement("div");
+
+        element.className = "stack-item";
+
+        element.textContent =
+            "index " + index + ": " + arr[index];
+
+        stackView.appendChild(element);
+    });
+}
+
+
+function clearHighlights() {
+
+    document.querySelectorAll(".array-item").forEach(item => {
+
+        item.classList.remove(
+            "current",
+            "compare",
+            "greater",
+            "result"
+        );
+    });
+}
+
+
+function startAlgorithm() {
+
+    if (arr.length === 0) {
+        loadArray();
+    }
+
+    result = new Array(arr.length).fill(-1);
+
+    stack = [];
+
+    currentIndex = arr.length - 1;
+
+    phase = "process";
+
+    renderStack();
+    renderArray();
+    updateResultTable();
+
+    status.innerHTML =
+        `<span class="step-counter">Step started.</span>
+         Processing from right to left.`;
+
+    nextBtn.disabled = false;
+}
+
+
+function nextStep() {
+
+    if (phase === "idle") {
+        startAlgorithm();
+        return;
+    }
+
+    if (currentIndex < 0) {
+
+        phase = "finished";
+
+        clearHighlights();
+
+        renderStack();
+
+        status.innerHTML =
+            "<strong>Algorithm completed!</strong> " +
+            "Every element now has its first greater element to the right.";
+
+        updateResultTable();
+
+        if (autoTimer) {
+            clearInterval(autoTimer);
+            autoTimer = null;
+        }
+
+        return;
+    }
+
+
+    clearHighlights();
+
+    const current = arr[currentIndex];
+
+    /*
+        Phase 1:
+        Remove smaller or equal elements.
+    */
+
+    if (phase === "process") {
+
+        document
+            .getElementById("item-" + currentIndex)
+            .classList.add("current");
+
+        if (stack.length > 0 &&
+            arr[stack[stack.length - 1]] <= current) {
+
+            const removedIndex = stack.pop();
+
+            document
+                .getElementById("item-" + removedIndex)
+                .classList.add("compare");
+
+            status.innerHTML =
+                `<strong>${current}</strong> is being processed.
+                 <br>
+                 Top stack value <strong>${arr[removedIndex]}</strong>
+                 is ≤ ${current}, so it is removed from the stack.`;
+
+            renderStack();
+
+            phase = "remove";
+
+            return;
+        }
+
+        /*
+            No more elements need to be removed.
+        */
+
+        if (stack.length === 0) {
+
+            result[currentIndex] = -1;
+
+            status.innerHTML =
+                `<strong>${current}</strong> has no greater element
+                 on its right, so result = -1.`;
+
+        } else {
+
+            const greaterIndex = stack[stack.length - 1];
+
+            result[currentIndex] = arr[greaterIndex];
+
+            document
+                .getElementById("item-" + greaterIndex)
+                .classList.add("greater");
+
+            status.innerHTML =
+                `For <strong>${current}</strong>, the top of the stack
+                 is <strong>${arr[greaterIndex]}</strong>.
+                 <br>
+                 Therefore, Next Greater = <strong>
+                 ${arr[greaterIndex]}</strong>.`;
+        }
+
+        phase = "push";
+
+        updateResultTable();
+
+        return;
+    }
+
+
+    /*
+        Phase 2:
+        After removals, push current element.
+    */
+
+    if (phase === "remove") {
+
+        phase = "process";
+
+        nextStep();
+
+        return;
+    }
+
+
+    /*
+        Phase 3:
+        Push current element.
+    */
+
+    if (phase === "push") {
+
+        stack.push(currentIndex);
+
+        document
+            .getElementById("item-" + currentIndex)
+            .classList.add("current");
+
+        status.innerHTML =
+            `<strong>${current}</strong> is pushed onto the stack.
+             <br>
+             Moving to the next element on the left.`;
+
+        renderStack();
+
+        currentIndex--;
+
+        phase = "process";
+
+        updateResultTable();
+
+        if (currentIndex < 0) {
+
+            setTimeout(() => {
+                phase = "finished";
+
+                clearHighlights();
+
+                status.innerHTML =
+                    "<strong>Algorithm completed!</strong>";
+
+                updateResultTable();
+
+                if (autoTimer) {
+                    clearInterval(autoTimer);
+                    autoTimer = null;
+                }
+            }, 500);
+        }
+    }
+}
+
+
+function updateResultTable() {
+
+    let html = `
+        <h3>Current Result</h3>
+        <table class="result-table">
+            <thead>
+                <tr>
+                    <th>Index</th>
+                    <th>Element</th>
+                    <th>Next Greater</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    arr.forEach((value, index) => {
+
+        html += `
+            <tr>
+                <td>${index}</td>
+                <td>${value}</td>
+                <td>${result[index]}</td>
+            </tr>
+        `;
+    });
+
+    html += `
+            </tbody>
+        </table>
+    `;
+
+    resultArea.innerHTML = html;
+}
+
+
+function resetAlgorithm() {
+
+    if (autoTimer) {
+        clearInterval(autoTimer);
+        autoTimer = null;
+    }
+
+    result = new Array(arr.length).fill(-1);
+
+    stack = [];
+
+    currentIndex = -1;
+
+    phase = "idle";
+
+    renderStack();
+
+    if (arr.length > 0) {
+        renderArray();
+    }
+
+    clearHighlights();
+
+    resultArea.innerHTML = "";
+
+    nextBtn.disabled = false;
+
+    status.innerHTML =
+        "Click <strong>Start</strong> to begin the algorithm.";
+}
+
+
+function autoRun() {
+
+    if (autoTimer) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+        autoBtn.textContent = "Auto Run";
+
+        return;
+    }
+
+    if (phase === "idle") {
+        startAlgorithm();
+    }
+
+    autoBtn.textContent = "Pause";
+
+    autoTimer = setInterval(() => {
+
+        if (phase === "finished") {
+
+            clearInterval(autoTimer);
+
+            autoTimer = null;
+
+            autoBtn.textContent = "Auto Run";
+
+            return;
+        }
+
+        nextStep();
+
+    }, 900);
+}
+
+
+/* Event listeners */
+
+loadBtn.addEventListener("click", loadArray);
+
+startBtn.addEventListener("click", startAlgorithm);
+
+nextBtn.addEventListener("click", nextStep);
+
+autoBtn.addEventListener("click", autoRun);
+
+resetBtn.addEventListener("click", resetAlgorithm);
+
+
+/* Load default array */
+
+loadArray();
+
+</script>
+
+</body>
+</html>

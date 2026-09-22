@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>DS :: Interview Coding Problems</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fb;
+            color: #222;
+            line-height: 1.6;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            padding: 35px 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 17px;
+            opacity: 0.95;
+        }
+
+        .container {
+            width: 92%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+
+        .module {
+            background: white;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .module-header {
+            color: white;
+            padding: 18px 22px;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .module1 .module-header {
+            background: #1565c0;
+        }
+
+        .module2 .module-header {
+            background: #2e7d32;
+        }
+
+        .module3 .module-header {
+            background: #ef6c00;
+        }
+
+        .module4 .module-header {
+            background: #6a1b9a;
+        }
+
+        .problem-list {
+            list-style: none;
+            padding: 15px 20px 20px;
+        }
+
+        .problem-list li {
+            margin: 8px 0;
+        }
+
+        .problem-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: #333;
+            background: #f8fafc;
+            border: 1px solid #e3e8ef;
+            border-radius: 8px;
+            padding: 12px 15px;
+            transition: all 0.2s ease;
+        }
+
+        .problem-link:hover {
+            transform: translateX(5px);
+            background: #eef4ff;
+            border-color: #9bbcf5;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.08);
+        }
+
+        .number {
+            min-width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            background: #37474f;
+        }
+
+        .problem-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        footer {
+            text-align: center;
+            padding: 25px;
+            margin-top: 20px;
+            background: #263238;
+            color: white;
+        }
+
+        .search-box {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        #searchInput {
+            width: 100%;
+            max-width: 650px;
+            padding: 14px 18px;
+            border: 1px solid #ccd4df;
+            border-radius: 25px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        #searchInput:focus {
+            border-color: #2a5298;
+            box-shadow: 0 0 5px rgba(42,82,152,0.3);
+        }
+
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 24px;
+            }
+
+            .module-header {
+                font-size: 19px;
+            }
+
+            .problem-title {
+                font-size: 14px;
+            }
+
+            .container {
+                width: 96%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Data Structures - Interview Programs </h1>
+    <p>Interactive Coding & Visualizations</p>
+</header>
+
+<div class="container">
+
+    <!-- SEARCH -->
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="🔍 Search for a coding problem..."
+            aria-label="Search coding problems"
+        >
+    </div>
+
+
+    <!-- ===================================================== -->
+    <!-- MODULE 1 -->
+    <!-- ===================================================== -->
+
+    <section class="module module1">
+
+        <div class="module-header">
+            Module 1 – Array & String Coding Problems
+        </div>
+
+        <ol class="problem-list">
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/TwoSum.html">
+                    <span class="number">1</span>
+                    <span class="problem-title">
+                        Two Sum II – Sorted Array
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/ContainerWithMostWater.html">
+                    <span class="number">2</span>
+                    <span class="problem-title">
+                        Container With Most Water
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/3Sum.html">
+                    <span class="number">3</span>
+                    <span class="problem-title">
+                        3Sum
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/ValidPalindrome.html">
+                    <span class="number">4</span>
+                    <span class="problem-title">
+                        Valid Palindrome
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/LongestSubstring.html">
+                    <span class="number">5</span>
+                    <span class="problem-title">
+                        Longest Substring Without Repeating Characters
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/MinimumSizeSubarraySum.html">
+                    <span class="number">6</span>
+                    <span class="problem-title">
+                        Minimum Size Subarray Sum
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/MaxPtsCards.html">
+                    <span class="number">7</span>
+                    <span class="problem-title">
+                        Maximum Points From Cards
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/PermutationInString.html">
+                    <span class="number">8</span>
+                    <span class="problem-title">
+                        Permutation in String
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/SubarraySumEqualsK.html">
+                    <span class="number">9</span>
+                    <span class="problem-title">
+                        Subarray Sum Equals K
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="ArrayStrings/ProductExceptSelf.html">
+                    <span class="number">10</span>
+                    <span class="problem-title">
+                        Product of Array Except Self
+                    </span>
+                </a>
+            </li>
+
+        </ol>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- MODULE 2 -->
+    <!-- ===================================================== -->
+
+    <section class="module module2">
+
+        <div class="module-header">
+            Module 2 – Linked List Coding Problems
+        </div>
+
+        <ol class="problem-list">
+
+            <li>
+                <a class="problem-link" href="LinkedList/ReverseLinkedList.html">
+                    <span class="number">1</span>
+                    <span class="problem-title">
+                        Reverse a Singly Linked List
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="LinkedList/MiddleLinkedList.html">
+                    <span class="number">2</span>
+                    <span class="problem-title">
+                        Middle of the Linked List
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="LinkedList/RemoveNthNode.html">
+                    <span class="number">3</span>
+                    <span class="problem-title">
+                        Remove Nth Node From End
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="LinkedList/ReorderLL.html">
+                    <span class="number">4</span>
+                    <span class="problem-title">
+                        Reorder Linked List
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="LinkedList/CloneLinkedList.html">
+                    <span class="number">5</span>
+                    <span class="problem-title">
+                        Copy List With Random Pointer
+                    </span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="LinkedList/CycleDetectionSLL.html">
+                    <span class="number">6</span>
+                    <span class="problem-title">
+                        Linked List Cycle Detection
+                    </span>
+                </a>
+            </li>
+
+            
+
+        </ol>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- MODULE 3 -->
+    <!-- ===================================================== -->
+
+    <section class="module module3">
+
+        <div class="module-header">
+            Module 3 – Stacks & Queues
+        </div>
+
+        <ol class="problem-list">
+
+            <li>
+                <a class="problem-link" href="StackQueue/NextGreater.html">
+                    <span class="number">1</span>
+                    <span class="problem-title">Next Greater Element</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/DailyTemperature.html">
+                    <span class="number">2</span>
+                    <span class="problem-title">Daily Temperatures</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/LargeRectangleHistogram.html">
+                    <span class="number">3</span>
+                    <span class="problem-title">Largest Rectangle in Histogram</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/SlidingWindowMaximum.html">
+                    <span class="number">4</span>
+                    <span class="problem-title">Sliding Window Maximum</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/ValidParentheses.html">
+                    <span class="number">5</span>
+                    <span class="problem-title">Valid Parentheses</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/PostfixEvaluation.html">
+                    <span class="number">6</span>
+                    <span class="problem-title">Evaluate Postfix Expression</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/SimplifyPath.html">
+                    <span class="number">7</span>
+                    <span class="problem-title">Simplify Unix Path</span>
+                </a>
+            </li>
+
+            
+
+            <li>
+                <a class="problem-link" href="StackQueue/TopKFrequent.html">
+                    <span class="number">8</span>
+                    <span class="problem-title">Top K Frequent Elements</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/GroupAnagram.html">
+                    <span class="number">9</span>
+                    <span class="problem-title">Group Anagrams</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/FirstUniqueCharacter.html">
+                    <span class="number">10</span>
+                    <span class="problem-title">First Non-Repeating Character</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/LongestConsecutiveSequence.html">
+                    <span class="number">11</span>
+                    <span class="problem-title">Longest Consecutive Sequence</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/ContainsDuplicate.html">
+                    <span class="number">12</span>
+                    <span class="problem-title">Contains Duplicate</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="StackQueue/IntersectionTwoArrays.html">
+                    <span class="number">13</span>
+                    <span class="problem-title">Intersection of Two Arrays</span>
+                </a>
+            </li>
+
+        </ol>
+    </section>
+
+
+    <!-- ===================================================== -->
+    <!-- MODULE 4 -->
+    <!-- ===================================================== -->
+
+    <section class="module module4">
+
+        <div class="module-header">
+            Module 4 – Trees & Graphs
+        </div>
+
+        <ol class="problem-list">
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/FlipBinaryTree.html">
+                    <span class="number">1</span>
+                    <span class="problem-title">Invert Binary Tree</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/SameBinaryTree.html">
+                    <span class="number">2</span>
+                    <span class="problem-title">Same Tree</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/MaxDepthBT.html">
+                    <span class="number">3</span>
+                    <span class="problem-title">Maximum Depth of Binary Tree</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/LevelOrderTraversal.html">
+                    <span class="number">4</span>
+                    <span class="problem-title">Binary Tree Level Order Traversal</span>
+                </a>
+            </li>
+
+            
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/PathSum.html">
+                    <span class="number">5</span>
+                    <span class="problem-title">Path Sum</span>
+                </a>
+            </li>
+
+            
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/LowestCommonAncestor.html">
+                    <span class="number">6</span>
+                    <span class="problem-title">Lowest Common Ancestor of BST</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/KthSmallestBST.html">
+                    <span class="number">7</span>
+                    <span class="problem-title">Kth Smallest Element in BST</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/KthLargestArray.html">
+                    <span class="number">8</span>
+                    <span class="problem-title">Kth Largest Element in Array</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/MedianDataStream.html">
+                    <span class="number">9</span>
+                    <span class="problem-title">Find Median From Data Stream</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/NoOfIslands.html">
+                    <span class="number">10</span>
+                    <span class="problem-title">Number of Islands</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/RottingOranges.html">
+                    <span class="number">11</span>
+                    <span class="problem-title">Rotting Oranges</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/CourseSchedule.html">
+                    <span class="number">12</span>
+                    <span class="problem-title">Course Schedule – Course Ordering</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/AlienDictionary.html">
+                    <span class="number">13</span>
+                    <span class="problem-title">Alien Dictionary</span>
+                </a>
+            </li>
+
+            <li>
+                <a class="problem-link" href="TreeGraphs/WordSearchII.html">
+                    <span class="number">14</span>
+                    <span class="problem-title">Word Search II</span>
+                </a>
+            </li>
+
+        </ol>
+    </section>
+
+</div>
+
+
+<footer>
+   <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</footer>
+
+
+<script>
+    // Search functionality
+    // Uses addEventListener instead of inline onclick handlers.
+
+    const searchInput = document.getElementById("searchInput");
+    const problemLinks = document.querySelectorAll(".problem-link");
+
+    searchInput.addEventListener("input", function () {
+
+        const searchText = this.value.toLowerCase().trim();
+
+        problemLinks.forEach(function (link) {
+
+            const title = link
+                .querySelector(".problem-title")
+                .textContent
+                .toLowerCase();
+
+            const listItem = link.parentElement;
+
+            if (title.includes(searchText)) {
+                listItem.style.display = "";
+            } else {
+                listItem.style.display = "none";
+            }
+
+        });
+
+    });
+</script>
+
+</body>
+</html>

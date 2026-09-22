@@ -1,0 +1,1476 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Remove N-th Node From End</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 28px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+header p {
+    margin-top: 10px;
+    font-size: 17px;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    margin-bottom: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+}
+
+h2 {
+    color: #263238;
+    border-left: 5px solid #607d8b;
+    padding-left: 12px;
+}
+
+h3 {
+    color: #37474f;
+}
+
+p, li {
+    line-height: 1.7;
+}
+
+.problem {
+    font-size: 17px;
+}
+
+/* INPUT */
+
+.input-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.input-area label {
+    font-weight: bold;
+    font-size: 17px;
+}
+
+input {
+    width: 90px;
+    padding: 11px;
+    font-size: 17px;
+    text-align: center;
+    border: 2px solid #78909c;
+    border-radius: 6px;
+}
+
+/* BUTTONS */
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+button {
+    background: #455a64;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+/* VISUALIZATION */
+
+.visual-area {
+    overflow-x: auto;
+    padding: 55px 10px 70px;
+    min-height: 310px;
+}
+
+.linked-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 850px;
+}
+
+.node-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.node {
+    width: 105px;
+    min-width: 105px;
+    border: 3px solid #455a64;
+    border-radius: 10px;
+    background: white;
+    text-align: center;
+    position: relative;
+    transition: 0.4s;
+}
+
+.node-data {
+    padding: 14px 5px;
+    font-size: 22px;
+    font-weight: bold;
+    background: #eceff1;
+}
+
+.node-next {
+    padding: 8px;
+    border-top: 2px solid #455a64;
+    font-size: 12px;
+}
+
+.arrow {
+    font-size: 30px;
+    margin: 0 10px;
+    color: #455a64;
+}
+
+.node.fast-node {
+    border: 4px solid #17a2b8;
+    transform: translateY(8px);
+}
+
+.node.slow-node {
+    border: 4px solid #f0ad4e;
+    transform: translateY(-8px);
+}
+
+.node.delete-node {
+    border: 4px solid #dc3545;
+    opacity: 0.65;
+    transform: translateY(-8px);
+}
+
+.node.head-node {
+    border: 4px solid #28a745;
+}
+
+.pointer-tag {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.fast-tag {
+    bottom: -35px;
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.slow-tag {
+    top: -35px;
+    background: #fff3cd;
+    color: #856404;
+}
+
+.delete-tag {
+    top: -35px;
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.head-tag {
+    top: -35px;
+    background: #d4edda;
+    color: #155724;
+}
+
+/* LEGEND */
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.legend span {
+    padding: 9px 15px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.legend-fast {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.legend-slow {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.legend-delete {
+    background: #f8d7da;
+    color: #721c24;
+}
+
+.legend-head {
+    background: #d4edda;
+    color: #155724;
+}
+
+/* STATUS */
+
+.status {
+    background: #eceff1;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.step-box {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    padding: 18px;
+    border-radius: 8px;
+    margin-top: 15px;
+    line-height: 1.7;
+}
+
+/* CODE */
+
+pre {
+    background: #263238;
+    color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+/* COMPLEXITY */
+
+.complexity {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.complexity-box {
+    flex: 1;
+    min-width: 220px;
+    background: #eceff1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.complexity-box strong {
+    display: block;
+    font-size: 24px;
+    margin: 8px;
+}
+
+/* EXAMPLE */
+
+.example {
+    background: #f8f9fa;
+    padding: 18px;
+    border-radius: 8px;
+    margin: 15px 0;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #37474f;
+}
+
+footer {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+@media(max-width: 700px) {
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .linked-list {
+        justify-content: flex-start;
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<header>
+
+<h1>Remove the N-th Node From the End</h1>
+
+<p>
+Singly Linked List — Two Pointer Technique
+</p>
+
+</header>
+
+
+<div class="container">
+
+
+<!-- PROBLEM -->
+
+<div class="card">
+
+<h2>1. Problem Statement</h2>
+
+<p class="problem">
+
+Given the head of a singly linked list, remove the
+<strong>n-th node from the end</strong> of the list and return
+the head of the modified list.
+
+</p>
+
+<div class="example">
+
+<h3>Example</h3>
+
+<pre><code>
+Input:
+
+1 → 2 → 3 → 4 → 5 → NULL
+
+n = 2
+</code></pre>
+
+<p>
+The 2nd node from the end is <strong>4</strong>.
+</p>
+
+<pre><code>
+Output:
+
+1 → 2 → 3 → 5 → NULL
+</code></pre>
+
+</div>
+
+</div>
+
+
+<!-- INPUT -->
+
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<div class="input-area">
+
+<label for="nInput">
+Enter n:
+</label>
+
+<input
+    type="number"
+    id="nInput"
+    min="1"
+    max="5"
+    value="2"
+>
+
+</div>
+
+
+<div class="visual-area">
+
+<div id="list" class="linked-list"></div>
+
+</div>
+
+
+<div class="legend">
+
+<span class="legend-fast">
+FAST
+</span>
+
+<span class="legend-slow">
+SLOW
+</span>
+
+<span class="legend-delete">
+NODE TO DELETE
+</span>
+
+<span class="legend-head">
+HEAD
+</span>
+
+</div>
+
+
+<div class="controls">
+
+<button onclick="resetVisualization()">
+Reset
+</button>
+
+<button onclick="nextStep()" id="stepButton">
+Next Step
+</button>
+
+<button onclick="runAlgorithm()" id="runButton">
+Run Automatically
+</button>
+
+</div>
+
+
+<div id="status" class="status">
+
+Ready. Enter n and click "Next Step".
+
+</div>
+
+
+<div id="explanation" class="step-box">
+
+<strong>Initial State:</strong>
+Both slow and fast pointers start at the dummy node.
+
+</div>
+
+</div>
+
+
+<!-- IDEA -->
+
+<div class="card">
+
+<h2>3. Main Idea</h2>
+
+<p>
+We use two pointers called <strong>fast</strong> and
+<strong>slow</strong>.
+</p>
+
+<ol>
+
+<li>
+Create a dummy node before the head.
+</li>
+
+<li>
+Place both fast and slow at the dummy node.
+</li>
+
+<li>
+Move fast forward by <strong>n + 1</strong> positions.
+</li>
+
+<li>
+Move both fast and slow one position at a time.
+</li>
+
+<li>
+When fast reaches the end, slow is immediately before
+the node that must be deleted.
+</li>
+
+<li>
+Skip the target node using:
+</li>
+
+</ol>
+
+<pre><code>
+slow.next = slow.next.next
+</code></pre>
+
+<li>
+Return <code>dummy.next</code>.
+</li>
+
+</div>
+
+
+<!-- PSEUDOCODE -->
+
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>
+REMOVE_NTH_FROM_END(head, n)
+
+    dummy ← new Node(0)
+    dummy.next ← head
+
+    fast ← dummy
+    slow ← dummy
+
+    REPEAT n + 1 times
+        fast ← fast.next
+
+    WHILE fast ≠ NULL
+        fast ← fast.next
+        slow ← slow.next
+
+    slow.next ← slow.next.next
+
+    RETURN dummy.next
+</code></pre>
+
+</div>
+
+
+<!-- STEP EXAMPLE -->
+
+<div class="card">
+
+<h2>5. Step-by-Step Example</h2>
+
+<h3>Input</h3>
+
+<pre><code>
+1 → 2 → 3 → 4 → 5 → NULL
+
+n = 2
+</code></pre>
+
+<h3>Step 1 — Create Dummy Node</h3>
+
+<pre><code>
+dummy → 1 → 2 → 3 → 4 → 5 → NULL
+
+slow = dummy
+fast = dummy
+</code></pre>
+
+<h3>Step 2 — Move Fast n + 1 Positions</h3>
+
+<p>
+Since n = 2, move fast 3 positions.
+</p>
+
+<pre><code>
+dummy → 1 → 2 → 3 → 4 → 5
+
+slow = dummy
+fast = 3
+</code></pre>
+
+<h3>Step 3 — Move Both Pointers</h3>
+
+<pre><code>
+slow = 1
+fast = 4
+</code></pre>
+
+<pre><code>
+slow = 2
+fast = 5
+</code></pre>
+
+<pre><code>
+slow = 3
+fast = NULL
+</code></pre>
+
+<p>
+Now slow points to node <strong>3</strong>, which is immediately
+before the node that must be removed.
+</p>
+
+<h3>Step 4 — Delete Node</h3>
+
+<pre><code>
+slow.next = slow.next.next
+</code></pre>
+
+<p>
+Therefore:
+</p>
+
+<pre><code>
+3 → 4 → 5
+
+becomes
+
+3 → 5
+</code></pre>
+
+<h3>Final Result</h3>
+
+<pre><code>
+1 → 2 → 3 → 5 → NULL
+</code></pre>
+
+</div>
+
+
+<!-- PYTHON -->
+
+<div class="card">
+
+<h2>6. Python Implementation</h2>
+
+<pre><code>
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def remove_nth_from_end(head, n):
+
+    # Dummy node handles deletion of the head
+    dummy = Node(0)
+    dummy.next = head
+
+    slow = dummy
+    fast = dummy
+
+    # Move fast n + 1 positions
+    for _ in range(n + 1):
+        fast = fast.next
+
+    # Move both pointers
+    while fast is not None:
+        fast = fast.next
+        slow = slow.next
+
+    # Remove the n-th node from the end
+    slow.next = slow.next.next
+
+    return dummy.next
+
+
+def display(head):
+
+    current = head
+
+    while current is not None:
+        print(current.data, end=" -> ")
+        current = current.next
+
+    print("None")
+
+
+# Create linked list
+head = Node(1)
+head.next = Node(2)
+head.next.next = Node(3)
+head.next.next.next = Node(4)
+head.next.next.next.next = Node(5)
+
+
+print("Original List:")
+display(head)
+
+n = 2
+
+head = remove_nth_from_end(head, n)
+
+print("After Removing", n, "th Node From End:")
+display(head)
+</code></pre>
+
+
+<h3>Output</h3>
+
+<pre><code>
+Original List:
+1 -> 2 -> 3 -> 4 -> 5 -> None
+
+After Removing 2 th Node From End:
+1 -> 2 -> 3 -> 5 -> None
+</code></pre>
+
+</div>
+
+
+<!-- CODE EXPLANATION -->
+
+<div class="card">
+
+<h2>7. Explanation of Python Code</h2>
+
+<h3>Dummy Node</h3>
+
+<p>
+A dummy node is placed before the original head:
+</p>
+
+<pre><code>
+dummy → head
+</code></pre>
+
+<p>
+This makes the algorithm easier when the node to be removed is
+the first node of the list.
+</p>
+
+
+<h3>Fast Pointer</h3>
+
+<p>
+The fast pointer is moved <strong>n + 1</strong> positions ahead.
+This creates a gap of n nodes between fast and slow.
+</p>
+
+
+<h3>Move Both Pointers</h3>
+
+<pre><code>
+while fast is not None:
+    fast = fast.next
+    slow = slow.next
+</code></pre>
+
+<p>
+When fast reaches the end, slow is positioned immediately before
+the node that needs to be removed.
+</p>
+
+
+<h3>Delete the Node</h3>
+
+<pre><code>
+slow.next = slow.next.next
+</code></pre>
+
+<p>
+This bypasses the target node.
+The target node is no longer connected to the linked list.
+</p>
+
+
+<h3>Return the Head</h3>
+
+<pre><code>
+return dummy.next
+</code></pre>
+
+<p>
+The modified head is returned.
+</p>
+
+</div>
+
+
+<!-- EDGE CASES -->
+
+<div class="card">
+
+<h2>8. Important Cases</h2>
+
+<div class="example">
+
+<h3>Case 1 — Remove Last Node</h3>
+
+<pre><code>
+1 → 2 → 3 → 4 → 5
+
+n = 1
+
+Result:
+1 → 2 → 3 → 4
+</code></pre>
+
+</div>
+
+
+<div class="example">
+
+<h3>Case 2 — Remove First Node</h3>
+
+<pre><code>
+1 → 2 → 3 → 4 → 5
+
+n = 5
+
+Result:
+2 → 3 → 4 → 5
+</code></pre>
+
+</div>
+
+
+<div class="example">
+
+<h3>Case 3 — Single Node</h3>
+
+<pre><code>
+1
+
+n = 1
+
+Result:
+NULL
+</code></pre>
+
+</div>
+
+</div>
+
+
+<!-- COMPLEXITY -->
+
+<div class="card">
+
+<h2>9. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<div>Time Complexity</div>
+
+<strong>O(n)</strong>
+
+<p>
+The list is traversed once.
+</p>
+
+</div>
+
+
+<div class="complexity-box">
+
+<div>Space Complexity</div>
+
+<strong>O(1)</strong>
+
+<p>
+Only pointers are used.
+</p>
+
+</div>
+
+
+<div class="complexity-box">
+
+<div>Technique</div>
+
+<strong>Two Pointers</strong>
+
+<p>
+Fast and slow pointers.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- KEY POINTS -->
+
+<div class="card">
+
+<h2>10. Key Points to Remember</h2>
+
+<ul>
+
+<li>
+Use a <strong>dummy node</strong> before the head.
+</li>
+
+<li>
+Move <strong>fast n + 1 positions</strong> first.
+</li>
+
+<li>
+Move fast and slow together until fast becomes NULL.
+</li>
+
+<li>
+Slow will point to the node immediately before the target.
+</li>
+
+<li>
+Delete the node using:
+<code>slow.next = slow.next.next</code>
+</li>
+
+<li>
+Return <code>dummy.next</code>.
+</li>
+
+<li>
+The algorithm works even when the head itself must be removed.
+</li>
+
+<li>
+Time complexity is <strong>O(n)</strong>.
+</li>
+
+<li>
+Space complexity is <strong>O(1)</strong>.
+</li>
+
+</ul>
+
+</div>
+
+
+</div>
+
+
+<footer>
+
+ <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+
+</footer>
+
+
+<script>
+
+/*
+====================================================
+DATA
+====================================================
+*/
+
+const originalValues = [1, 2, 3, 4, 5];
+
+let values = [...originalValues];
+
+let n = 2;
+
+let fastIndex = 0;
+let slowIndex = 0;
+
+let phase = "initial";
+
+let finished = false;
+
+let targetIndex = -1;
+
+
+/*
+====================================================
+GET N
+====================================================
+*/
+
+function getN() {
+
+    const input =
+        document.getElementById("nInput");
+
+    n = parseInt(input.value);
+
+    if (isNaN(n) || n < 1 || n > values.length) {
+
+        n = 2;
+
+        input.value = n;
+    }
+}
+
+
+/*
+====================================================
+DRAW LIST
+====================================================
+*/
+
+function drawList() {
+
+    const list =
+        document.getElementById("list");
+
+    list.innerHTML = "";
+
+
+    for (let i = 0; i < values.length; i++) {
+
+        const wrapper =
+            document.createElement("div");
+
+        wrapper.className = "node-wrapper";
+
+
+        const node =
+            document.createElement("div");
+
+        node.className = "node";
+
+
+        /*
+        Fast pointer
+        */
+
+        if (!finished && i === fastIndex) {
+
+            node.classList.add("fast-node");
+
+            const tag =
+                document.createElement("div");
+
+            tag.className =
+                "pointer-tag fast-tag";
+
+            tag.textContent = "FAST";
+
+            node.appendChild(tag);
+        }
+
+
+        /*
+        Slow pointer
+        */
+
+        if (!finished && i === slowIndex) {
+
+            node.classList.add("slow-node");
+
+            const tag =
+                document.createElement("div");
+
+            tag.className =
+                "pointer-tag slow-tag";
+
+            tag.textContent = "SLOW";
+
+            node.appendChild(tag);
+        }
+
+
+        /*
+        Target node
+        */
+
+        if (finished && i === targetIndex) {
+
+            node.classList.add("delete-node");
+
+            const tag =
+                document.createElement("div");
+
+            tag.className =
+                "pointer-tag delete-tag";
+
+            tag.textContent = "REMOVED";
+
+            node.appendChild(tag);
+        }
+
+
+        /*
+        Head
+        */
+
+        if (i === 0 && !finished) {
+
+            const tag =
+                document.createElement("div");
+
+            tag.className =
+                "pointer-tag head-tag";
+
+            tag.textContent = "HEAD";
+
+            node.appendChild(tag);
+        }
+
+
+        const data =
+            document.createElement("div");
+
+        data.className = "node-data";
+
+        data.textContent = values[i];
+
+
+        const next =
+            document.createElement("div");
+
+        next.className = "node-next";
+
+
+        if (i === values.length - 1) {
+
+            next.textContent =
+                "next = NULL";
+
+        } else {
+
+            next.textContent =
+                "next → " + values[i + 1];
+        }
+
+
+        node.appendChild(data);
+
+        node.appendChild(next);
+
+        wrapper.appendChild(node);
+
+
+        if (i < values.length - 1) {
+
+            const arrow =
+                document.createElement("span");
+
+            arrow.className = "arrow";
+
+            arrow.textContent = "→";
+
+            wrapper.appendChild(arrow);
+        }
+
+
+        list.appendChild(wrapper);
+    }
+
+
+    if (values.length === 0) {
+
+        const empty =
+            document.createElement("div");
+
+        empty.style.fontSize = "20px";
+
+        empty.style.fontWeight = "bold";
+
+        empty.textContent =
+            "NULL — Empty List";
+
+        list.appendChild(empty);
+    }
+}
+
+
+/*
+====================================================
+NEXT STEP
+====================================================
+*/
+
+function nextStep() {
+
+    getN();
+
+
+    /*
+    Phase 1:
+    Move fast n positions.
+    */
+
+    if (phase === "initial") {
+
+        fastIndex = 0;
+
+        slowIndex = 0;
+
+        phase = "advanceFast";
+
+        document.getElementById("status").textContent =
+            "Starting: fast and slow are at the head.";
+
+        document.getElementById("explanation").innerHTML =
+            "<strong>Step 1:</strong> " +
+            "Both pointers start at the head. " +
+            "We now move FAST " + n +
+            " positions ahead.";
+
+        drawList();
+
+        return;
+    }
+
+
+    /*
+    Move fast ahead n positions.
+    */
+
+    if (phase === "advanceFast") {
+
+        if (fastIndex < n) {
+
+            fastIndex++;
+
+            if (fastIndex >= values.length) {
+
+                /*
+                Fast has reached NULL.
+                */
+
+                fastIndex = values.length;
+
+                phase = "moveTogether";
+
+            }
+
+            document.getElementById("status").textContent =
+                "FAST moved forward. Position = " +
+                fastIndex;
+
+            document.getElementById("explanation").innerHTML =
+                "<strong>FAST movement:</strong> " +
+                "FAST is being moved ahead by " +
+                n +
+                " positions to create the required gap.";
+
+            drawList();
+
+            return;
+        }
+
+        phase = "moveTogether";
+    }
+
+
+    /*
+    Move slow and fast together.
+    */
+
+    if (phase === "moveTogether") {
+
+        if (fastIndex < values.length) {
+
+            fastIndex++;
+
+            slowIndex++;
+
+            document.getElementById("status").textContent =
+                "FAST = " +
+                (fastIndex < values.length
+                    ? values[fastIndex]
+                    : "NULL") +
+                " | SLOW = " +
+                (slowIndex < values.length
+                    ? values[slowIndex]
+                    : "NULL");
+
+            document.getElementById("explanation").innerHTML =
+                "<strong>Move Together:</strong> " +
+                "FAST and SLOW move one position. " +
+                "The gap between them remains " +
+                n +
+                " nodes.";
+
+            drawList();
+
+            return;
+        }
+
+
+        /*
+        Fast reached NULL.
+        Slow is before target.
+        */
+
+        targetIndex = slowIndex;
+
+
+        /*
+        Target node is the next node.
+        */
+
+        targetIndex = slowIndex + 1;
+
+
+        phase = "delete";
+
+        document.getElementById("status").textContent =
+            "FAST reached NULL. Target node = " +
+            values[targetIndex];
+
+        document.getElementById("explanation").innerHTML =
+            "<strong>Target found:</strong> " +
+            "SLOW is at node " +
+            values[slowIndex] +
+            ". The next node, " +
+            values[targetIndex] +
+            ", is the n-th node from the end.";
+
+        drawList();
+
+        return;
+    }
+
+
+    /*
+    Delete target.
+    */
+
+    if (phase === "delete") {
+
+        const removedValue =
+            values[targetIndex];
+
+        values.splice(targetIndex, 1);
+
+        finished = true;
+
+        phase = "finished";
+
+        document.getElementById("status").textContent =
+            "Completed! Removed node = " +
+            removedValue;
+
+        document.getElementById("explanation").innerHTML =
+            "<strong>Deletion:</strong> " +
+            "Node " +
+            removedValue +
+            " has been removed. " +
+            "The new list is returned.";
+
+        document.getElementById("stepButton").disabled = true;
+
+        drawList();
+
+        return;
+    }
+}
+
+
+/*
+====================================================
+RUN AUTOMATICALLY
+====================================================
+*/
+
+function runAlgorithm() {
+
+    if (finished) {
+        return;
+    }
+
+    nextStep();
+
+    if (!finished) {
+
+        setTimeout(function() {
+
+            runAlgorithm();
+
+        }, 650);
+    }
+}
+
+
+/*
+====================================================
+RESET
+====================================================
+*/
+
+function resetVisualization() {
+
+    getN();
+
+    values = [...originalValues];
+
+    fastIndex = 0;
+
+    slowIndex = 0;
+
+    phase = "initial";
+
+    finished = false;
+
+    targetIndex = -1;
+
+
+    document.getElementById("stepButton").disabled =
+        false;
+
+
+    document.getElementById("status").textContent =
+        "Ready. Enter n and click 'Next Step'.";
+
+
+    document.getElementById("explanation").innerHTML =
+        "<strong>Initial State:</strong> " +
+        "Both fast and slow pointers start at the head.";
+
+
+    drawList();
+}
+
+
+/*
+====================================================
+INITIAL DISPLAY
+====================================================
+*/
+
+drawList();
+
+</script>
+
+</body>
+</html>

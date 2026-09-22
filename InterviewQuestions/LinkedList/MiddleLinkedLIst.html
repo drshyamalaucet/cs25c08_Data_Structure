@@ -1,0 +1,1114 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Middle Node of Singly Linked List</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f4f6f8;
+    color: #222;
+}
+
+header {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 28px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+header p {
+    font-size: 17px;
+    margin: 10px 0 0;
+}
+
+.container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 25px auto;
+}
+
+.card {
+    background: white;
+    margin-bottom: 25px;
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.10);
+}
+
+h2 {
+    color: #263238;
+    border-left: 5px solid #607d8b;
+    padding-left: 12px;
+}
+
+h3 {
+    color: #37474f;
+}
+
+p, li {
+    line-height: 1.7;
+}
+
+.problem {
+    font-size: 17px;
+}
+
+/* Visualization */
+
+.visual-area {
+    overflow-x: auto;
+    padding: 35px 10px 80px;
+    min-height: 300px;
+}
+
+.linked-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 800px;
+}
+
+.node-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.node {
+    width: 105px;
+    min-width: 105px;
+    border: 3px solid #455a64;
+    border-radius: 10px;
+    background: white;
+    text-align: center;
+    position: relative;
+    transition: 0.4s;
+}
+
+.node-data {
+    padding: 14px 5px;
+    font-size: 22px;
+    font-weight: bold;
+    background: #eceff1;
+}
+
+.node-next {
+    border-top: 2px solid #455a64;
+    padding: 8px;
+    font-size: 12px;
+}
+
+.arrow {
+    font-size: 30px;
+    margin: 0 10px;
+    color: #455a64;
+}
+
+.node.slow-node {
+    border: 4px solid #f0ad4e;
+    transform: translateY(-8px);
+}
+
+.node.fast-node {
+    border: 4px solid #17a2b8;
+    transform: translateY(8px);
+}
+
+.node.middle-node {
+    border: 4px solid #28a745;
+    transform: translateY(-8px);
+}
+
+.pointer-tag {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+}
+
+.slow-tag {
+    top: -34px;
+    background: #fff3cd;
+    color: #856404;
+}
+
+.fast-tag {
+    bottom: -34px;
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.middle-tag {
+    top: -34px;
+    background: #d4edda;
+    color: #155724;
+}
+
+.legend {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.legend span {
+    padding: 9px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.legend-slow {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.legend-fast {
+    background: #d1ecf1;
+    color: #0c5460;
+}
+
+.legend-middle {
+    background: #d4edda;
+    color: #155724;
+}
+
+.controls {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+button {
+    background: #455a64;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    opacity: 0.85;
+}
+
+button:disabled {
+    background: #aaa;
+    cursor: not-allowed;
+}
+
+.status {
+    background: #eceff1;
+    padding: 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+}
+
+.step-box {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 18px;
+    margin-top: 15px;
+    line-height: 1.7;
+}
+
+/* Code */
+
+pre {
+    background: #263238;
+    color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    overflow-x: auto;
+    line-height: 1.55;
+    font-size: 14px;
+}
+
+code {
+    font-family: Consolas, "Courier New", monospace;
+}
+
+/* Complexity */
+
+.complexity {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.complexity-box {
+    flex: 1;
+    min-width: 220px;
+    background: #eceff1;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.complexity-box strong {
+    display: block;
+    font-size: 24px;
+    margin: 8px;
+}
+
+.example {
+    background: #f8f9fa;
+    padding: 18px;
+    border-radius: 8px;
+    margin: 12px 0;
+}
+
+.highlight {
+    font-weight: bold;
+    color: #37474f;
+}
+
+footer {
+    background: #263238;
+    color: white;
+    text-align: center;
+    padding: 20px;
+    margin-top: 30px;
+}
+
+@media(max-width: 700px) {
+
+    header h1 {
+        font-size: 25px;
+    }
+
+    .card {
+        padding: 17px;
+    }
+
+    .linked-list {
+        justify-content: flex-start;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>Find the Middle Node</h1>
+    <p>Singly Linked List — Slow & Fast Pointer Technique</p>
+</header>
+
+<div class="container">
+
+<!-- PROBLEM -->
+
+<div class="card">
+
+<h2>1. Problem Statement</h2>
+
+<p class="problem">
+Given the head of a singly linked list, return the middle node.
+If the list contains two middle nodes, return the
+<strong>second middle node</strong>.
+</p>
+
+<div class="example">
+
+<h3>Odd Number of Nodes</h3>
+
+<pre><code>
+10 → 20 → 30 → 40 → 50 → NULL
+
+Middle Node = 30
+</code></pre>
+
+</div>
+
+<div class="example">
+
+<h3>Even Number of Nodes</h3>
+
+<pre><code>
+10 → 20 → 30 → 40 → 50 → 60 → NULL
+
+Middle Nodes = 30 and 40
+
+Return = 40
+(second middle node)
+</code></pre>
+
+</div>
+
+</div>
+
+
+<!-- VISUALIZATION -->
+
+<div class="card">
+
+<h2>2. Interactive Visualization</h2>
+
+<p>
+The algorithm uses two pointers:
+</p>
+
+<ul>
+<li><strong>Slow pointer:</strong> moves one node at a time.</li>
+<li><strong>Fast pointer:</strong> moves two nodes at a time.</li>
+</ul>
+
+<div class="visual-area">
+
+<div id="list" class="linked-list"></div>
+
+</div>
+
+<div class="legend">
+
+<span class="legend-slow">
+SLOW — moves 1 step
+</span>
+
+<span class="legend-fast">
+FAST — moves 2 steps
+</span>
+
+<span class="legend-middle">
+MIDDLE — answer
+</span>
+
+</div>
+
+<div class="controls">
+
+<button onclick="resetVisualization()">
+Reset
+</button>
+
+<button onclick="nextStep()" id="stepButton">
+Next Step
+</button>
+
+<button onclick="runAlgorithm()" id="runButton">
+Run Automatically
+</button>
+
+</div>
+
+<div id="status" class="status">
+Ready. Click "Next Step" to start.
+</div>
+
+<div id="explanation" class="step-box">
+
+<strong>Initial State:</strong>
+
+Both slow and fast pointers start at the head node.
+
+</div>
+
+</div>
+
+
+<!-- ALGORITHM -->
+
+<div class="card">
+
+<h2>3. Algorithm</h2>
+
+<ol>
+
+<li>
+Initialize <code>slow = head</code>.
+</li>
+
+<li>
+Initialize <code>fast = head</code>.
+</li>
+
+<li>
+Move slow by one node:
+<code>slow = slow.next</code>.
+</li>
+
+<li>
+Move fast by two nodes:
+<code>fast = fast.next.next</code>.
+</li>
+
+<li>
+Continue while
+<code>fast != None</code> and
+<code>fast.next != None</code>.
+</li>
+
+<li>
+When the loop ends, <code>slow</code> points to the middle node.
+</li>
+
+<li>
+Return <code>slow</code>.
+</li>
+
+</ol>
+
+</div>
+
+
+<!-- PSEUDOCODE -->
+
+<div class="card">
+
+<h2>4. Pseudocode</h2>
+
+<pre><code>
+FIND_MIDDLE(head)
+
+    slow ← head
+    fast ← head
+
+    WHILE fast ≠ NULL
+          AND fast.next ≠ NULL
+
+        slow ← slow.next
+        fast ← fast.next.next
+
+    RETURN slow
+</code></pre>
+
+</div>
+
+
+<!-- STEP EXPLANATION -->
+
+<div class="card">
+
+<h2>5. Step-by-Step Example</h2>
+
+<h3>Initial List</h3>
+
+<pre><code>
+10 → 20 → 30 → 40 → 50 → 60 → NULL
+
+slow = 10
+fast = 10
+</code></pre>
+
+<h3>Step 1</h3>
+
+<pre><code>
+slow moves 1 step:
+slow = 20
+
+fast moves 2 steps:
+fast = 30
+</code></pre>
+
+<h3>Step 2</h3>
+
+<pre><code>
+slow moves 1 step:
+slow = 30
+
+fast moves 2 steps:
+fast = 50
+</code></pre>
+
+<h3>Step 3</h3>
+
+<pre><code>
+slow moves 1 step:
+slow = 40
+
+fast moves 2 steps:
+fast = NULL
+</code></pre>
+
+<p>
+Since <code>fast</code> has reached the end,
+<strong>slow = 40</strong>.
+Therefore, 40 is returned.
+</p>
+
+</div>
+
+
+<!-- PYTHON -->
+
+<div class="card">
+
+<h2>6. Python Implementation</h2>
+
+<pre><code>
+class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+
+def middle_node(head):
+
+    slow = head
+    fast = head
+
+    while fast is not None and fast.next is not None:
+
+        # Move slow by one node
+        slow = slow.next
+
+        # Move fast by two nodes
+        fast = fast.next.next
+
+    return slow
+
+
+def display(head):
+
+    current = head
+
+    while current is not None:
+        print(current.data, end=" -> ")
+        current = current.next
+
+    print("None")
+
+
+# Create linked list
+head = Node(10)
+head.next = Node(20)
+head.next.next = Node(30)
+head.next.next.next = Node(40)
+head.next.next.next.next = Node(50)
+head.next.next.next.next.next = Node(60)
+
+
+print("Linked List:")
+display(head)
+
+
+# Find middle
+middle = middle_node(head)
+
+print("Middle Node:", middle.data)
+</code></pre>
+
+<h3>Output</h3>
+
+<pre><code>
+Linked List:
+10 -> 20 -> 30 -> 40 -> 50 -> 60 -> None
+
+Middle Node: 40
+</code></pre>
+
+</div>
+
+
+<!-- CODE EXPLANATION -->
+
+<div class="card">
+
+<h2>7. Explanation of Python Code</h2>
+
+<h3>Node Class</h3>
+
+<p>
+The <code>Node</code> class represents one node of the linked list.
+Each node contains:
+</p>
+
+<ul>
+<li><code>data</code> — stores the value.</li>
+<li><code>next</code> — points to the next node.</li>
+</ul>
+
+
+<h3>Slow Pointer</h3>
+
+<p>
+The slow pointer moves one node at a time:
+</p>
+
+<pre><code>
+slow = slow.next
+</code></pre>
+
+
+<h3>Fast Pointer</h3>
+
+<p>
+The fast pointer moves two nodes at a time:
+</p>
+
+<pre><code>
+fast = fast.next.next
+</code></pre>
+
+
+<h3>Why Does It Work?</h3>
+
+<p>
+Because fast moves twice as quickly as slow, fast reaches the end
+when slow has travelled approximately half of the list.
+Therefore, slow is positioned at the middle.
+</p>
+
+</div>
+
+
+<!-- EVEN LIST -->
+
+<div class="card">
+
+<h2>8. Why Does It Return the Second Middle?</h2>
+
+<p>
+Consider an even-sized list:
+</p>
+
+<pre><code>
+10 → 20 → 30 → 40 → 50 → 60
+</code></pre>
+
+<p>
+There are two middle nodes:
+</p>
+
+<pre><code>
+10 → 20 → [30] → [40] → 50 → 60
+             ↑      ↑
+          first    second
+          middle   middle
+</code></pre>
+
+<p>
+Since both pointers start at the head and the loop moves
+<code>slow</code> before checking the final position,
+the slow pointer ends at <strong>40</strong>.
+Thus the algorithm returns the <strong>second middle node</strong>.
+</p>
+
+</div>
+
+
+<!-- COMPLEXITY -->
+
+<div class="card">
+
+<h2>9. Complexity Analysis</h2>
+
+<div class="complexity">
+
+<div class="complexity-box">
+
+<div>Time Complexity</div>
+
+<strong>O(n)</strong>
+
+<p>
+The list is traversed once.
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<div>Space Complexity</div>
+
+<strong>O(1)</strong>
+
+<p>
+Only two pointers are used.
+</p>
+
+</div>
+
+<div class="complexity-box">
+
+<div>Technique</div>
+
+<strong>Two Pointers</strong>
+
+<p>
+Slow and fast pointers.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- KEY POINTS -->
+
+<div class="card">
+
+<h2>10. Key Points</h2>
+
+<ul>
+
+<li>
+Use the <strong>slow and fast pointer technique</strong>.
+</li>
+
+<li>
+Slow moves one step at a time.
+</li>
+
+<li>
+Fast moves two steps at a time.
+</li>
+
+<li>
+When fast reaches the end, slow is at the middle.
+</li>
+
+<li>
+For an even-length list, this implementation returns the
+<strong>second middle node</strong>.
+</li>
+
+<li>
+No extra array or list is required.
+</li>
+
+<li>
+Time complexity is <strong>O(n)</strong>.
+</li>
+
+<li>
+Space complexity is <strong>O(1)</strong>.
+</li>
+
+</ul>
+
+</div>
+
+</div>
+
+
+<footer>
+
+<p>
+ <h3>Data Structures  – Interview Programs </h3>
+    <p> Copyright © Dr.R.Shyamala.,M.E.,Ph.D.,</p>
+    <p> For Suggestions & Queries - shyamala@aucet.in</p>
+</p>
+
+<p>
+Finding Middle Node using Slow & Fast Pointers
+</p>
+
+</footer>
+
+
+<script>
+
+/*
+==================================================
+DATA
+==================================================
+*/
+
+const values = [10, 20, 30, 40, 50, 60];
+
+let slowIndex = 0;
+let fastIndex = 0;
+
+let finished = false;
+
+
+/*
+==================================================
+DRAW LIST
+==================================================
+*/
+
+function drawList() {
+
+    const list = document.getElementById("list");
+
+    list.innerHTML = "";
+
+    for (let i = 0; i < values.length; i++) {
+
+        const wrapper = document.createElement("div");
+
+        wrapper.className = "node-wrapper";
+
+
+        const node = document.createElement("div");
+
+        node.className = "node";
+
+
+        /*
+        Highlight slow pointer
+        */
+
+        if (!finished && i === slowIndex) {
+
+            node.classList.add("slow-node");
+
+            const tag = document.createElement("div");
+
+            tag.className = "pointer-tag slow-tag";
+
+            tag.textContent = "SLOW";
+
+            node.appendChild(tag);
+        }
+
+
+        /*
+        Highlight fast pointer
+        */
+
+        if (!finished && i === fastIndex) {
+
+            node.classList.add("fast-node");
+
+            const tag = document.createElement("div");
+
+            tag.className = "pointer-tag fast-tag";
+
+            tag.textContent = "FAST";
+
+            node.appendChild(tag);
+        }
+
+
+        /*
+        Highlight final middle
+        */
+
+        if (finished && i === slowIndex) {
+
+            node.classList.add("middle-node");
+
+            const tag = document.createElement("div");
+
+            tag.className = "pointer-tag middle-tag";
+
+            tag.textContent = "MIDDLE";
+
+            node.appendChild(tag);
+        }
+
+
+        const data = document.createElement("div");
+
+        data.className = "node-data";
+
+        data.textContent = values[i];
+
+
+        const next = document.createElement("div");
+
+        next.className = "node-next";
+
+
+        if (i === values.length - 1) {
+
+            next.textContent = "next = NULL";
+
+        } else {
+
+            next.textContent =
+                "next → " + values[i + 1];
+
+        }
+
+
+        node.appendChild(data);
+
+        node.appendChild(next);
+
+        wrapper.appendChild(node);
+
+
+        /*
+        Arrow
+        */
+
+        if (i < values.length - 1) {
+
+            const arrow =
+                document.createElement("span");
+
+            arrow.className = "arrow";
+
+            arrow.textContent = "→";
+
+            wrapper.appendChild(arrow);
+        }
+
+
+        list.appendChild(wrapper);
+    }
+}
+
+
+/*
+==================================================
+NEXT STEP
+==================================================
+*/
+
+function nextStep() {
+
+    if (finished) {
+        return;
+    }
+
+
+    /*
+    Check whether another movement is possible.
+    */
+
+    if (
+        fastIndex + 1 >= values.length ||
+        fastIndex + 2 >= values.length
+    ) {
+
+        finished = true;
+
+        document.getElementById("status").textContent =
+            "Completed! Middle node = " +
+            values[slowIndex];
+
+        document.getElementById("explanation").innerHTML =
+            "<strong>Answer:</strong> The slow pointer is now at " +
+            values[slowIndex] +
+            ", so this is the middle node.";
+
+        document.getElementById("stepButton").disabled = true;
+
+        drawList();
+
+        return;
+    }
+
+
+    /*
+    Move slow by one position.
+    */
+
+    slowIndex = slowIndex + 1;
+
+
+    /*
+    Move fast by two positions.
+    */
+
+    fastIndex = fastIndex + 2;
+
+
+    document.getElementById("status").textContent =
+        "Slow = " + values[slowIndex] +
+        " | Fast = " + values[fastIndex];
+
+
+    document.getElementById("explanation").innerHTML =
+        "<strong>Pointer movement:</strong> " +
+        "Slow moved one node to " +
+        values[slowIndex] +
+        " and Fast moved two nodes to " +
+        values[fastIndex] +
+        ".";
+
+
+    drawList();
+}
+
+
+/*
+==================================================
+RUN AUTOMATICALLY
+==================================================
+*/
+
+function runAlgorithm() {
+
+    if (finished) {
+        return;
+    }
+
+    nextStep();
+
+    if (!finished) {
+
+        setTimeout(function() {
+            runAlgorithm();
+        }, 700);
+    }
+}
+
+
+/*
+==================================================
+RESET
+==================================================
+*/
+
+function resetVisualization() {
+
+    slowIndex = 0;
+
+    fastIndex = 0;
+
+    finished = false;
+
+
+    document.getElementById("stepButton").disabled = false;
+
+
+    document.getElementById("status").textContent =
+        "Ready. Click 'Next Step' to start.";
+
+
+    document.getElementById("explanation").innerHTML =
+        "<strong>Initial State:</strong> " +
+        "Both slow and fast pointers start at the head node.";
+
+
+    drawList();
+}
+
+
+/*
+==================================================
+INITIAL DISPLAY
+==================================================
+*/
+
+drawList();
+
+</script>
+
+</body>
+</html>

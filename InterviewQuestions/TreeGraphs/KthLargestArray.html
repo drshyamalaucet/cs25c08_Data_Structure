@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>K-th Largest Element in an Unsorted Array</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0;
+        padding: 25px;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .subtitle {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        margin-bottom: 22px;
+        box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    }
+
+    h2 {
+        margin-top: 0;
+        padding-bottom: 8px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    h3 {
+        margin-bottom: 8px;
+    }
+
+    .problem {
+        line-height: 1.7;
+    }
+
+    .example {
+        background: #f8fafc;
+        border-left: 5px solid #4f46e5;
+        padding: 15px;
+        border-radius: 7px;
+        line-height: 1.7;
+        margin-top: 15px;
+    }
+
+    .input-area {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: end;
+        gap: 12px;
+        margin-bottom: 20px;
+    }
+
+    .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    label {
+        font-weight: bold;
+    }
+
+    input {
+        padding: 10px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 16px;
+    }
+
+    #arrayInput {
+        width: 300px;
+    }
+
+    #kInput {
+        width: 80px;
+    }
+
+    button {
+        border: none;
+        padding: 11px 18px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 15px;
+        font-weight: bold;
+        background: #4f46e5;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .auto {
+        background: #059669;
+    }
+
+    .reset {
+        background: #64748b;
+    }
+
+    .stats {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .stat {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 14px;
+        text-align: center;
+    }
+
+    .stat strong {
+        display: block;
+        font-size: 23px;
+        margin-top: 5px;
+    }
+
+    .array-container {
+        background: #f8fafc;
+        border-radius: 10px;
+        padding: 25px;
+        min-height: 180px;
+        overflow-x: auto;
+    }
+
+    .array {
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 10px;
+        min-width: max-content;
+    }
+
+    .array-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .index {
+        font-size: 13px;
+        color: #64748b;
+    }
+
+    .box {
+        width: 60px;
+        height: 60px;
+        border: 3px solid #334155;
+        border-radius: 8px;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        font-weight: bold;
+        transition: all 0.25s ease;
+    }
+
+    .box.pivot {
+        background: #fde68a;
+        border-color: #d97706;
+        transform: translateY(-8px);
+    }
+
+    .box.compare {
+        background: #bfdbfe;
+        border-color: #2563eb;
+        transform: translateY(-8px);
+    }
+
+    .box.active {
+        background: #ddd6fe;
+        border-color: #7c3aed;
+    }
+
+    .box.placed {
+        background: #bbf7d0;
+        border-color: #16a34a;
+    }
+
+    .box.answer {
+        background: #86efac;
+        border-color: #15803d;
+        transform: translateY(-10px) scale(1.08);
+    }
+
+    .pointer {
+        font-size: 12px;
+        font-weight: bold;
+        min-height: 16px;
+    }
+
+    .status {
+        margin-top: 15px;
+        padding: 15px;
+        border-radius: 8px;
+        background: #eef2ff;
+        border-left: 5px solid #4f46e5;
+        min-height: 50px;
+        line-height: 1.5;
+    }
+
+    .success {
+        background: #dcfce7;
+        border-left-color: #16a34a;
+    }
+
+    .warning {
+        background: #fef3c7;
+        border-left-color: #d97706;
+    }
+
+    .formula {
+        background: #f1f5f9;
+        padding: 13px;
+        border-radius: 7px;
+        font-family: Consolas, monospace;
+        margin: 10px 0;
+    }
+
+    pre {
+        background: #111827;
+        color: #e5e7eb;
+        padding: 18px;
+        border-radius: 8px;
+        overflow-x: auto;
+        line-height: 1.5;
+    }
+
+    code {
+        font-family: Consolas, monospace;
+    }
+
+    .two-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+    }
+
+    .observation {
+        padding: 15px;
+        background: #f8fafc;
+        border-left: 4px solid #0ea5e9;
+        margin: 10px 0;
+        line-height: 1.6;
+    }
+
+    .method {
+        padding: 18px;
+        border: 1px solid #e5e7eb;
+        border-radius: 9px;
+        margin-bottom: 15px;
+    }
+
+    .method h3 {
+        margin-top: 0;
+    }
+
+    @media (max-width: 800px) {
+        body {
+            padding: 12px;
+        }
+
+        .stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .two-column {
+            grid-template-columns: 1fr;
+        }
+
+        #arrayInput {
+            width: 240px;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>🔢 K-th Largest Element in an Unsorted Array</h1>
+
+    <div class="subtitle">
+        Interactive Quickselect Visualization + Python Implementation
+    </div>
+
+
+    <!-- =====================================================
+         1. Problem Statement
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>1. Problem Statement</h2>
+
+        <div class="problem">
+            Given an unsorted array of integers, find the
+            <strong>k-th largest element</strong>.
+        </div>
+
+        <div class="example">
+
+            <strong>Important:</strong>
+
+            The answer is based on sorted order, and the element does
+            <strong>not</strong> have to be distinct.
+
+            <br><br>
+
+            Example:
+
+            <div class="formula">
+                nums = [3, 2, 1, 5, 6, 4]
+            </div>
+
+            For:
+
+            <div class="formula">
+                k = 2
+            </div>
+
+            Sort in descending order:
+
+            <div class="formula">
+                6, 5, 4, 3, 2, 1
+            </div>
+
+            Therefore:
+
+            <div class="formula">
+                2nd largest = 5
+            </div>
+
+        </div>
+
+        <div class="observation">
+            <strong>Duplicates count.</strong>
+            For example, in
+            [3, 2, 3, 1, 2, 4, 5, 5, 6],
+            the 4th largest element is 5, because the sorted descending
+            sequence is 6, 5, 5, 4, 3, 3, 2, 2, 1.
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         2. Interactive Visualization
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>2. Interactive Quickselect Visualization</h2>
+
+        <div class="input-area">
+
+            <div class="input-group">
+
+                <label for="arrayInput">
+                    Array
+                </label>
+
+                <input
+                    id="arrayInput"
+                    type="text"
+                    value="3, 2, 1, 5, 6, 4"
+                >
+
+            </div>
+
+            <div class="input-group">
+
+                <label for="kInput">
+                    k
+                </label>
+
+                <input
+                    id="kInput"
+                    type="number"
+                    min="1"
+                    value="2"
+                >
+
+            </div>
+
+            <button id="startBtn">
+                ▶ Start
+            </button>
+
+            <button id="nextBtn">
+                ➡ Next Step
+            </button>
+
+            <button id="autoBtn" class="auto">
+                ⏩ Auto Run
+            </button>
+
+            <button id="resetBtn" class="reset">
+                ↺ Reset
+            </button>
+
+        </div>
+
+
+        <div class="stats">
+
+            <div class="stat">
+                k
+                <strong id="kDisplay">2</strong>
+            </div>
+
+            <div class="stat">
+                Target Index
+                <strong id="targetDisplay">4</strong>
+            </div>
+
+            <div class="stat">
+                Pivot
+                <strong id="pivotDisplay">—</strong>
+            </div>
+
+            <div class="stat">
+                Answer
+                <strong id="answerDisplay">—</strong>
+            </div>
+
+        </div>
+
+
+        <div class="array-container">
+
+            <div id="arrayVisual" class="array"></div>
+
+        </div>
+
+
+        <div id="status" class="status">
+
+            Click <strong>Start</strong> to begin.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         3. Important Transformation
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>3. Convert K-th Largest to K-th Smallest Position</h2>
+
+        <p>
+            Quickselect is normally described using a target index in
+            ascending order.
+        </p>
+
+        <div class="formula">
+            targetIndex = n - k
+        </div>
+
+        <p>
+            For:
+        </p>
+
+        <div class="formula">
+            nums = [3, 2, 1, 5, 6, 4]
+            <br>
+            n = 6
+            <br>
+            k = 2
+            <br>
+            targetIndex = 6 - 2 = 4
+        </div>
+
+        <p>
+            The element at index 4 in the sorted array is
+            <strong>5</strong>.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         4. Quickselect Algorithm
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>4. Quickselect Algorithm</h2>
+
+        <ol>
+
+            <li>
+                Convert k-th largest into an ascending target index:
+                <strong>n - k</strong>.
+            </li>
+
+            <li>
+                Choose a pivot.
+            </li>
+
+            <li>
+                Partition the array around the pivot.
+            </li>
+
+            <li>
+                If the pivot reaches the target index, we have the answer.
+            </li>
+
+            <li>
+                If the target index is smaller, continue on the left.
+            </li>
+
+            <li>
+                If the target index is larger, continue on the right.
+            </li>
+
+        </ol>
+
+    </div>
+
+
+    <!-- =====================================================
+         5. Pseudocode
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>5. Pseudocode – Quickselect</h2>
+
+<pre><code>FUNCTION findKthLargest(nums, k):
+
+    target = length(nums) - k
+
+    RETURN quickSelect(nums, 0, length(nums) - 1, target)
+
+
+FUNCTION quickSelect(nums, left, right, target):
+
+    IF left == right:
+        RETURN nums[left]
+
+    pivotIndex = partition(nums, left, right)
+
+    IF pivotIndex == target:
+        RETURN nums[pivotIndex]
+
+    ELSE IF target &lt; pivotIndex:
+        RETURN quickSelect(
+            nums, left, pivotIndex - 1, target
+        )
+
+    ELSE:
+        RETURN quickSelect(
+            nums, pivotIndex + 1, right, target
+        )</code></pre>
+
+    </div>
+
+
+    <!-- =====================================================
+         6. Python Quickselect
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>6. Python Implementation – Quickselect</h2>
+
+<pre><code>def findKthLargest(nums, k):
+
+    target = len(nums) - k
+
+    def quickselect(left, right):
+
+        pivot = nums[right]
+        store_index = left
+
+        for i in range(left, right):
+
+            if nums[i] &lt;= pivot:
+                nums[store_index], nums[i] = \
+                    nums[i], nums[store_index]
+
+                store_index += 1
+
+        nums[store_index], nums[right] = \
+            nums[right], nums[store_index]
+
+        if store_index == target:
+            return nums[store_index]
+
+        elif store_index &gt; target:
+            return quickselect(left, store_index - 1)
+
+        else:
+            return quickselect(store_index + 1, right)
+
+    return quickselect(0, len(nums) - 1)</code></pre>
+
+    </div>
+
+
+    <!-- =====================================================
+         7. Sorting Solution
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>7. Simple Python Solution Using Sorting</h2>
+
+<pre><code>def findKthLargest(nums, k):
+
+    nums.sort(reverse=True)
+
+    return nums[k - 1]</code></pre>
+
+        <div class="observation">
+
+            This is the easiest solution to understand.
+            It explicitly sorts the array in descending order and
+            returns the element at position <strong>k - 1</strong>.
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         8. Heap Solution
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>8. Python Solution Using a Min-Heap</h2>
+
+<pre><code>import heapq
+
+def findKthLargest(nums, k):
+
+    heap = []
+
+    for num in nums:
+
+        heapq.heappush(heap, num)
+
+        if len(heap) &gt; k:
+            heapq.heappop(heap)
+
+    return heap[0]</code></pre>
+
+        <p>
+            The heap stores only the k largest elements encountered so far.
+            The smallest of those k elements is the k-th largest overall.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         9. Example Walkthrough
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>9. Example Walkthrough</h2>
+
+        <h3>Input</h3>
+
+        <div class="formula">
+            nums = [3, 2, 1, 5, 6, 4]
+            <br>
+            k = 2
+        </div>
+
+        <h3>Sorted Order</h3>
+
+        <div class="formula">
+            Descending:
+            6 → 5 → 4 → 3 → 2 → 1
+        </div>
+
+        <p>
+            Position 1 → 6
+        </p>
+
+        <p>
+            Position 2 → <strong>5</strong>
+        </p>
+
+        <div class="formula">
+            Answer = 5
+        </div>
+
+        <hr>
+
+        <h3>Quickselect View</h3>
+
+        <p>
+            Number of elements:
+            <strong>n = 6</strong>
+        </p>
+
+        <p>
+            k = 2
+        </p>
+
+        <div class="formula">
+            target = n - k
+                   = 6 - 2
+                   = 4
+        </div>
+
+        <p>
+            Quickselect searches for index 4 in ascending order.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         10. Complexity
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>10. Complexity Analysis</h2>
+
+        <div class="method">
+
+            <h3>Sorting</h3>
+
+            <div class="formula">
+                Time: O(N log N)
+                <br>
+                Space: O(1) to O(N), depending on sorting implementation
+            </div>
+
+        </div>
+
+        <div class="method">
+
+            <h3>Quickselect</h3>
+
+            <div class="formula">
+                Average Time: O(N)
+                <br>
+                Worst Time: O(N²)
+                <br>
+                Extra Space: O(1) for iterative partitioning
+            </div>
+
+        </div>
+
+        <div class="method">
+
+            <h3>Min-Heap</h3>
+
+            <div class="formula">
+                Time: O(N log K)
+                <br>
+                Space: O(K)
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         11. Important Observations
+    ====================================================== -->
+
+    <div class="card">
+
+        <h2>11. Important Observations</h2>
+
+        <div class="observation">
+
+            <strong>1. Duplicates are included.</strong>
+            The problem asks for the k-th element in sorted order,
+            not the k-th distinct element.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>2. k is 1-indexed.</strong>
+            k = 1 means the largest element.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>3. Conversion:</strong>
+            K-th largest corresponds to index
+            <strong>N - K</strong> in ascending zero-based order.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>4. Quickselect:</strong>
+            It does not completely sort the array.
+            It only determines which partition contains the target.
+
+        </div>
+
+        <div class="observation">
+
+            <strong>5. Choosing a good pivot</strong>
+            helps Quickselect achieve its expected linear-time behavior.
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+"use strict";
+
+
+/* =====================================================
+   Global State
+===================================================== */
+
+let originalArray = [];
+let workingArray = [];
+
+let k = 2;
+let targetIndex = 4;
+
+let steps = [];
+let currentStep = -1;
+
+let autoTimer = null;
+
+
+/* =====================================================
+   DOM Elements
+===================================================== */
+
+const arrayInput =
+    document.getElementById("arrayInput");
+
+const kInput =
+    document.getElementById("kInput");
+
+const arrayVisual =
+    document.getElementById("arrayVisual");
+
+const statusBox =
+    document.getElementById("status");
+
+
+/* =====================================================
+   Parse Input
+===================================================== */
+
+function parseArray() {
+
+    return arrayInput.value
+        .split(",")
+        .map(value => Number(value.trim()))
+        .filter(value => !Number.isNaN(value));
+
+}
+
+
+/* =====================================================
+   Render Array
+===================================================== */
+
+function renderArray(
+    pivotIndex = -1,
+    compareIndex = -1,
+    activeLeft = -1,
+    activeRight = -1,
+    answerIndex = -1
+) {
+
+    arrayVisual.innerHTML = "";
+
+    workingArray.forEach((value, index) => {
+
+        const item =
+            document.createElement("div");
+
+        item.className = "array-item";
+
+
+        const pointer =
+            document.createElement("div");
+
+        pointer.className = "pointer";
+
+
+        if (index === pivotIndex) {
+            pointer.textContent = "PIVOT";
+        }
+        else if (index === compareIndex) {
+            pointer.textContent = "COMPARE";
+        }
+        else if (index === activeLeft) {
+            pointer.textContent = "LEFT";
+        }
+        else if (index === activeRight) {
+            pointer.textContent = "RIGHT";
+        }
+        else {
+            pointer.textContent = "";
+        }
+
+
+        const box =
+            document.createElement("div");
+
+        box.className = "box";
+
+        if (index === answerIndex) {
+
+            box.classList.add("answer");
+
+        }
+        else if (index === pivotIndex) {
+
+            box.classList.add("pivot");
+
+        }
+        else if (index === compareIndex) {
+
+            box.classList.add("compare");
+
+        }
+        else if (
+            index >= activeLeft &&
+            index <= activeRight &&
+            activeLeft !== -1 &&
+            activeRight !== -1
+        ) {
+
+            box.classList.add("active");
+
+        }
+
+
+        box.textContent = value;
+
+
+        const indexLabel =
+            document.createElement("div");
+
+        indexLabel.className = "index";
+
+        indexLabel.textContent =
+            "index " + index;
+
+
+        item.appendChild(pointer);
+        item.appendChild(box);
+        item.appendChild(indexLabel);
+
+        arrayVisual.appendChild(item);
+
+    });
+
+}
+
+
+/* =====================================================
+   Add Step
+===================================================== */
+
+function addStep(data) {
+
+    steps.push(data);
+
+}
+
+
+/* =====================================================
+   Build Quickselect Steps
+===================================================== */
+
+function buildSteps() {
+
+    steps = [];
+
+    const arr = [...originalArray];
+
+    const target = arr.length - k;
+
+
+    function partition(left, right) {
+
+        const pivot = arr[right];
+
+        let storeIndex = left;
+
+
+        addStep({
+            type: "pivot",
+            array: [...arr],
+            pivotIndex: right,
+            left: left,
+            right: right,
+            pivot: pivot
+        });
+
+
+        for (let i = left; i < right; i++) {
+
+            addStep({
+                type: "compare",
+                array: [...arr],
+                pivotIndex: right,
+                compareIndex: i,
+                left: left,
+                right: right,
+                pivot: pivot
+            });
+
+
+            if (arr[i] <= pivot) {
+
+                [
+                    arr[storeIndex],
+                    arr[i]
+                ] = [
+                    arr[i],
+                    arr[storeIndex]
+                ];
+
+
+                addStep({
+                    type: "swap",
+                    array: [...arr],
+                    pivotIndex: right,
+                    compareIndex: i,
+                    activeIndex: storeIndex,
+                    left: left,
+                    right: right,
+                    pivot: pivot
+                });
+
+
+                storeIndex++;
+
+            }
+
+        }
+
+
+        [
+            arr[storeIndex],
+            arr[right]
+        ] = [
+            arr[right],
+            arr[storeIndex]
+        ];
+
+
+        addStep({
+            type: "placed",
+            array: [...arr],
+            pivotIndex: storeIndex,
+            left: left,
+            right: right,
+            pivot: arr[storeIndex]
+        });
+
+
+        if (storeIndex === target) {
+
+            addStep({
+                type: "answer",
+                array: [...arr],
+                answerIndex: storeIndex,
+                answer: arr[storeIndex]
+            });
+
+            return;
+
+        }
+
+
+        if (storeIndex > target) {
+
+            addStep({
+                type: "leftSearch",
+                array: [...arr],
+                left: left,
+                right: storeIndex - 1,
+                pivotIndex: storeIndex
+            });
+
+            partition(
+                left,
+                storeIndex - 1
+            );
+
+        }
+        else {
+
+            addStep({
+                type: "rightSearch",
+                array: [...arr],
+                left: storeIndex + 1,
+                right: right,
+                pivotIndex: storeIndex
+            });
+
+            partition(
+                storeIndex + 1,
+                right
+            );
+
+        }
+
+    }
+
+
+    partition(
+        0,
+        arr.length - 1
+    );
+
+}
+
+
+/* =====================================================
+   Start
+===================================================== */
+
+function startAlgorithm() {
+
+    stopAuto();
+
+    originalArray = parseArray();
+
+    k = Number(kInput.value);
+
+
+    if (originalArray.length === 0) {
+
+        statusBox.className =
+            "status warning";
+
+        statusBox.innerHTML =
+            "Please enter a valid array.";
+
+        return;
+
+    }
+
+
+    if (
+        !Number.isInteger(k) ||
+        k < 1 ||
+        k > originalArray.length
+    ) {
+
+        statusBox.className =
+            "status warning";
+
+        statusBox.innerHTML =
+            `Please enter k between
+             <strong>1</strong> and
+             <strong>${originalArray.length}</strong>.`;
+
+        return;
+
+    }
+
+
+    workingArray =
+        [...originalArray];
+
+    targetIndex =
+        workingArray.length - k;
+
+
+    document.getElementById("kDisplay").textContent =
+        k;
+
+    document.getElementById("targetDisplay").textContent =
+        targetIndex;
+
+    document.getElementById("pivotDisplay").textContent =
+        "—";
+
+    document.getElementById("answerDisplay").textContent =
+        "—";
+
+
+    buildSteps();
+
+    currentStep = -1;
+
+    renderArray();
+
+
+    statusBox.className =
+        "status";
+
+    statusBox.innerHTML =
+        `Ready to find the
+         <strong>${k}th largest</strong> element.
+         Target ascending index =
+         <strong>${targetIndex}</strong>.`;
+
+}
+
+
+/* =====================================================
+   Next Step
+===================================================== */
+
+function nextStep() {
+
+    if (steps.length === 0) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+
+    }
+
+
+    if (currentStep >= steps.length - 1) {
+
+        return;
+
+    }
+
+
+    currentStep++;
+
+    const step = steps[currentStep];
+
+
+    workingArray =
+        [...step.array];
+
+
+    if (step.pivot !== undefined) {
+
+        document.getElementById("pivotDisplay").textContent =
+            step.pivot;
+
+    }
+
+
+    if (step.type === "pivot") {
+
+        renderArray(
+            step.pivotIndex,
+            -1,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML =
+            `Choose <strong>${step.pivot}</strong>
+             as the pivot.`;
+
+    }
+
+
+    else if (step.type === "compare") {
+
+        renderArray(
+            step.pivotIndex,
+            step.compareIndex,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML =
+            `Compare
+             <strong>${workingArray[step.compareIndex]}</strong>
+             with pivot
+             <strong>${step.pivot}</strong>.`;
+
+    }
+
+
+    else if (step.type === "swap") {
+
+        renderArray(
+            step.pivotIndex,
+            step.compareIndex,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML = "Value belongs on the left side of the pivot,so the elements are rearranged.";
+
+    }
+
+
+    else if (step.type === "placed") {
+
+        renderArray(
+            step.pivotIndex,
+            -1,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML =
+            `Pivot <strong>${step.pivot}</strong>
+             is now in its partition position.`;
+
+    }
+
+
+    else if (step.type === "leftSearch") {
+
+        renderArray(
+            step.pivotIndex,
+            -1,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML =
+            `Target index ${targetIndex} is to the
+             <strong>left</strong> of the pivot.
+             Continue searching in the left partition.`;
+
+    }
+
+
+    else if (step.type === "rightSearch") {
+
+        renderArray(
+            step.pivotIndex,
+            -1,
+            step.left,
+            step.right
+        );
+
+
+        statusBox.className =
+            "status";
+
+        statusBox.innerHTML =
+            `Target index ${targetIndex} is to the
+             <strong>right</strong> of the pivot.
+             Continue searching in the right partition.`;
+
+    }
+
+
+    else if (step.type === "answer") {
+
+        renderArray(
+            -1,
+            -1,
+            -1,
+            -1,
+            step.answerIndex
+        );
+
+
+        document.getElementById("answerDisplay").textContent =
+            step.answer;
+
+
+        statusBox.className =
+            "status success";
+
+        statusBox.innerHTML =
+            `🎉 <strong>Answer Found!</strong><br>
+             The ${k}th largest element is
+             <strong>${step.answer}</strong>.`;
+
+    }
+
+}
+
+
+/* =====================================================
+   Auto Run
+===================================================== */
+
+function autoRun() {
+
+    if (autoTimer !== null) {
+
+        stopAuto();
+
+        return;
+
+    }
+
+
+    if (
+        steps.length === 0 ||
+        currentStep >= steps.length - 1
+    ) {
+
+        startAlgorithm();
+
+        if (steps.length === 0) {
+            return;
+        }
+
+    }
+
+
+    autoTimer =
+        setInterval(() => {
+
+            if (
+                currentStep >=
+                steps.length - 1
+            ) {
+
+                stopAuto();
+
+                return;
+
+            }
+
+            nextStep();
+
+        }, 850);
+
+}
+
+
+/* =====================================================
+   Stop Auto
+===================================================== */
+
+function stopAuto() {
+
+    if (autoTimer !== null) {
+
+        clearInterval(autoTimer);
+
+        autoTimer = null;
+
+    }
+
+}
+
+
+/* =====================================================
+   Reset
+===================================================== */
+
+function resetAlgorithm() {
+
+    stopAuto();
+
+    originalArray =
+        [];
+
+    workingArray =
+        [];
+
+    steps =
+        [];
+
+    currentStep =
+        -1;
+
+
+    arrayInput.value =
+        "3, 2, 1, 5, 6, 4";
+
+    kInput.value =
+        2;
+
+
+    document.getElementById("kDisplay").textContent =
+        2;
+
+    document.getElementById("targetDisplay").textContent =
+        4;
+
+    document.getElementById("pivotDisplay").textContent =
+        "—";
+
+    document.getElementById("answerDisplay").textContent =
+        "—";
+
+
+    renderArray();
+
+
+    statusBox.className =
+        "status";
+
+    statusBox.innerHTML =
+        "Click <strong>Start</strong> to begin.";
+
+}
+
+
+/* =====================================================
+   Event Listeners
+===================================================== */
+
+document
+    .getElementById("startBtn")
+    .addEventListener(
+        "click",
+        startAlgorithm
+    );
+
+
+document
+    .getElementById("nextBtn")
+    .addEventListener(
+        "click",
+        nextStep
+    );
+
+
+document
+    .getElementById("autoBtn")
+    .addEventListener(
+        "click",
+        autoRun
+    );
+
+
+document
+    .getElementById("resetBtn")
+    .addEventListener(
+        "click",
+        resetAlgorithm
+    );
+
+
+/* =====================================================
+   Initial Render
+===================================================== */
+
+renderArray();
+
+</script>
+
+</body>
+</html>
